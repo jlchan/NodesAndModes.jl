@@ -55,11 +55,17 @@ end
 
 module Tri
 using DelimitedFiles # to read quadrature node data
-include("nodes_and_modes_1D.jl")
+using ..NodesAndModes
 include("nodes_and_modes_2D_tri.jl")
 export vandermonde_2D, grad_vandermonde_2D
 export nodes_2D, equi_nodes_2D, quad_nodes_2D
 end
 
+# module Quad
+# include("nodes_and_modes_1D.jl")
+# include("nodes_and_modes_2D_quad.jl")
+# export vandermonde_2D, grad_vandermonde_2D
+# export nodes_2D, equi_nodes_2D, quad_nodes_2D
+# end
 
 end # module
