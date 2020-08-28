@@ -11,8 +11,8 @@ VectorizedRoutines = "0e69188a-a5d4-5622-b4e4-a72373136fc5"
 
 [compat]
 julia = "^1.2"
-SpecialFunctions = "^.1"
-VectorizedRoutines = "^.1"
+SpecialFunctions = "^0.1"
+VectorizedRoutines = "0.1, 1.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
