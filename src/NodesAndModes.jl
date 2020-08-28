@@ -6,7 +6,7 @@ using SpecialFunctions
 export greet
 greet() = print("Hello World!")
 
-include("nodes_and_modes.jl")
+include("nodes_and_modes_1D.jl")
 
 # export 1D routines by default (there's only one type of element in 1D)
 export gauss_lobatto_quad, gauss_quad
