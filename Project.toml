@@ -11,7 +11,6 @@ VectorizedRoutines = "0e69188a-a5d4-5622-b4e4-a72373136fc5"
 
 [compat]
 julia = "^1.2"
-SpecialFunctions = "^0.10.0"
 VectorizedRoutines = "0.1, 1.0"
 
 [extras]
