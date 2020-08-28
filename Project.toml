@@ -3,6 +3,10 @@ uuid = "7aca2e03-f7e2-4192-9ec8-f4ca66d597fb"
 authors = ["Jesse Chan", "Yimin Lin"]
 version = "0.1.0"
 
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+
 [compat]
 julia = "1"
 
