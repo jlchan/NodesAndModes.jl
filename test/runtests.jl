@@ -37,30 +37,28 @@ using LinearAlgebra
 end
 
 @testset "2D tri tests" begin
-    using NodesAndModes.Tri
-
     tol = 1e2*eps()
 
     N = 3
-    rq,sq,wq = quad_nodes_2D(2*N)
+    rq,sq,wq = Tri.quad_nodes_2D(2*N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
 
-    Vq = vandermonde_2D(N,rq,sq)
+    Vq = Tri.vandermonde_2D(N,rq,sq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s = nodes_2D(N)
-    V = vandermonde_2D(N,r,s)
-    Dr,Ds = (A->A/V).(grad_vandermonde_2D(N,r,s))
+    r,s = Tri.nodes_2D(N)
+    V = Tri.vandermonde_2D(N,r,s)
+    Dr,Ds = (A->A/V).(Tri.grad_vandermonde_2D(N,r,s))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
 
-    r,s = equi_nodes_2D(N)
-    V = vandermonde_2D(N,r,s)
-    Dr,Ds = (A->A/V).(grad_vandermonde_2D(N,r,s))
+    r,s = Tri.equi_nodes_2D(N)
+    V = Tri.vandermonde_2D(N,r,s)
+    Dr,Ds = (A->A/V).(Tri.grad_vandermonde_2D(N,r,s))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
@@ -68,15 +66,13 @@ end
 
     # test duffy quadrature too
     N = 15
-    rq,sq,wq = quad_nodes_2D(2*N)
+    rq,sq,wq = Tri.quad_nodes_2D(2*N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
 end
 
 @testset "2D quad tests" begin
-    using NodesAndModes.Quad
-
     tol = 1e2*eps()
 
     N = 3

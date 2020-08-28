@@ -7,9 +7,11 @@ include("nodes_and_modes_1D.jl")
 # export 1D routines by default (there's only one type of element in 1D)
 export gauss_lobatto_quad, gauss_quad
 export jacobiP, grad_jacobiP
-
-# export 1D vandermonde basis matrix functions by default
 export vandermonde_1D, grad_vandermonde_1D
+
+#export submodules 
+export Tri
+export Quad
 
 """
     vandermonde_1D(N, r)
