@@ -27,5 +27,5 @@ V = vandermonde_2D(N,r,s)
 
 Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex elements. 
 
-Todo: 
+## To-do list
 - support for tetrahedra, prisms, and pyramids. 
