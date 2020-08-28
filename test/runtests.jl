@@ -65,6 +65,12 @@ end
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
-    # export vandermonde_2D, grad_vandermonde_2D
-    # export nodes_2D, equi_nodes_2D, quad_nodes_2D
+
+    # test duffy quadrature too
+    N = 15
+    rq,sq,wq = quad_nodes_2D(2*N)
+    @test sum(wq)≈2
+    @test sum(rq.*wq)≈ -2/3
+    @test sum(sq.*wq)≈ -2/3
+
 end
