@@ -3,7 +3,7 @@
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/jlchan/NodesAndModes.jl?svg=true)](https://ci.appveyor.com/project/jlchan/NodesAndModes-jl)
 [![Codecov](https://codecov.io/gh/jlchan/NodesAndModes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/jlchan/NodesAndModes.jl)
 
-Package to compute nodes and modes for nodal DG methods. Codes inspired by the Matlab codes for the book Nodal Discontinuous Galerkin methods by Hesthaven and Warburton (2007). 
+Package to compute nodes and modes (orthogonal polynomials) for nodal DG methods. Codes inspired by the Matlab codes for the book Nodal Discontinuous Galerkin methods by Hesthaven and Warburton (2007). 
 
 ## Example usage
 
@@ -25,4 +25,7 @@ r,s = nodes_2D(N)
 V = vandermonde_2D(N,r,s)
 ```
 
-Nodes and modes (and mode derivatives) available for 1D elements, as well as 2D Tri and Quad elements. 
+Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex elements. 
+
+Todo: 
+- support for tetrahedra, prisms, and pyramids. 
