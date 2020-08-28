@@ -72,5 +72,35 @@ end
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
+end
 
+@testset "2D quad tests" begin
+    using NodesAndModes.Quad
+
+    tol = 1e2*eps()
+
+    N = 3
+    rq,sq,wq = Quad.quad_nodes_2D(2*N)
+    @test sum(wq) ≈ 4
+    @test abs(sum(rq.*wq)) < tol
+    @test abs(sum(sq.*wq)) < tol
+
+    Vq = Quad.vandermonde_2D(N,rq,sq)
+    @test Vq'*diagm(wq)*Vq ≈ I
+
+    r,s = Quad.nodes_2D(N)
+    V = Quad.vandermonde_2D(N,r,s)
+    Dr,Ds = (A->A/V).(Quad.grad_vandermonde_2D(N,r,s))
+    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
+    @test norm(Dr*s)+norm(Ds*r) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
+
+    r,s = Quad.equi_nodes_2D(N)
+    V = Quad.vandermonde_2D(N,r,s)
+    Dr,Ds = (A->A/V).(Quad.grad_vandermonde_2D(N,r,s))
+    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
+    @test norm(Dr*s)+norm(Ds*r) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
 end
