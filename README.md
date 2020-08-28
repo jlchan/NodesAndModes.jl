@@ -4,7 +4,7 @@ Package to compute nodes and modes for nodal DG methods. Codes inspired by the M
 
 ## Example usage
 
-To compute a Vandermonde matrix from Lobatto points and orthonormal polynomials
+To compute a Vandermonde matrix from Lobatto points and orthonormal polynomials.
 ```
 using NodesAndModes
 
@@ -22,7 +22,7 @@ r,s = nodes_2D(N)
 V = vandermonde_2D(N,r,s)
 ```
 
-Nodes and modes available for 1D elements, as well as 2D Tri and Quad elements. 
+Nodes and modes (and mode derivatives) available for 1D elements, as well as 2D Tri and Quad elements. 
 
 [![Build Status](https://travis-ci.com/jlchan/NodesAndModes.jl.svg?branch=master)](https://travis-ci.com/jlchan/NodesAndModes.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/jlchan/NodesAndModes.jl?svg=true)](https://ci.appveyor.com/project/jlchan/NodesAndModes-jl)
