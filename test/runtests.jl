@@ -3,12 +3,14 @@ using Test
 using LinearAlgebra
 
 @testset "1D tests" begin
-    tol = 1e2*eps()
+    @test diagm(ones(3))≈I
 
-    N = 0
-    r,w = gauss_lobatto_quad(0,0,N)
-    @test sum(w) ≈ 2
-
+    # tol = 1e2*eps()
+    #
+    # N = 0
+    # r,w = gauss_lobatto_quad(0,0,N)
+    # @test sum(w) ≈ 2
+    #
     # for N = 1:2
     #     r,w = gauss_quad(0,0,N)
     #     @test sum(w) ≈ 2
