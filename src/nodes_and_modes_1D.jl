@@ -8,9 +8,10 @@ Initialize Legendre-Gauss-Lobatto quadrature points.
 """
 function gauss_lobatto_quad(α, β, N)
 
-    if (α!=0) & (β!=0)
-        error("alpha/beta not zero")
-    end
+    @assert (α==0) & (β==0) "alpha/beta must be zero for Lobatto"
+    # if
+    #     error("alpha/beta not zero")
+    # end
     x = zeros(N+1, 1)
     w = zeros(N+1, 1)
     if N == 0
