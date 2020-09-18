@@ -14,6 +14,7 @@ export basis_1D # returns all VDMs
 export Tri
 export Quad
 export Hex
+export Pyr
 
 #####
 ##### Submodule for triangles
@@ -51,15 +52,17 @@ end
 # # export nodes_3D, equi_nodes_3D, quad_nodes_3D
 # end
 
-# #####
-# ##### Submodule for pyr
-# #####
-# module Pyr
-# using ..NodesAndModes
-# # include("nodes_and_modes_3D_pyr.jl")
-# # export vandermonde_3D, grad_vandermonde_3D, basis_3D
-# # export nodes_3D, equi_nodes_3D, quad_nodes_3D
-# end
+#####
+##### Submodule for pyr
+#####
+module Pyr
+import VectorizedRoutines.Matlab.meshgrid
+using ..NodesAndModes
+include("nodes_and_modes_3D_pyr.jl")
+export vandermonde_3D, grad_vandermonde_3D, basis_3D
+export equi_nodes_3D, quad_nodes_3D
+# export nodes_3D
+end
 
 #####
 ##### Submodule for hexes
