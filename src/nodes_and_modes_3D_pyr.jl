@@ -88,6 +88,9 @@ end
 
 
 function quad_nodes_3D(N)
+    return stroud_quad_nodes_3D(N)
+end
+function stroud_quad_nodes_3D(N)
 
     a1D, w1D = gauss_quad(0,0,N)
     c1D, wc1D = gauss_quad(2,0,N)

@@ -76,7 +76,7 @@ end
     tol = 1e2*eps()
 
     N = 3
-    rq,sq,wq = Quad.quad_nodes_2D(2*N)
+    rq,sq,wq = Quad.quad_nodes_2D(N)
     @test sum(wq) ≈ 4
     @test abs(sum(rq.*wq)) < tol
     @test abs(sum(sq.*wq)) < tol
@@ -106,7 +106,7 @@ end
     tol = 5e2*eps()
 
     N = 3
-    rq,sq,tq,wq = Hex.quad_nodes_3D(2*N)
+    rq,sq,tq,wq = Hex.quad_nodes_3D(N)
     @test sum(wq) ≈ 8
     @test abs(sum(rq.*wq))+abs(sum(sq.*wq))+abs(sum(tq.*wq)) < tol
 
@@ -137,7 +137,7 @@ end
     tol = 5e2*eps()
 
     N = 3
-    rq,sq,tq,wq = Pyr.quad_nodes_3D(2*N)
+    rq,sq,tq,wq = Pyr.quad_nodes_3D(N)
     @test sum(wq) ≈ 8/3
 
     Vq = Pyr.vandermonde_3D(N,rq,sq,tq)

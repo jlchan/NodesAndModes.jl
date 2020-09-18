@@ -123,20 +123,24 @@ function quad_nodes_tri(N)
         s = rsw[:,2]
         w = rsw[:,3]
     else
-        cubNA = convert(Int,ceil( (N+1)/2))
-        cubNB = convert(Int,ceil( (N+1)/2))
-        cubA,cubWA = gauss_quad(0,0, cubNA-1)
-        cubB,cubWB = gauss_quad(1,0, cubNB-1)
-
-        cubA = ones(cubNB,1)*cubA'
-        cubB = cubB*ones(1,cubNA)
-
-        r = @. 0.5*(1+cubA)*(1-cubB)-1
-        s = cubB
-        w = 0.5*cubWB*(cubWA')
+        cubN = convert(Int,ceil((N+1)/2))
+        r,s,w = stroud_quad_nodes_2D(cubN)
     end
 
     return r[:], s[:], w[:]
+end
+
+function stroud_quad_nodes_2D(N)
+    cubA,cubWA = gauss_quad(0,0,N)
+    cubB,cubWB = gauss_quad(1,0,N)
+
+    cubA = ones(N+1,1)*cubA'
+    cubB = cubB*ones(1,N+1)
+
+    r = @. 0.5*(1+cubA)*(1-cubB)-1
+    s = cubB
+    w = 0.5*cubWB*(cubWA')
+    return vec.((r,s,w))
 end
 
 
