@@ -14,8 +14,10 @@ export basis_1D # returns all VDMs
 export Tri
 export Quad
 export Hex
-export Pyr
 export Wedge
+export Pyr
+export Tet
+
 
 #####
 ##### Submodule for triangles
@@ -43,15 +45,18 @@ export basis_2D
 export nodes_2D, equi_nodes_2D, quad_nodes_2D
 end
 
-# #####
-# ##### Submodule for tets
-# #####
-# module Tet
-# using ..NodesAndModes
-# # include("nodes_and_modes_3D_tet.jl")
-# # export vandermonde_3D, grad_vandermonde_3D, basis_3D
-# # export nodes_3D, equi_nodes_3D, quad_nodes_3D
-# end
+#####
+##### Submodule for tets
+#####
+module Tet
+using DelimitedFiles # to read quadrature node data
+import VectorizedRoutines.Matlab.meshgrid
+using ..NodesAndModes
+include("nodes_and_modes_3D_tet.jl")
+export vandermonde_3D, grad_vandermonde_3D, basis_3D
+export equi_nodes_3D, quad_nodes_3D
+# export nodes_3D
+end
 
 #####
 ##### Submodule for pyr

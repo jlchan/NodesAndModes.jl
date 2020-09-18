@@ -181,3 +181,32 @@ end
     @test Ds*s ≈ ones(length(s))
     @test Dt*t ≈ ones(length(t))
 end
+
+@testset "3D tet tests" begin
+    tol = 5e2*eps()
+
+    N = 3
+    rq,sq,tq,wq = Tet.quad_nodes_3D(N)
+    @test sum(wq) ≈ 4/3    
+
+    Vq = Tet.vandermonde_3D(N,rq,sq,tq)
+    @test Vq'*diagm(wq)*Vq ≈ I
+
+    # r,s,t = Tet.nodes_3D(N)
+    # V = Tet.vandermonde_3D(N,r,s,t)
+    # Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde_3D(N,r,s,t))
+    # @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
+    # @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
+    # @test Dr*r ≈ ones(length(r))
+    # @test Ds*s ≈ ones(length(s))
+    # @test Dt*t ≈ ones(length(t))
+
+    r,s,t = Tet.equi_nodes_3D(N)
+    V = Tet.vandermonde_3D(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde_3D(N,r,s,t))
+    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
+    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
+    @test Dt*t ≈ ones(length(t))
+end
