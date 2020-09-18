@@ -65,7 +65,8 @@ end
     @test Ds*s ≈ ones(length(s))
 
     # test duffy quadrature too
-    rq,sq,wq = Tri.stroud_quad_nodes_2D(N)
+    N = 14
+    rq,sq,wq = Tri.quad_nodes_2D(N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
@@ -187,7 +188,7 @@ end
 
     N = 3
     rq,sq,tq,wq = Tet.quad_nodes_3D(N)
-    @test sum(wq) ≈ 4/3    
+    @test sum(wq) ≈ 4/3
 
     Vq = Tet.vandermonde_3D(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
@@ -209,4 +210,11 @@ end
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
     @test Dt*t ≈ ones(length(t))
+
+    N = 8
+    rq,sq,tq,wq = Tet.quad_nodes_3D(N)
+    @test sum(wq)≈4/3
+    @test sum(rq.*wq)≈ -2/3
+    @test sum(sq.*wq)≈ -2/3
+    @test sum(tq.*wq)≈ -2/3
 end
