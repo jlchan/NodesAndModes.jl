@@ -1,7 +1,12 @@
-function build_edge_basis(N, basis_1D, vertices,
-                          edges, vertex_functions)
-    
-end
+#####
+##### routines to compute warp-and-blend interpolation nodes for triangles, tets,
+##### and pyramid elements. Wedges/hexes use tensor product nodes
+#####
+
+# function build_edge_basis(N, basis_1D, vertices,
+#                           edges, vertex_functions)
+#
+# end
 
 
 """
