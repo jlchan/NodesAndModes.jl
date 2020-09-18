@@ -8,16 +8,7 @@ nodes (r,s)
 ```jldoctest
 """
 function vandermonde_2D(N, r, s)
-
-    Np = convert(Int,(N+1)*(N+1))
-    sk = 1
-    V = zeros(length(r), Np);
-    for i=0:N
-        for j=0:N
-            V[:,sk] = jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j)
-            sk += 1
-        end
-    end
+    V,Vr,Vs = basis_2D(N,r,s)
     return V
 end
 
@@ -31,20 +22,26 @@ of order N at (r,s)
 ```jldoctest
 """
 function grad_vandermonde_2D(N, r, s)
+    V,Vr,Vs = basis_2D(N,r,s)
+    return Vr,Vs
+end
 
+"""
+function V,Vr,Vs = basis_2D
+"""
+function basis_2D(N,r,s)
     Np = convert(Int,(N+1)*(N+1))
     sk = 1
-    V2Dr = zeros(length(r), Np);
-    V2Ds = zeros(length(r), Np);
+    V,Vr,Vs = ntuple(x->zeros(length(r), Np),3)
     for i=0:N
         for j=0:N
-            V2Dr[:,sk] = grad_jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j)
-            V2Ds[:,sk] = jacobiP(r, 0, 0, i).*grad_jacobiP(s, 0, 0, j)
+            V[:,sk]  = jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j)
+            Vr[:,sk] = grad_jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j)
+            Vs[:,sk] = jacobiP(r, 0, 0, i).*grad_jacobiP(s, 0, 0, j)
             sk += 1
         end
     end
-
-    return V2Dr, V2Ds
+    return V,Vr,Vs
 end
 
 # ===================================================

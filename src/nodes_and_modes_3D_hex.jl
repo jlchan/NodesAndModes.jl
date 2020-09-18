@@ -12,18 +12,7 @@ V = vandermonde_3D(N, r, s, t)
 ```jldoctest
 """
 function vandermonde_3D(N, r, s, t)
-
-    Np = convert(Int,(N+1)^3)
-    sk = 1
-    V = zeros(length(r), Np);
-    for i=0:N
-        for j=0:N
-            for k=0:N
-                V[:,sk] = jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*jacobiP(t, 0, 0, k)
-                sk += 1
-            end
-        end
-    end
+    V,_ = basis_3D(N,r,s,t)
     return V
 end
 
@@ -37,15 +26,23 @@ V = grad_vandermonde_3D(N, r, s, t)
 ```jldoctest
 """
 function grad_vandermonde_3D(N, r, s, t)
+    V,Vr,Vs,Vt = basis_3D(N,r,s,t)
+    return Vr, Vs, Vt
+end
 
+"""
+    basis_3D(N, r, s, t)
+
+```jldoctest
+"""
+function basis_3D(N, r, s, t)
     Np = convert(Int,(N+1)^3)
     sk = 1
-    Vr = zeros(length(r), Np);
-    Vs = zeros(length(r), Np);
-    Vt = zeros(length(r), Np);
+    V,Vr,Vs,Vt = ntuple(x->zeros(length(r), Np),4)
     for i=0:N
         for j=0:N
             for k=0:N
+                V[:,sk]  = jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*jacobiP(t, 0, 0, k)
                 Vr[:,sk] = grad_jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*jacobiP(t,0,0,k)
                 Vs[:,sk] = jacobiP(r, 0, 0, i).*grad_jacobiP(s, 0, 0, j).*jacobiP(t,0,0,k)
                 Vt[:,sk] = jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*grad_jacobiP(t,0,0,k)
@@ -54,7 +51,7 @@ function grad_vandermonde_3D(N, r, s, t)
         end
     end
 
-    return Vr, Vs, Vt
+    return V, Vr, Vs, Vt
 end
 
 # ===================================================
@@ -90,8 +87,7 @@ end
 """
     quad_nodes_3D(N)
 # Examples
-N = 2
-rq,sq,tq,wq = quad_nodes_3D(N)
+rq,sq,tq,wq = quad_nodes_3D(2)
 ```jldoctest
 """
 function quad_nodes_3D(N)

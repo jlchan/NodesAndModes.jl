@@ -122,3 +122,48 @@ function jacobiP(x, α, β, N)
     P = PL[N+1,:]
     return P;
 end
+
+
+"""
+    V,Vr = basis_1D(N,r)
+"""
+function basis_1D(N,r)
+    V1D,Vr1D = ntuple(x->zeros(length(r), N+1),2)
+    for j = 1:N+1
+        V1D[:,j] = jacobiP(r[:], 0, 0, j-1)
+        Vr1D[:,j] = grad_jacobiP(r[:], 0, 0, j-1)
+    end
+    return V1D,Vr1D
+end
+
+"""
+    vandermonde_1D(N, r)
+
+Initialize the 1D Vandermonde matrix of order N Legendre polynomials at nodes r
+
+# Examples
+N = 2
+r,w = gauss_lobatto_quad(0,0,N)
+V = vandermonde_1D(N,r)
+```jldoctest
+"""
+function vandermonde_1D(N, r)
+    V,Vr = basis_1D(N,r)
+    return V
+end
+
+"""
+    grad_vandermonde_1D(N, r)
+
+Initialize the 1D Vandermonde matrix of order N Legendre polynomials at nodes r
+
+# Examples
+N = 2
+r,w = gauss_lobatto_quad(0,0,N)
+Vr = grad_vandermonde_1D(N,r)
+```jldoctest
+"""
+function grad_vandermonde_1D(N, r)
+    V,Vr = basis_1D(N,r)
+    return Vr
+end

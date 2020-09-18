@@ -3,7 +3,11 @@
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/jlchan/NodesAndModes.jl?svg=true)](https://ci.appveyor.com/project/jlchan/NodesAndModes-jl)
 [![Codecov](https://codecov.io/gh/jlchan/NodesAndModes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/jlchan/NodesAndModes.jl)
 
-Package to compute nodes and modes (orthogonal polynomials) for nodal DG methods. Codes inspired by the Matlab codes for the book Nodal Discontinuous Galerkin methods by Hesthaven and Warburton (2007). Original port from Matlab to Julia by [Yimin Lin](https://github.com/yiminllin).
+Package to compute nodes and modes (orthogonal polynomials) for nodal DG methods on various reference elements. Codes inspired by the Matlab codes for the book "Nodal Discontinuous Galerkin methods" by Hesthaven and Warburton (2007) and simplicial interpolation nodes from ["Recursive, parameter-free, explicitly defined interpolation nodes for simplices"](https://arxiv.org/pdf/2002.09421.pdf) by Isaac (2020).
+
+Original port from Matlab to Julia by [Yimin Lin](https://github.com/yiminllin).
+
+This package is registered and can be installed via `] add NodesAndModes`. Julia v1.4 and above required.
 
 ## Example usage
 
@@ -25,7 +29,7 @@ r,s = nodes_2D(N)
 V = vandermonde_2D(N,r,s)
 ```
 
-Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex elements. 
+Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex elements.
 
 ## To-do list
-- support for tetrahedra, prisms, and pyramids. 
+- support for tetrahedra, prisms, and pyramids.

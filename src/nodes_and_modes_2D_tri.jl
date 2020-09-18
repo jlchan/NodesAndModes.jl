@@ -212,7 +212,7 @@ Returns quadrature nodes which exactly integrate degree N polynomials
 
 function quad_nodes_tri(N)
 
-    if N<28
+    if N < 28
         rsw = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tri_N", N, ".txt"),' ', Float64, '\n')
         r = rsw[:,1]
         s = rsw[:,2]
@@ -234,55 +234,6 @@ function quad_nodes_tri(N)
     return r[:], s[:], w[:]
 end
 
-
-"""
-    vandermonde_2D(N, r)
-
-Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
-nodes (r,s)
-
-# Examples
-```jldoctest
-"""
-function vandermonde_2D(N, r, s)
-    Np = convert(Int,(N+1)*(N+2)/2)
-    V2D = zeros(length(r), Np)
-    a, b = rstoab(r, s)
-    sk = 1
-    for i = 0:N
-        for j = 0:N-i
-            V2D[:,sk] = simplex_2D(a,b,i,j)
-            sk = sk+1
-        end
-    end
-    return V2D
-end
-
-"""
-    gradV_2D(N, Np, r, s)
-
-Initilize 2D gradient Vandermonde matrix of derivatives 2D "Legendre" polynomials
-of order N at (r,s)
-
-# Examples
-```jldoctest
-"""
-function grad_vandermonde_2D(N, r, s)
-    Np = convert(Int,(N+1)*(N+2)/2)
-    V2Dr = zeros(length(r), Np)
-    V2Ds = zeros(length(r), Np)
-    a, b = rstoab(r, s)
-
-    sk = 1
-    for i = 0:N
-        for j = 0:N-i
-            V2Dr[:,sk], V2Ds[:,sk] = grad_simplex_2D(a, b, i, j)
-            sk = sk+1
-        end
-    end
-
-    return V2Dr, V2Ds
-end
 
 """
     nodes_2D(N)
@@ -315,4 +266,52 @@ end
 function quad_nodes_2D(N)
     r,s,w = quad_nodes_tri(N)
     return r,s,w
+end
+
+
+"""
+    vandermonde_2D(N, r)
+
+Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
+nodes (r,s)
+
+# Examples
+```jldoctest
+"""
+function vandermonde_2D(N, r, s)
+    V,Vr,Vs = basis_2D(N,r,s)
+    return V
+end
+
+"""
+    gradV_2D(N, Np, r, s)
+
+Initilize 2D gradient Vandermonde matrix of derivatives 2D "Legendre" polynomials
+of order N at (r,s)
+
+# Examples
+```jldoctest
+"""
+function grad_vandermonde_2D(N, r, s)
+    V,Vr,Vs = basis_2D(N,r,s)
+    return Vr,Vs
+end
+
+"""
+basis_2D
+"""
+
+function basis_2D(N,r,s)
+    Np = convert(Int,(N+1)*(N+2)/2)
+    V2D,V2Dr,V2Ds = ntuple(x->zeros(length(r), Np),3)
+    a, b = rstoab(r, s)
+    sk = 1
+    for i = 0:N
+        for j = 0:N-i
+            V2D[:,sk] = simplex_2D(a,b,i,j)
+            V2Dr[:,sk], V2Ds[:,sk] = grad_simplex_2D(a, b, i, j)
+            sk = sk+1
+        end
+    end
+    return V2D,V2Dr,V2Ds
 end
