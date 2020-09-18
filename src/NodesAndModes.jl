@@ -23,6 +23,7 @@ module Tri
 using DelimitedFiles # to read quadrature node data
 using ..NodesAndModes
 include("nodes_and_modes_2D_tri.jl")
+include("warpblend_interp_nodes.jl")
 export vandermonde_2D, grad_vandermonde_2D
 export basis_2D
 export nodes_2D, equi_nodes_2D, quad_nodes_2D
@@ -46,7 +47,17 @@ end
 # module Tet
 # using ..NodesAndModes
 # # include("nodes_and_modes_3D_tet.jl")
-# # export vandermonde_3D, grad_vandermonde_3D
+# # export vandermonde_3D, grad_vandermonde_3D, basis_3D
+# # export nodes_3D, equi_nodes_3D, quad_nodes_3D
+# end
+
+# #####
+# ##### Submodule for pyr
+# #####
+# module Pyr
+# using ..NodesAndModes
+# # include("nodes_and_modes_3D_pyr.jl")
+# # export vandermonde_3D, grad_vandermonde_3D, basis_3D
 # # export nodes_3D, equi_nodes_3D, quad_nodes_3D
 # end
 
