@@ -15,6 +15,7 @@ export Tri
 export Quad
 export Hex
 export Pyr
+export Wedge
 
 #####
 ##### Submodule for triangles
@@ -62,6 +63,17 @@ include("nodes_and_modes_3D_pyr.jl")
 export vandermonde_3D, grad_vandermonde_3D, basis_3D
 export equi_nodes_3D, quad_nodes_3D
 # export nodes_3D
+end
+
+#####
+##### Submodule for wedge (prism)
+#####
+module Wedge
+import VectorizedRoutines.Matlab.meshgrid
+using ..NodesAndModes
+include("nodes_and_modes_3D_wedge.jl")
+export vandermonde_3D, grad_vandermonde_3D, basis_3D
+export equi_nodes_3D, quad_nodes_3D, nodes_3D
 end
 
 #####

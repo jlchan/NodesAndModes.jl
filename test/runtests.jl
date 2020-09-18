@@ -40,7 +40,7 @@ end
     tol = 1e2*eps()
 
     N = 3
-    rq,sq,wq = Tri.quad_nodes_2D(2*N)
+    rq,sq,wq = Tri.quad_nodes_2D(N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
@@ -65,8 +65,7 @@ end
     @test Ds*s ≈ ones(length(s))
 
     # test duffy quadrature too
-    N = 15
-    rq,sq,wq = Tri.quad_nodes_2D(2*N)
+    rq,sq,wq = Tri.stroud_quad_nodes_2D(N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
@@ -146,6 +145,36 @@ end
     r,s,t = Pyr.equi_nodes_3D(N)
     V = Pyr.vandermonde_3D(N,r,s,t)
     Dr,Ds,Dt = (A->A/V).(Pyr.grad_vandermonde_3D(N,r,s,t))
+    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
+    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
+    @test Dt*t ≈ ones(length(t))
+end
+
+@testset "3D wedge tests" begin
+    tol = 5e2*eps()
+
+    N = 3
+    rq,sq,tq,wq = Wedge.quad_nodes_3D(N)
+    @test sum(wq) ≈ 4
+    @test abs(sum(tq.*wq)) < tol
+
+    Vq = Wedge.vandermonde_3D(N,rq,sq,tq)
+    @test Vq'*diagm(wq)*Vq ≈ I
+
+    r,s,t = Wedge.nodes_3D(N)
+    V = Wedge.vandermonde_3D(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Wedge.grad_vandermonde_3D(N,r,s,t))
+    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
+    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
+    @test Dt*t ≈ ones(length(t))
+
+    r,s,t = Wedge.equi_nodes_3D(N)
+    V = Wedge.vandermonde_3D(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Wedge.grad_vandermonde_3D(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
