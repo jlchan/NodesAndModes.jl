@@ -167,13 +167,14 @@ end
 
 """
     quad_nodes_2D(N)
+    returns quadrature nodes which exactly integrate degree 2N polynomials
 
 # Examples
 ```jldoctest
 """
 
 function quad_nodes_2D(N)
-    r,s,w = quad_nodes_tri(N)
+    r,s,w = quad_nodes_tri(2*N)
     return r,s,w
 end
 
