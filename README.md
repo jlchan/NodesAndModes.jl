@@ -29,7 +29,7 @@ r,s = nodes_2D(N)
 V = vandermonde_2D(N,r,s)
 ```
 
-Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex elements.
+Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex, Tet, Wedge, and Pyr elements.
 
 ## To-do list
-- support for tetrahedra, prisms, and pyramids.
+- high order interpolation nodes
