@@ -208,7 +208,8 @@ function grad_vandermonde_2D(N, r, s)
 end
 
 """
-basis_2D
+function basis_2D(N,r,s)
+    basis_2D: computes Vandermonde matrices for a basis + its derivatives
 """
 
 function basis_2D(N,r,s)
