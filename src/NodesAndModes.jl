@@ -2,13 +2,10 @@ module NodesAndModes
 using LinearAlgebra
 using SpecialFunctions
 
+# export some convenient 1D routines by default
 include("nodes_and_modes_1D.jl")
-
-# export 1D routines by default (there's only one type of element in 1D)
 export gauss_lobatto_quad, gauss_quad
 export jacobiP, grad_jacobiP
-# export vandermonde, grad_vandermonde
-# export basis # returns all VDMs
 
 #export submodules
 export Line # 1D

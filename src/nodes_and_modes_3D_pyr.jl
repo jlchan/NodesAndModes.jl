@@ -2,15 +2,8 @@
 ##### 3D modes on pyramids
 #####
 
-function vandermonde(N,r,s,t)
-    V,_ = basis(N,r,s,t)
-    return V
-end
-
-function grad_vandermonde(N,r,s,t)
-    V,Vr,Vs,Vt = basis(N,r,s,t)
-    return Vr,Vs,Vt
-end
+vandermonde(N, r, s, t) = first(basis(N,r,s,t))
+grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
 
 # orthogonal basis on mapped pyramidal elements. semi nodal
 function basis(N,r,s,t,tol=1e-12)
@@ -90,6 +83,7 @@ end
 function quad_nodes(N)
     return stroud_quad_nodes(N)
 end
+
 function stroud_quad_nodes(N)
 
     a1D, w1D = gauss_quad(0,0,N)

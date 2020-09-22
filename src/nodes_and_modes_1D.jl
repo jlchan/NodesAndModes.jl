@@ -133,34 +133,5 @@ function basis(N,r)
     return V1D,Vr1D
 end
 
-"""
-    vandermonde(N, r)
-
-Initialize the 1D Vandermonde matrix of order N Legendre polynomials at nodes r
-
-# Examples
-N = 2
-r,w = gauss_lobatto_quad(0,0,N)
-V = vandermonde(N,r)
-```jldoctest
-"""
-function vandermonde(N, r)
-    V,Vr = basis(N,r)
-    return V
-end
-
-"""
-    grad_vandermonde(N, r)
-
-Initialize the 1D Vandermonde matrix of order N Legendre polynomials at nodes r
-
-# Examples
-N = 2
-r,w = gauss_lobatto_quad(0,0,N)
-Vr = grad_vandermonde(N,r)
-```jldoctest
-"""
-function grad_vandermonde(N, r)
-    V,Vr = basis(N,r)
-    return Vr
-end
+vandermonde(N,r) = first(basis(N,r))
+grad_vandermonde(N,r) = last(basis(N,r))

@@ -1,30 +1,5 @@
-"""
-    vandermonde(N, r)
-
-Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
-nodes (r,s)
-
-# Examples
-```jldoctest
-"""
-function vandermonde(N, r, s)
-    V,Vr,Vs = basis(N,r,s)
-    return V
-end
-
-"""
-    gradV_2D(N, Np, r, s)
-
-Initilize 2D gradient Vandermonde matrix of derivatives 2D "Legendre" polynomials
-of order N at (r,s)
-
-# Examples
-```jldoctest
-"""
-function grad_vandermonde(N, r, s)
-    V,Vr,Vs = basis(N,r,s)
-    return Vr,Vs
-end
+vandermonde(N, r, s) = first(basis(N,r,s))
+grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]
 
 """
 function V,Vr,Vs = basis
@@ -75,7 +50,6 @@ triangles for polynomial of order N, with Np points
 function equi_nodes(N)
     r1D = LinRange(-1,1,N+1)
     s,r = meshgrid(r1D)
-
     return r[:], s[:]
 end
 

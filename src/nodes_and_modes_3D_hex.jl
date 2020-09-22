@@ -1,34 +1,5 @@
-"""
-    vandermonde(N, r)
-
-Initialize the 3D Vandermonde matrix of order N "Legendre" polynomials at
-nodes (r,s,t)
-
-# Examples
-N = 2
-r,s,t = nodes(N)
-V = vandermonde(N, r, s, t)
-
-```jldoctest
-"""
-function vandermonde(N, r, s, t)
-    V,_ = basis(N,r,s,t)
-    return V
-end
-
-"""
-    grad_vandermonde(N, r, s, t)
-
-# Examples
-N = 2
-r,s,t = nodes(N)
-V = grad_vandermonde(N, r, s, t)
-```jldoctest
-"""
-function grad_vandermonde(N, r, s, t)
-    V,Vr,Vs,Vt = basis(N,r,s,t)
-    return Vr, Vs, Vt
-end
+vandermonde(N, r, s, t) = first(basis(N,r,s,t))
+grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
 
 """
     basis(N, r, s, t)

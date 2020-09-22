@@ -183,30 +183,5 @@ function basis(N,r,s,t)
     return V,Vr,Vs,Vt
 end
 
-"""
-    vandermonde(N, r)
-
-Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
-nodes (r,s)
-
-# Examples
-```jldoctest
-"""
-function vandermonde(N,r,s,t)
-    V,_ = basis(N,r,s,t)
-    return V
-end
-
-"""
-    gradV_2D(N, Np, r, s)
-
-Initilize 2D gradient Vandermonde matrix of derivatives 2D "Legendre" polynomials
-of order N at (r,s)
-
-# Examples
-```jldoctest
-"""
-function grad_vandermonde(N, r, s, t)
-    V,Vr,Vs,Vt = basis(N,r,s,t)
-    return Vr,Vs,Vt
-end
+vandermonde(N, r, s, t) = first(basis(N,r,s,t))
+grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
