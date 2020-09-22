@@ -73,7 +73,7 @@ function equi_nodes_3D(N)
     Np = (N+1)*(N+2)*(2*N+3)/6
     a,b,c = ntuple(x->Float64[],3)
     c1D = LinRange(-1,1,N+1)
-    for k = 0:N
+    for k = N:-1:0
         if k==0
             r1D = [.5]
         else
