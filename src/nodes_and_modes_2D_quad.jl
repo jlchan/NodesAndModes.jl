@@ -1,5 +1,5 @@
 """
-    vandermonde_2D(N, r)
+    vandermonde(N, r)
 
 Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
 nodes (r,s)
@@ -7,8 +7,8 @@ nodes (r,s)
 # Examples
 ```jldoctest
 """
-function vandermonde_2D(N, r, s)
-    V,Vr,Vs = basis_2D(N,r,s)
+function vandermonde(N, r, s)
+    V,Vr,Vs = basis(N,r,s)
     return V
 end
 
@@ -21,15 +21,15 @@ of order N at (r,s)
 # Examples
 ```jldoctest
 """
-function grad_vandermonde_2D(N, r, s)
-    V,Vr,Vs = basis_2D(N,r,s)
+function grad_vandermonde(N, r, s)
+    V,Vr,Vs = basis(N,r,s)
     return Vr,Vs
 end
 
 """
-function V,Vr,Vs = basis_2D
+function V,Vr,Vs = basis
 """
-function basis_2D(N,r,s)
+function basis(N,r,s)
     Np = convert(Int,(N+1)*(N+1))
     sk = 1
     V,Vr,Vs = ntuple(x->zeros(length(r), Np),3)
@@ -47,7 +47,7 @@ end
 # ===================================================
 
 """
-    nodes_2D(N)
+    nodes(N)
 
 Compute optimized interpolation nodes using blend & warp method on equilateral
 triangles for polynomial of order N, with Np points
@@ -56,14 +56,14 @@ triangles for polynomial of order N, with Np points
 ```jldoctest
 """
 
-function nodes_2D(N)
+function nodes(N)
     r1D,w1D = gauss_lobatto_quad(0,0,N)
     s,r = meshgrid(r1D)
     return r[:], s[:]
 end
 
 """
-    equi_nodes_2D(N)
+    equi_nodes(N)
 
 Compute optimized interpolation nodes using blend & warp method on equilateral
 triangles for polynomial of order N, with Np points
@@ -72,7 +72,7 @@ triangles for polynomial of order N, with Np points
 ```jldoctest
 """
 
-function equi_nodes_2D(N)
+function equi_nodes(N)
     r1D = LinRange(-1,1,N+1)
     s,r = meshgrid(r1D)
 
@@ -80,7 +80,7 @@ function equi_nodes_2D(N)
 end
 
 """
-    quad_nodes_2D(N)
+    quad_nodes(N)
 
 Compute optimized interpolation nodes using blend & warp method on equilateral
 triangles for polynomial of order N, with Np points
@@ -89,7 +89,7 @@ triangles for polynomial of order N, with Np points
 ```jldoctest
 """
 
-function quad_nodes_2D(N)
+function quad_nodes(N)
     r1D,w1D = gauss_quad(0,0,N)
     s,r = meshgrid(r1D)
     ws,wr = meshgrid(w1D)

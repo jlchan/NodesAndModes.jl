@@ -2,18 +2,18 @@
 ##### 3D modes on pyramids
 #####
 
-function vandermonde_3D(N,r,s,t)
-    V,_ = basis_3D(N,r,s,t)
+function vandermonde(N,r,s,t)
+    V,_ = basis(N,r,s,t)
     return V
 end
 
-function grad_vandermonde_3D(N,r,s,t)
-    V,Vr,Vs,Vt = basis_3D(N,r,s,t)
+function grad_vandermonde(N,r,s,t)
+    V,Vr,Vs,Vt = basis(N,r,s,t)
     return Vr,Vs,Vt
 end
 
 # orthogonal basis on mapped pyramidal elements. semi nodal
-function basis_3D(N,r,s,t,tol=1e-12)
+function basis(N,r,s,t,tol=1e-12)
 
     # convert to abc
     a = @. 2*(r+1)/(1-t)-1
@@ -39,9 +39,9 @@ function basis_3D(N,r,s,t,tol=1e-12)
     ind = 1
     for k = 0:N
         # make nodal quad basis
-        bq,aq,wab = Quad.quad_nodes_2D(k)
-        VDM,_ = Quad.basis_2D(k,aq,bq)
-        VDMab,Va,Vb = Quad.basis_2D(k,a,b)
+        bq,aq,wab = Quad.quad_nodes(k)
+        VDM,_ = Quad.basis(k,aq,bq)
+        VDMab,Va,Vb = Quad.basis(k,a,b)
         Vab,DVa,DVb = map(A->A/VDM,(VDMab,Va,Vb))
 
         CNk = (N+2) / (2^(2*k+2)*(2*k+3))
@@ -69,7 +69,7 @@ function abctorst(a,b,c)
     return r,s,t
 end
 
-function equi_nodes_3D(N)
+function equi_nodes(N)
     Np = (N+1)*(N+2)*(2*N+3)/6
     a,b,c = ntuple(x->Float64[],3)
     c1D = LinRange(-1,1,N+1)
@@ -87,10 +87,10 @@ function equi_nodes_3D(N)
 end
 
 
-function quad_nodes_3D(N)
-    return stroud_quad_nodes_3D(N)
+function quad_nodes(N)
+    return stroud_quad_nodes(N)
 end
-function stroud_quad_nodes_3D(N)
+function stroud_quad_nodes(N)
 
     a1D, w1D = gauss_quad(0,0,N)
     c1D, wc1D = gauss_quad(2,0,N)

@@ -9,31 +9,31 @@
 # hard code for tri, tet, pyr
 function get_vertices_edges(elem::Symbol)
     if elem==:tri
-        return Tri.equi_nodes_2D(1),([1,2],[2,3],[3,1])
+        return Tri.equi_nodes(1),([1,2],[2,3],[3,1])
     elseif elem==:pyr
-        return Pyr.equi_nodes_3D(1),([1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5])
+        return Pyr.equi_nodes(1),([1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5])
     elseif elem==:tet
-        return Tet.equi_nodes_3D(1),nothing # yet...
+        return Tet.equi_nodes(1),nothing # yet...
     end
 end
 
 function get_vertex_fxns(elem::Symbol,vertices)
     if elem==:tri
-        return (r,s)->Tri.vandermonde_2D(1,r,s)/Tri.vandermonde_2D(1,vertices...)
+        return (r,s)->Tri.vandermonde(1,r,s)/Tri.vandermonde(1,vertices...)
     elseif elem==:pyr
-        return (r,s,t)->Pyr.vandermonde_3D(1,r,s,t)/Pyr.vandermonde_3D(1,vertices...)
+        return (r,s,t)->Pyr.vandermonde(1,r,s,t)/Pyr.vandermonde(1,vertices...)
     elseif elem==:tet
-        return Tet.equi_nodes_3D(1),nothing # yet...
+        return Tet.equi_nodes(1),nothing # yet...
     end
 end
 
 function get_equi_nodes(N,elem::Symbol)
     if elem==:tri
-        rst_equi = Tri.equi_nodes_2D(N)
+        rst_equi = Tri.equi_nodes(N)
     elseif elem==:pyr
-        rst_equi = Pyr.equi_nodes_3D(N)
+        rst_equi = Pyr.equi_nodes(N)
     elseif elem==:tet
-        rst_equi = Tet.equi_nodes_3D(N)
+        rst_equi = Tet.equi_nodes(N)
     end
     return rst_equi
 end
@@ -80,7 +80,7 @@ function edge_basis(N, vertices, edges, vertex_functions, rst...)
 
         # eval 1D edge basis with edge parametrization
         r1D_edge = sum(rst .* dv)
-        V1D,_ = basis_1D(N-2,r1D_edge)
+        V1D,_ = basis(N-2,r1D_edge)
         for i = 1:size(V1D,2)
             V[:,id] = V1D[:,i].*V1[:,e[1]].*V1[:,e[2]]
             id += 1
@@ -144,7 +144,7 @@ function warp_factor(N, rout)
     LGLr,w1D = gauss_lobatto_quad(0, 0, N)
     # LGLr = transpose(LGLr[:])
     req = LinRange(-1,1,N+1)
-    Veq = vandermonde_1D(N, req)
+    Veq = Line.vandermonde(N, req)
     Nr = length(rout)
     Pmat = zeros(N+1, Nr)
     for i = 1:N+1

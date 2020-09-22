@@ -84,7 +84,7 @@ Compute equispaced nodes on tets
 ```jldoctest
 """
 
-function equi_nodes_3D(N)
+function equi_nodes(N)
     Np = (N+1)*(N+2)*(N+3) ÷ 6
     r1D = LinRange(-1,1,N+1)
     r,s,t = ntuple(x->zeros(Np),3)
@@ -123,14 +123,14 @@ function quad_nodes_tet(N)
         w = rstw[:,4]
     else
         cubN = convert(Int,ceil((N+1)/2))
-        r,s,t,w = stroud_quad_nodes_3D(cubN)
+        r,s,t,w = stroud_quad_nodes(cubN)
     end
 
     return r,s,t,w
 end
 
 
-function stroud_quad_nodes_3D(N)
+function stroud_quad_nodes(N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
     cubC,cubWC = gauss_quad(2,0,N)
@@ -147,15 +147,15 @@ function stroud_quad_nodes_3D(N)
 end
 
 """
-    quad_nodes_2D(N)
+    quad_nodes(N)
 
 # Examples
 ```jldoctest
 """
 
-quad_nodes_3D(N) = quad_nodes_tet(2*N)
+quad_nodes(N) = quad_nodes_tet(2*N)
 
-function basis_3D(N,r,s,t)
+function basis(N,r,s,t)
     Np = (N+1)*(N+2)*(N+3)÷6
 
     V,Vr,Vs,Vt = ntuple(x->zeros(length(r),Np),4)
@@ -184,7 +184,7 @@ function basis_3D(N,r,s,t)
 end
 
 """
-    vandermonde_2D(N, r)
+    vandermonde(N, r)
 
 Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
 nodes (r,s)
@@ -192,8 +192,8 @@ nodes (r,s)
 # Examples
 ```jldoctest
 """
-function vandermonde_3D(N,r,s,t)
-    V,_ = basis_3D(N,r,s,t)
+function vandermonde(N,r,s,t)
+    V,_ = basis(N,r,s,t)
     return V
 end
 
@@ -206,7 +206,7 @@ of order N at (r,s)
 # Examples
 ```jldoctest
 """
-function grad_vandermonde_3D(N, r, s, t)
-    V,Vr,Vs,Vt = basis_3D(N,r,s,t)
+function grad_vandermonde(N, r, s, t)
+    V,Vr,Vs,Vt = basis(N,r,s,t)
     return Vr,Vs,Vt
 end

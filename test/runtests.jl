@@ -14,10 +14,10 @@ using LinearAlgebra
         @test sum(w) ≈ 2
         @test abs(sum(w.*r)) < tol
 
-        V = vandermonde_1D(N,r)
+        V = Line.vandermonde(N,r)
         @test V'*diagm(w)*V ≈ I
 
-        Vr = grad_vandermonde_1D(N,r)
+        Vr = Line.grad_vandermonde(N,r)
         Dr = Vr/V
         @test norm(sum(Dr,dims=2)) < tol
         @test Dr*r ≈ ones(N+1)
@@ -27,10 +27,10 @@ using LinearAlgebra
         @test abs(sum(w.*r)) < tol
 
         # check if Lobatto is exact for 2N-2 polynoms
-        V = vandermonde_1D(N-1,r)
+        V = Line.vandermonde(N-1,r)
         @test V'*diagm(w)*V ≈ I
 
-        Dr = grad_vandermonde_1D(N,r)/vandermonde_1D(N,r)
+        Dr = Line.grad_vandermonde(N,r)/Line.vandermonde(N,r)
         @test norm(sum(Dr,dims=2)) < tol
         @test Dr*r ≈ ones(N+1)
     end
@@ -40,25 +40,25 @@ end
     tol = 1e2*eps()
 
     N = 3
-    rq,sq,wq = Tri.quad_nodes_2D(N)
+    rq,sq,wq = Tri.quad_nodes(N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
 
-    Vq = Tri.vandermonde_2D(N,rq,sq)
+    Vq = Tri.vandermonde(N,rq,sq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s = Tri.nodes_2D(N)
-    V = Tri.vandermonde_2D(N,r,s)
-    Dr,Ds = (A->A/V).(Tri.grad_vandermonde_2D(N,r,s))
+    r,s = Tri.nodes(N)
+    V = Tri.vandermonde(N,r,s)
+    Dr,Ds = (A->A/V).(Tri.grad_vandermonde(N,r,s))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
 
-    r,s = Tri.equi_nodes_2D(N)
-    V = Tri.vandermonde_2D(N,r,s)
-    Dr,Ds = (A->A/V).(Tri.grad_vandermonde_2D(N,r,s))
+    r,s = Tri.equi_nodes(N)
+    V = Tri.vandermonde(N,r,s)
+    Dr,Ds = (A->A/V).(Tri.grad_vandermonde(N,r,s))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
@@ -66,7 +66,7 @@ end
 
     # test duffy quadrature too
     N = 14
-    rq,sq,wq = Tri.quad_nodes_2D(N)
+    rq,sq,wq = Tri.quad_nodes(N)
     @test sum(wq)≈2
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3
@@ -76,25 +76,25 @@ end
     tol = 1e2*eps()
 
     N = 3
-    rq,sq,wq = Quad.quad_nodes_2D(N)
+    rq,sq,wq = Quad.quad_nodes(N)
     @test sum(wq) ≈ 4
     @test abs(sum(rq.*wq)) < tol
     @test abs(sum(sq.*wq)) < tol
 
-    Vq = Quad.vandermonde_2D(N,rq,sq)
+    Vq = Quad.vandermonde(N,rq,sq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s = Quad.nodes_2D(N)
-    V = Quad.vandermonde_2D(N,r,s)
-    Dr,Ds = (A->A/V).(Quad.grad_vandermonde_2D(N,r,s))
+    r,s = Quad.nodes(N)
+    V = Quad.vandermonde(N,r,s)
+    Dr,Ds = (A->A/V).(Quad.grad_vandermonde(N,r,s))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
 
-    r,s = Quad.equi_nodes_2D(N)
-    V = Quad.vandermonde_2D(N,r,s)
-    Dr,Ds = (A->A/V).(Quad.grad_vandermonde_2D(N,r,s))
+    r,s = Quad.equi_nodes(N)
+    V = Quad.vandermonde(N,r,s)
+    Dr,Ds = (A->A/V).(Quad.grad_vandermonde(N,r,s))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
     @test norm(Dr*s)+norm(Ds*r) < tol
     @test Dr*r ≈ ones(length(r))
@@ -106,25 +106,25 @@ end
     tol = 5e2*eps()
 
     N = 3
-    rq,sq,tq,wq = Hex.quad_nodes_3D(N)
+    rq,sq,tq,wq = Hex.quad_nodes(N)
     @test sum(wq) ≈ 8
     @test abs(sum(rq.*wq))+abs(sum(sq.*wq))+abs(sum(tq.*wq)) < tol
 
-    Vq = Hex.vandermonde_3D(N,rq,sq,tq)
+    Vq = Hex.vandermonde(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s,t = Hex.nodes_3D(N)
-    V = Hex.vandermonde_3D(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Hex.grad_vandermonde_3D(N,r,s,t))
+    r,s,t = Hex.nodes(N)
+    V = Hex.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Hex.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
     @test Dt*t ≈ ones(length(t))
 
-    r,s,t = Hex.equi_nodes_3D(N)
-    V = Hex.vandermonde_3D(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Hex.grad_vandermonde_3D(N,r,s,t))
+    r,s,t = Hex.equi_nodes(N)
+    V = Hex.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Hex.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
@@ -137,15 +137,15 @@ end
     tol = 5e2*eps()
 
     N = 3
-    rq,sq,tq,wq = Pyr.quad_nodes_3D(N)
+    rq,sq,tq,wq = Pyr.quad_nodes(N)
     @test sum(wq) ≈ 8/3
 
-    Vq = Pyr.vandermonde_3D(N,rq,sq,tq)
+    Vq = Pyr.vandermonde(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s,t = Pyr.equi_nodes_3D(N)
-    V = Pyr.vandermonde_3D(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Pyr.grad_vandermonde_3D(N,r,s,t))
+    r,s,t = Pyr.equi_nodes(N)
+    V = Pyr.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Pyr.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
@@ -157,25 +157,25 @@ end
     tol = 5e2*eps()
 
     N = 3
-    rq,sq,tq,wq = Wedge.quad_nodes_3D(N)
+    rq,sq,tq,wq = Wedge.quad_nodes(N)
     @test sum(wq) ≈ 4
     @test abs(sum(tq.*wq)) < tol
 
-    Vq = Wedge.vandermonde_3D(N,rq,sq,tq)
+    Vq = Wedge.vandermonde(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s,t = Wedge.nodes_3D(N)
-    V = Wedge.vandermonde_3D(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Wedge.grad_vandermonde_3D(N,r,s,t))
+    r,s,t = Wedge.nodes(N)
+    V = Wedge.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Wedge.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
     @test Dt*t ≈ ones(length(t))
 
-    r,s,t = Wedge.equi_nodes_3D(N)
-    V = Wedge.vandermonde_3D(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Wedge.grad_vandermonde_3D(N,r,s,t))
+    r,s,t = Wedge.equi_nodes(N)
+    V = Wedge.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Wedge.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
@@ -187,24 +187,24 @@ end
     tol = 5e2*eps()
 
     N = 3
-    rq,sq,tq,wq = Tet.quad_nodes_3D(N)
+    rq,sq,tq,wq = Tet.quad_nodes(N)
     @test sum(wq) ≈ 4/3
 
-    Vq = Tet.vandermonde_3D(N,rq,sq,tq)
+    Vq = Tet.vandermonde(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    # r,s,t = Tet.nodes_3D(N)
-    # V = Tet.vandermonde_3D(N,r,s,t)
-    # Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde_3D(N,r,s,t))
+    # r,s,t = Tet.nodes(N)
+    # V = Tet.vandermonde(N,r,s,t)
+    # Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde(N,r,s,t))
     # @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     # @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     # @test Dr*r ≈ ones(length(r))
     # @test Ds*s ≈ ones(length(s))
     # @test Dt*t ≈ ones(length(t))
 
-    r,s,t = Tet.equi_nodes_3D(N)
-    V = Tet.vandermonde_3D(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde_3D(N,r,s,t))
+    r,s,t = Tet.equi_nodes(N)
+    V = Tet.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))
@@ -212,7 +212,7 @@ end
     @test Dt*t ≈ ones(length(t))
 
     N = 8
-    rq,sq,tq,wq = Tet.quad_nodes_3D(N)
+    rq,sq,tq,wq = Tet.quad_nodes(N)
     @test sum(wq)≈4/3
     @test sum(rq.*wq)≈ -2/3
     @test sum(sq.*wq)≈ -2/3

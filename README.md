@@ -17,7 +17,7 @@ using NodesAndModes
 
 N = 2
 r,w = gauss_lobatto_quad(0,0,N)
-V = vandermonde_1D(N,r)
+V = vandermonde(N,r)
 ```
 
 To compute a Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle
@@ -25,8 +25,8 @@ To compute a Vandermonde matrix from Warp & Blend points (see [Warburton 2006](h
 using NodesAndModes.Tri
 
 N = 2
-r,s = nodes_2D(N)
-V = vandermonde_2D(N,r,s)
+r,s = nodes(N)
+V = vandermonde(N,r,s)
 ```
 
 Nodes and modes (and mode derivatives) available for 1D elements, 2D Tri and Quad elements, and 3D Hex, Tet, Wedge, and Pyr elements.

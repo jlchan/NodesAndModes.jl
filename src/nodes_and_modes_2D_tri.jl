@@ -124,13 +124,13 @@ function quad_nodes_tri(N)
         w = rsw[:,3]
     else
         cubN = convert(Int,ceil((N+1)/2))
-        r,s,w = stroud_quad_nodes_2D(cubN)
+        r,s,w = stroud_quad_nodes(cubN)
     end
 
     return r[:], s[:], w[:]
 end
 
-function stroud_quad_nodes_2D(N)
+function stroud_quad_nodes(N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
 
@@ -145,42 +145,42 @@ end
 
 
 """
-    nodes_2D(N)
+    nodes(N)
 
 # Examples
 ```jldoctest
 """
-function nodes_2D(N)
+function nodes(N)
     return wb_nodes_tri(N)
 end
 
 """
-    equi_nodes_2D(N)
+    equi_nodes(N)
 
 # Examples
 ```jldoctest
 """
-function equi_nodes_2D(N)
+function equi_nodes(N)
     equi_nodes_tri(N)
 end
 
 
 """
-    quad_nodes_2D(N)
+    quad_nodes(N)
     returns quadrature nodes which exactly integrate degree 2N polynomials
 
 # Examples
 ```jldoctest
 """
 
-function quad_nodes_2D(N)
+function quad_nodes(N)
     r,s,w = quad_nodes_tri(2*N)
     return r,s,w
 end
 
 
 """
-    vandermonde_2D(N, r)
+    vandermonde(N, r)
 
 Initialize the 2D Vandermonde matrix of order N "Legendre" polynomials at
 nodes (r,s)
@@ -188,8 +188,8 @@ nodes (r,s)
 # Examples
 ```jldoctest
 """
-function vandermonde_2D(N, r, s)
-    V,Vr,Vs = basis_2D(N,r,s)
+function vandermonde(N, r, s)
+    V,Vr,Vs = basis(N,r,s)
     return V
 end
 
@@ -202,17 +202,17 @@ of order N at (r,s)
 # Examples
 ```jldoctest
 """
-function grad_vandermonde_2D(N, r, s)
-    V,Vr,Vs = basis_2D(N,r,s)
+function grad_vandermonde(N, r, s)
+    V,Vr,Vs = basis(N,r,s)
     return Vr,Vs
 end
 
 """
-function basis_2D(N,r,s)
-    basis_2D: computes Vandermonde matrices for a basis + its derivatives
+function basis(N,r,s)
+    basis: computes Vandermonde matrices for a basis + its derivatives
 """
 
-function basis_2D(N,r,s)
+function basis(N,r,s)
     Np = convert(Int,(N+1)*(N+2)/2)
     V2D,V2Dr,V2Ds = ntuple(x->zeros(length(r), Np),3)
     a, b = rstoab(r, s)
