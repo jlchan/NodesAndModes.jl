@@ -134,7 +134,7 @@ end
 
 
 @testset "3D pyr tests" begin
-    tol = 5e2*eps()
+    tol = 1e3*eps()
 
     N = 3
     rq,sq,tq,wq = Pyr.quad_nodes(N)
@@ -158,7 +158,7 @@ end
 end
 
 @testset "3D wedge tests" begin
-    tol = 5e2*eps()
+    tol = 1e3*eps()
 
     N = 3
     rq,sq,tq,wq = Wedge.quad_nodes(N)
@@ -188,7 +188,7 @@ end
 end
 
 @testset "3D tet tests" begin
-    tol = 5e2*eps()
+    tol = 1e3*eps()
 
     N = 3
     rq,sq,tq,wq = Tet.quad_nodes(N)
