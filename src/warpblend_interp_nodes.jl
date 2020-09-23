@@ -14,7 +14,7 @@ function get_edge_list(elem::Symbol)
     elseif elem==:Pyr
         return [1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5]
     elseif elem==:Tet
-        return nothing # yet...
+        return [1,4],[4,3],[3,1],[1,2],[3,2],[4,2]
     end
 end
 

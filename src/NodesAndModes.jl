@@ -62,8 +62,7 @@ using ..NodesAndModes
 include("nodes_and_modes_3D_tet.jl")
 include("warpblend_interp_nodes.jl")
 export vandermonde, grad_vandermonde, basis
-export equi_nodes, quad_nodes # TODO: add nodes
-# export nodes
+export nodes, equi_nodes, quad_nodes # TODO: add nodes
 end
 
 #####

@@ -197,14 +197,14 @@ end
     Vq = Tet.vandermonde(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    # r,s,t = Tet.nodes(N)
-    # V = Tet.vandermonde(N,r,s,t)
-    # Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde(N,r,s,t))
-    # @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    # @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    # @test Dr*r ≈ ones(length(r))
-    # @test Ds*s ≈ ones(length(s))
-    # @test Dt*t ≈ ones(length(t))
+    r,s,t = Tet.nodes(N)
+    V = Tet.vandermonde(N,r,s,t)
+    Dr,Ds,Dt = (A->A/V).(Tet.grad_vandermonde(N,r,s,t))
+    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
+    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
+    @test Dt*t ≈ ones(length(t))
 
     r,s,t = Tet.equi_nodes(N)
     V = Tet.vandermonde(N,r,s,t)
@@ -215,6 +215,7 @@ end
     @test Ds*s ≈ ones(length(s))
     @test Dt*t ≈ ones(length(t))
 
+    # test high order quadrature
     N = 8
     rq,sq,tq,wq = Tet.quad_nodes(N)
     @test sum(wq)≈4/3

@@ -103,6 +103,10 @@ function equi_nodes(N)
     return r,s,t
 end
 
+function nodes(N)
+    r1D,_ = gauss_lobatto_quad(0,0,N)
+    return build_warped_nodes(N,:Tet,r1D)
+end
 
 """
     quad_nodes_tet(N)
@@ -128,7 +132,6 @@ function quad_nodes_tet(N)
 
     return r,s,t,w
 end
-
 
 function stroud_quad_nodes(N)
     cubA,cubWA = gauss_quad(0,0,N)
