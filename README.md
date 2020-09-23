@@ -20,7 +20,7 @@ r,w = gauss_lobatto_quad(0,0,N)
 V = Line.vandermonde(N,r)
 ```
 
-To compute a 2D Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle
+To compute a 2D Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle (with coordinates `r,s`)
 ```
 using NodesAndModes.Tri
 
@@ -28,11 +28,15 @@ N = 2
 r,s = nodes(N)
 V = vandermonde(N,r,s)
 ```
-Differentiation matrices can be computed via
+Differentiation matrices `Dr` and `Ds` can be computed via
 ```
+using NodesAndModes.Tri
+
+N = 2
+r,s = nodes(N)
+V = vandermonde(N,r,s)
 Dr,Ds = (A->A/V).(grad_vandermonde(N,r,s))
 ```
-
 
 Nodes and modes (and mode derivatives) are available for 1D elements, 2D Tri and Quad elements, and 3D Hex, Tet, Wedge, and Pyr elements.
 
@@ -40,4 +44,4 @@ Each module exports the following functions:
 - `vandermonde`: computes Vandermonde matrix constructed using orthogonal polynomials on the reference element.
 - `grad_vandermonde`: computes matrix whose columns are derivatives of orthogonal polynomials on the reference element.
 - `nodes`, `equi_nodes`: computes (non-uniform) interpolation nodes and equispaced nodes on the reference element.
-- `quad_nodes`: computes quadrature nodes (and weights) on the reference element. The strength of the quadrature rule is the smallest possible such that the mass matrix is integrated exactly. 
+- `quad_nodes`: computes quadrature nodes (and weights) on the reference element. The quadrature rule uses the smallest possible such that the mass matrix is integrated exactly.
