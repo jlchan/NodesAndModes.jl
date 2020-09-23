@@ -5,7 +5,13 @@
 vandermonde(N, r, s, t) = first(basis(N,r,s,t))
 grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
 
-# orthogonal basis on mapped pyramidal elements. semi nodal
+"function basis(N,r,s,t,tol=1e-12)
+    orthogonal semi nodal basis on the biunit pyramid element.
+    returns V,Vr,Vs,Vt
+
+    Note: nodal derivative matrices may contain errors if nodes involve t = 1.
+    A way to avoid this is to use weak differentiation matrices instead.
+"
 function basis(N,r,s,t,tol=1e-12)
 
     # convert to abc
@@ -60,6 +66,11 @@ function abctorst(a,b,c)
     s = @. .5*(1+b)*(1-c) - 1
     t = @. c
     return r,s,t
+end
+
+function nodes(N)
+    r1D,_ = gauss_lobatto_quad(0,0,N)
+    return build_warped_nodes(N,:Pyr,r1D)
 end
 
 function equi_nodes(N)

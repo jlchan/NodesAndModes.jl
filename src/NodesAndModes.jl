@@ -62,7 +62,7 @@ using ..NodesAndModes
 include("nodes_and_modes_3D_tet.jl")
 include("warpblend_interp_nodes.jl")
 export vandermonde, grad_vandermonde, basis
-export equi_nodes, quad_nodes
+export equi_nodes, quad_nodes # TODO: add nodes
 # export nodes
 end
 
@@ -75,8 +75,7 @@ using ..NodesAndModes
 include("nodes_and_modes_3D_pyr.jl")
 include("warpblend_interp_nodes.jl")
 export vandermonde, grad_vandermonde, basis
-export equi_nodes, quad_nodes
-# export nodes
+export nodes, equi_nodes, quad_nodes
 end
 
 #####
@@ -87,7 +86,7 @@ import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_wedge.jl")
 export vandermonde, grad_vandermonde, basis
-export equi_nodes, quad_nodes, nodes
+export nodes, equi_nodes, quad_nodes
 end
 
 #####

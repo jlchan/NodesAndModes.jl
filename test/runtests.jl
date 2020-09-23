@@ -143,9 +143,13 @@ end
     Vq = Pyr.vandermonde(N,rq,sq,tq)
     @test Vq'*diagm(wq)*Vq ≈ I
 
-    r,s,t = Pyr.equi_nodes(N)
+    r,s,t = Pyr.nodes(N)
     V = Pyr.vandermonde(N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(Pyr.grad_vandermonde(N,r,s,t))
+    rq,sq,tq,wq = Pyr.quad_nodes(N)
+    Vq,Vr,Vs,Vt = (A->A/V).(Pyr.basis(N,rq,sq,tq))
+    M = Vq'*diagm(wq)*Vq
+    Dr,Ds,Dt = (A->M\(Vq'*diagm(wq)*A)).((Vr,Vs,Vt))
+    # Dr,Ds,Dt = (A->A/V).(Pyr.grad_vandermonde(N,r,s,t))
     @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
     @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
     @test Dr*r ≈ ones(length(r))

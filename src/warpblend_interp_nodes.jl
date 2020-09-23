@@ -3,40 +3,31 @@
 ##### and pyramid elements. Wedges/hexes use tensor product nodes
 #####
 
-"function get_edge_indices(elem::Symbol)
-    elem = :tri, :pyr, or :tet.
+"function get_edge_list(elem::Symbol)
+    elem = :Tri, :Pyr, or :Tet.
+
+    Example: edges = get_vertices_edges(:Tri)
 "
-# hard code for tri, tet, pyr
-function get_vertices_edges(elem::Symbol)
-    if elem==:tri
-        return Tri.equi_nodes(1),([1,2],[2,3],[3,1])
-    elseif elem==:pyr
-        return Pyr.equi_nodes(1),([1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5])
-    elseif elem==:tet
-        return Tet.equi_nodes(1),nothing # yet...
+function get_edge_list(elem::Symbol)
+    if elem==:Tri
+        return [1,2],[2,3],[3,1]
+    elseif elem==:Pyr
+        return [1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5]
+    elseif elem==:Tet
+        return nothing # yet...
     end
 end
 
-function get_vertex_fxns(elem::Symbol,vertices)
-    if elem==:tri
-        return (r,s)->Tri.vandermonde(1,r,s)/Tri.vandermonde(1,vertices...)
-    elseif elem==:pyr
-        return (r,s,t)->Pyr.vandermonde(1,r,s,t)/Pyr.vandermonde(1,vertices...)
-    elseif elem==:tet
-        return Tet.equi_nodes(1),nothing # yet...
-    end
-end
+# dispatch symbols to module
+get_vertices(elem::Symbol) = get_vertices(@eval $elem)
+get_vertex_fxns(elem::Symbol) = get_vertex_fxns(@eval $elem)
+get_equi_nodes(N,elem::Symbol) = get_equi_nodes(N,@eval $elem)
 
-function get_equi_nodes(N,elem::Symbol)
-    if elem==:tri
-        rst_equi = Tri.equi_nodes(N)
-    elseif elem==:pyr
-        rst_equi = Pyr.equi_nodes(N)
-    elseif elem==:tet
-        rst_equi = Tet.equi_nodes(N)
-    end
-    return rst_equi
-end
+# call actual module
+get_vertices(elem::Module) = elem.equi_nodes(1)
+get_vertex_fxns(elem::Module) =
+    (rst...)->elem.vandermonde(1,rst...)/elem.vandermonde(1,elem.equi_nodes(1)...)
+get_equi_nodes(N,elem::Module) = elem.equi_nodes(N)
 
 # assumes r1D in [-1,1], v1,v2 are vertices
 function interp_1D_to_line(r1D,v1,v2)
@@ -44,9 +35,9 @@ function interp_1D_to_line(r1D,v1,v2)
     return map((a,b)->(b-a)*runit .+ a,v1,v2)
 end
 
-# interpolates 1D nodes to edges
 function interp_1D_to_edges(r1D,elem::Symbol)
-    v,edges = get_vertices_edges(elem)
+    v = get_vertices(elem)
+    edges = get_edge_list(elem)
     edge_pts = ntuple(x->zeros(length(r1D),length(edges)),length(v))
     for (i,e) in enumerate(edges)
         edge_pts_i = interp_1D_to_line(r1D,getindex.(v,e[1]),getindex.(v,e[2]))
@@ -60,12 +51,13 @@ function edge_basis(N, elem::Symbol, rst...)
     build VDM matrix for edge basis
 "
 function edge_basis(N, elem::Symbol, rst...)
-    vertices,edges = get_vertices_edges(elem)
-    vertex_functions = get_vertex_fxns(elem,vertices)
-    return edge_basis(N, vertices, edges, vertex_functions, rst...)
+    vertices = get_vertices(elem)
+    edges = get_edge_list(elem)
+    vertex_functions = get_vertex_fxns(elem)
+    return edge_basis(N, vertices, edges, Line.basis, vertex_functions, rst...)
 end
 
-function edge_basis(N, vertices, edges, vertex_functions, rst...)
+function edge_basis(N, vertices, edges, basis, vertex_functions, rst...)
     V1 = vertex_functions(rst...)
     if N<2
         return V1
@@ -80,7 +72,7 @@ function edge_basis(N, vertices, edges, vertex_functions, rst...)
 
         # eval 1D edge basis with edge parametrization
         r1D_edge = sum(rst .* dv)
-        V1D,_ = basis(N-2,r1D_edge)
+        V1D,_ = Line.basis(N-2,r1D_edge)
         for i = 1:size(V1D,2)
             V[:,id] = V1D[:,i].*V1[:,e[1]].*V1[:,e[2]]
             id += 1
@@ -89,6 +81,17 @@ function edge_basis(N, vertices, edges, vertex_functions, rst...)
     return V
 end
 
+"
+function build_warped_nodes(N,elem::Symbol,r1D)
+
+Input:
+    N:      polynomial degree
+    elem:   :Tri, :Pyr, or :Tet.
+    r1D:    1D node set for warping
+
+Output:
+    rst:    tuple containing arrays of interpolation points
+"
 function build_warped_nodes(N,elem::Symbol,r1D)
     r1D_equi = collect(LinRange(-1,1,N+1))
     rst_edge_equi = interp_1D_to_edges(r1D_equi,elem)

@@ -151,7 +151,9 @@ end
 ```jldoctest
 """
 function nodes(N)
-    return wb_nodes_tri(N)
+    #return wb_nodes_tri(N)
+    r1D,_ = gauss_lobatto_quad(0,0,N)
+    return build_warped_nodes(N,:Tri,r1D)
 end
 
 """
