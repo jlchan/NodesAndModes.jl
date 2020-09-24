@@ -13,11 +13,11 @@ This package is registered and can be installed via `] add NodesAndModes`. Julia
 
 To compute a 1D Vandermonde matrix using Gauss-Lobatto points and orthonormal polynomials.
 ```
-using NodesAndModes
+using NodesAndModes.Line
 
 N = 2
 r,w = gauss_lobatto_quad(0,0,N)
-V = Line.vandermonde(N,r)
+V = vandermonde(N,r)
 ```
 
 To compute a 2D Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle (with coordinates `r,s`)
