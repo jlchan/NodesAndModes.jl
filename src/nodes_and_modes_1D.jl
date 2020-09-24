@@ -9,9 +9,6 @@ Initialize Legendre-Gauss-Lobatto quadrature points.
 function gauss_lobatto_quad(α, β, N)
 
     @assert (α==0) & (β==0) "alpha/beta must be zero for Lobatto"
-    # if
-    #     error("alpha/beta not zero")
-    # end
     x = zeros(N+1, 1)
     w = zeros(N+1, 1)
     if N == 0
@@ -26,7 +23,7 @@ function gauss_lobatto_quad(α, β, N)
         xint, w = gauss_quad(α+1, β+1, N-2)
         x = [-1 transpose(xint) 1]
 
-        V = vandermonde_1D(N,x)
+        V = vandermonde(N,x)
         w = vec(sum(inv(V*V'),dims=2))
     end
     return x[:],w[:]
@@ -125,9 +122,9 @@ end
 
 
 """
-    V,Vr = basis_1D(N,r)
+    V,Vr = basis(N,r)
 """
-function basis_1D(N,r)
+function basis(N,r)
     V1D,Vr1D = ntuple(x->zeros(length(r), N+1),2)
     for j = 1:N+1
         V1D[:,j] = jacobiP(r[:], 0, 0, j-1)
@@ -136,34 +133,5 @@ function basis_1D(N,r)
     return V1D,Vr1D
 end
 
-"""
-    vandermonde_1D(N, r)
-
-Initialize the 1D Vandermonde matrix of order N Legendre polynomials at nodes r
-
-# Examples
-N = 2
-r,w = gauss_lobatto_quad(0,0,N)
-V = vandermonde_1D(N,r)
-```jldoctest
-"""
-function vandermonde_1D(N, r)
-    V,Vr = basis_1D(N,r)
-    return V
-end
-
-"""
-    grad_vandermonde_1D(N, r)
-
-Initialize the 1D Vandermonde matrix of order N Legendre polynomials at nodes r
-
-# Examples
-N = 2
-r,w = gauss_lobatto_quad(0,0,N)
-Vr = grad_vandermonde_1D(N,r)
-```jldoctest
-"""
-function grad_vandermonde_1D(N, r)
-    V,Vr = basis_1D(N,r)
-    return Vr
-end
+vandermonde(N,r) = first(basis(N,r))
+grad_vandermonde(N,r) = last(basis(N,r))

@@ -2,20 +2,13 @@
 ##### 3D modes on pyramids
 #####
 
-function vandermonde_3D(N,r,s,t)
-    V,_ = basis_3D(N,r,s,t)
-    return V
-end
-
-function grad_vandermonde_3D(N,r,s,t)
-    V,Vr,Vs,Vt = basis_3D(N,r,s,t)
-    return Vr,Vs,Vt
-end
+vandermonde(N, r, s, t) = first(basis(N,r,s,t))
+grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
 
 # tensor product basis for wedge
-function basis_3D(N,r,s,t,tol=1e-12)
-    V_tri,Vr_tri,Vs_tri = Tri.basis_2D(N,r,s)
-    V_1D,Vt_1D = basis_1D(N,t)
+function basis(N,r,s,t,tol=1e-12)
+    V_tri,Vr_tri,Vs_tri = Tri.basis(N,r,s)
+    V_1D,Vt_1D = Line.basis(N,t)
     Np = (N+1)*(N+2)*(N+1)÷2
     V,Vr,Vs,Vt = ntuple(x->zeros(length(r),Np),4)
     id = 1
@@ -31,24 +24,24 @@ function basis_3D(N,r,s,t,tol=1e-12)
     return V,Vr,Vs,Vt
 end
 
-function equi_nodes_3D(N)
+function equi_nodes(N)
     t1D = LinRange(-1,1,N+1)
-    r_tri,s_tri = Tri.equi_nodes_2D(N)
+    r_tri,s_tri = Tri.equi_nodes(N)
     r,t = vec.(meshgrid(r_tri,t1D))
     s,_ = vec.(meshgrid(s_tri,t1D))
     return r,s,t
 end
 
-function nodes_3D(N)
+function nodes(N)
     t1D,_ = gauss_lobatto_quad(0,0,N)
-    r_tri,s_tri = Tri.nodes_2D(N)
+    r_tri,s_tri = Tri.nodes(N)
     r,t = vec.(meshgrid(r_tri,t1D))
     s,_ = vec.(meshgrid(s_tri,t1D))
     return r,s,t
 end
 
-function quad_nodes_3D(N)
-    r_tri,s_tri,w_tri = Tri.quad_nodes_2D(2*N)
+function quad_nodes(N)
+    r_tri,s_tri,w_tri = Tri.quad_nodes(2*N)
     t1D,wt1D = gauss_quad(0,0,N)
     wrs,wt = vec.(meshgrid(w_tri,wt1D))
     r,t = vec.(meshgrid(r_tri,t1D))
