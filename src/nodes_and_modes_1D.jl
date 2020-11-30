@@ -9,8 +9,8 @@ Initialize Legendre-Gauss-Lobatto quadrature points.
 function gauss_lobatto_quad(α, β, N)
 
     @assert (α==0) & (β==0) "alpha/beta must be zero for Lobatto"
-    x = zeros(N+1, 1)
-    w = zeros(N+1, 1)
+    x = zeros(N+1)
+    w = zeros(N+1)
     if N == 0
         x[1] = 0
         w[1] = 2
@@ -70,7 +70,7 @@ Evaluate derivative of Jacobi Polynomial (α, β) of order N at r
 """
 
 function grad_jacobiP(r, α, β, N)
-    dP = zeros(length(r), 1)
+    dP = zeros(length(r))
     if N != 0
         dP = sqrt(N*(N+α+β+1))*jacobiP(r,α+1,β+1,N-1)
     end
@@ -117,7 +117,7 @@ function jacobiP(x, α, β, N)
     end
 
     P = PL[N+1,:]
-    return P;
+    return P
 end
 
 

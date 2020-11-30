@@ -64,7 +64,7 @@ coordinate (a,b)
 ```jldoctest
 """
 function rstoab(r, s)
-    a = zeros(length(r), 1)
+    a = zeros(length(r))
     for n = 1:length(r)
         if s[n] != 1
             a[n] = 2*(1+r[n])/(1-s[n])-1
@@ -89,8 +89,8 @@ triangles for polynomial of order N, with Np points
 function equi_nodes_tri(N)
     Np = convert(Int,(N+1)*(N+2)/2)
 
-    r = zeros(Np,1)
-    s = zeros(Np,1)
+    r = zeros(Np)
+    s = zeros(Np)
 
     r1D = LinRange(-1,1,N+1)
     sk = 1
