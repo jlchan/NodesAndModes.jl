@@ -45,9 +45,10 @@ end
 ##### Submodule for quads
 #####
 module Quad
-import VectorizedRoutines.Matlab.meshgrid
+# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_2D_quad.jl")
+include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -57,10 +58,11 @@ end
 #####
 module Tet
 using DelimitedFiles # to read quadrature node data
-import VectorizedRoutines.Matlab.meshgrid
+# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_tet.jl")
 include("warpblend_interp_nodes.jl")
+include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes # TODO: add nodes
 end
@@ -69,10 +71,11 @@ end
 ##### Submodule for pyr
 #####
 module Pyr
-import VectorizedRoutines.Matlab.meshgrid
+# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_pyr.jl")
 include("warpblend_interp_nodes.jl")
+include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -81,9 +84,10 @@ end
 ##### Submodule for wedge (prism)
 #####
 module Wedge
-import VectorizedRoutines.Matlab.meshgrid
+# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_wedge.jl")
+include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -92,9 +96,10 @@ end
 ##### Submodule for hexes
 #####
 module Hex
-import VectorizedRoutines.Matlab.meshgrid
+# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_hex.jl")
+include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
