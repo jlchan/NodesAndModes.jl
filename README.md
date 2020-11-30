@@ -1,6 +1,7 @@
 # NodesAndModes
 [![Build Status](https://travis-ci.com/jlchan/NodesAndModes.jl.svg?branch=master)](https://travis-ci.com/jlchan/NodesAndModes.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/jlchan/NodesAndModes.jl?svg=true)](https://ci.appveyor.com/project/jlchan/NodesAndModes-jl)
+[![Build status](https://github.com/jlchan/NodesAndModes.jl/workflows/CI/badge.svg)](https://github.com/jlchan/NodesAndModes.jl/actions)
 [![Codecov](https://codecov.io/gh/jlchan/NodesAndModes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/jlchan/NodesAndModes.jl)
 
 Package to compute nodes and modes (orthogonal polynomials) for nodal DG methods on various reference elements. Codes inspired by the Matlab codes for the book "Nodal Discontinuous Galerkin methods" by Hesthaven and Warburton (2007) and high order interpolation nodes on triangles, tetrahedra, and pyramids using the "Interpolatory Warp and Blend" procedure from [Chan and Warburton 2015](https://epubs.siam.org/doi/abs/10.1137/141000105).
@@ -44,4 +45,4 @@ Each module exports the following functions:
 - `vandermonde`: computes Vandermonde matrix constructed using orthogonal polynomials on the reference element.
 - `grad_vandermonde`: computes matrix whose columns are derivatives of orthogonal polynomials on the reference element.
 - `nodes`, `equi_nodes`: computes (non-uniform) interpolation nodes and equispaced nodes on the reference element.
-- `quad_nodes`: computes quadrature nodes (and weights) on the reference element. The quadrature rule uses the smallest possible such that the mass matrix is integrated exactly.
+- `quad_nodes`: computes quadrature nodes (and weights) on the reference element. The quadrature rule `quad_nodes(N)` uses the smallest possible such that the degree N mass matrix is integrated exactly.
