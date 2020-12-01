@@ -149,7 +149,7 @@ end
 """
     quad_nodes(N)
 
-Returns quadrature nodes and weights which exactly integrate degree N polynomials.
+Returns quadrature nodes and weights which exactly integrate degree 2N polynomials.
 """
 
 quad_nodes(N) = quad_nodes_tet(2*N)

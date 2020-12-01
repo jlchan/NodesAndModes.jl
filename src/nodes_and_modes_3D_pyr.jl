@@ -129,7 +129,7 @@ end
 """
     quad_nodes(N)
 
-Computes quadrature nodes and weights which are exact for degree N polynomials.
+Computes quadrature nodes and weights which are exact for degree 2N polynomials.
 """
 function quad_nodes(N)
     return stroud_quad_nodes(N)

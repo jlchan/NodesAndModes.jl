@@ -98,7 +98,7 @@ end
 """
     quad_nodes(N)
 
-Compute quadrature nodes and weights of degree N.
+Compute quadrature nodes and weights which exactly integrate degree 2N polynomials.
 
 # Examples
 ```jldoctest
