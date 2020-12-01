@@ -45,4 +45,4 @@ Each module exports the following functions:
 - `vandermonde`: computes Vandermonde matrix constructed using orthogonal polynomials on the reference element.
 - `grad_vandermonde`: computes matrix whose columns are derivatives of orthogonal polynomials on the reference element.
 - `nodes`, `equi_nodes`: computes (non-uniform) interpolation nodes and equispaced nodes on the reference element.
-- `quad_nodes`: computes quadrature nodes (and weights) on the reference element. The quadrature rule `quad_nodes(N)` uses the smallest possible such that the degree N mass matrix is integrated exactly.
+- `quad_nodes`: computes quadrature nodes and weights on the reference element. 
