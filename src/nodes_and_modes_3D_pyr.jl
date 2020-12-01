@@ -11,23 +11,6 @@ Warning: nodal derivative matrices may contain errors for nodes at t = 1.
 A way to avoid this is to use weak differentiation matrices computed using
 quadrature rules with only interior nodes.
 
-# Examples
-```jldoctest
-julia> N = 1; r,s,t,w = quad_nodes(N);
-
-julia> V,Vr,Vs,Vt = basis(N,r,s,t);
-
-julia> V
- 8×5 Array{Float64,2}:
- -0.237249  1.38743   0.0       0.0       0.0
-  1.05375   0.720759  0.0       0.0       0.0
- -0.237249  0.0       0.0       1.38743   0.0
-  1.05375   0.0       0.0       0.720759  0.0
- -0.237249  0.0       1.38743   0.0       0.0
-  1.05375   0.0       0.720759  0.0       0.0
- -0.237249  0.0       0.0       0.0       1.38743
-  1.05375   0.0       0.0       0.0       0.720759
-```
 """
 function basis(N,r,s,t,tol=1e-12)
 

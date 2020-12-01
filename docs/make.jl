@@ -1,9 +1,8 @@
 using Documenter, NodesAndModes
 
 Documenter.makedocs(
-    sitename = "jl documentation",
-    repo = "https://github.com/jlchan/jl",
-    format = Documenter.HTML(),
+    sitename = "NodesAndModes.jl documentation",
+    repo = "https://github.com/jlchan/NodesAndModes.jl",
     pages = [
     "Home" => "index.md",
     "Line submodule" => "Line.md",
