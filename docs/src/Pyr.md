@@ -1,9 +1,9 @@
-# NodesAndModes.Hex
+# NodesAndModes.Pyr
 
 ```@meta
-CurrentModule = NodesAndModes.Hex
+CurrentModule = NodesAndModes.Pyr
 ```
 
 ```@autodocs
-Modules = [Hex]
+Modules = [Pyr]
 ```

@@ -7,12 +7,6 @@
     get_edge_list(elem::Symbol)
 
 Returns list of edges for a specific element (elem = :Tri, :Pyr, or :Tet).
-
-# Examples
-```jldoctest
-julia> get_edge_list(:Tri)
- ([1, 2], [2, 3], [3, 1])
-```
 """
 function get_edge_list(elem::Symbol)
     if elem==:Tri
