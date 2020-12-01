@@ -5,7 +5,11 @@
 vandermonde(N, r, s, t) = first(basis(N,r,s,t))
 grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
 
-# tensor product basis for wedge
+"""
+    basis(N, r, s, t)
+
+Computes orthonormal basis of degree N at points (r,s,t)
+"""
 function basis(N,r,s,t,tol=1e-12)
     V_tri,Vr_tri,Vs_tri = Tri.basis(N,r,s)
     V_1D,Vt_1D = Line.basis(N,t)
@@ -24,6 +28,11 @@ function basis(N,r,s,t,tol=1e-12)
     return V,Vr,Vs,Vt
 end
 
+"""
+    equi_nodes(N)
+
+Compute equispaced nodes of degree N.
+"""
 function equi_nodes(N)
     t1D = LinRange(-1,1,N+1)
     r_tri,s_tri = Tri.equi_nodes(N)
@@ -32,6 +41,11 @@ function equi_nodes(N)
     return r,s,t
 end
 
+"""
+    nodes(N)
+
+Computes interpolation nodes of degree N.
+"""
 function nodes(N)
     t1D,_ = gauss_lobatto_quad(0,0,N)
     r_tri,s_tri = Tri.nodes(N)
@@ -40,6 +54,11 @@ function nodes(N)
     return r,s,t
 end
 
+"""
+    quad_nodes(N)
+
+Returns quadrature nodes and weights which exactly integrate degree 2N polynomials.
+"""
 function quad_nodes(N)
     r_tri,s_tri,w_tri = Tri.quad_nodes(2*N)
     t1D,wt1D = gauss_quad(0,0,N)

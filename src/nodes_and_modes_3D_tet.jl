@@ -3,12 +3,9 @@
 #####
 
 """
-    simplex_3D(a, b, i, j)
+    simplex_3D(a, b, c, i, j, k)
 
-Evaluate 3D "Legendre" basis phi_ijk at (a,b,c) coordinates on [-1,1] cube
-
-# Examples
-```jldoctest
+Evaluate 3D "Legendre" basis phi_ijk at (a,b,c) coordinates on the [-1,1] cube
 """
 function simplex_3D(a, b, c, i, j, k)
     h1 = jacobiP(a,0,0,i)
@@ -18,13 +15,10 @@ function simplex_3D(a, b, c, i, j, k)
 end
 
 """
-    grad_simplex_3D(a, b, id, jd)
+    grad_simplex_3D(a, b, c, id, jd, kd)
 
-Evalute the partial derivative w.r.t. (r,s) of 3D "Legendre" polynomial with
-index, or order, (id,jd) at (a,b)
-
-# Examples
-```jldoctest
+Evalute the partial derivative w.r.t. (r,s,t) of 3D "Legendre" polynomial with
+index, or order, (id,jd,kd) at (a,b,c)
 """
 
 function grad_simplex_3D(a, b, c, id, jd, kd)
@@ -76,12 +70,9 @@ end
 
 
 """
-    equi_nodes_tet(N)
+    equi_nodes(N)
 
-Compute equispaced nodes on tets
-
-# Examples
-```jldoctest
+Compute equispaced nodes of degree N on a tet
 """
 
 function equi_nodes(N)
@@ -103,6 +94,11 @@ function equi_nodes(N)
     return r,s,t
 end
 
+"""
+    nodes(N)
+
+Computes interpolation nodes of degree N.
+"""
 function nodes(N)
     r1D,_ = gauss_lobatto_quad(0,0,N)
     return build_warped_nodes(N,:Tet,r1D)
@@ -111,12 +107,8 @@ end
 """
     quad_nodes_tet(N)
 
-Returns quadrature nodes which exactly integrate degree N polynomials
-
-# Examples
-```jldoctest
+Returns quadrature nodes and weights which exactly integrate degree N polynomials
 """
-
 function quad_nodes_tet(N)
 
     if N<16
@@ -133,6 +125,11 @@ function quad_nodes_tet(N)
     return r,s,t,w
 end
 
+"""
+    stroud_quad_nodes(N)
+
+Computes Stroud-type quadrature nodes and weights.
+"""
 function stroud_quad_nodes(N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
@@ -152,12 +149,16 @@ end
 """
     quad_nodes(N)
 
-# Examples
-```jldoctest
+Returns quadrature nodes and weights which exactly integrate degree N polynomials.
 """
 
 quad_nodes(N) = quad_nodes_tet(2*N)
 
+"""
+    basis(N, r, s, t)
+
+Computes orthonormal basis of degree N at points (r,s,t)
+"""
 function basis(N,r,s,t)
     Np = (N+1)*(N+2)*(N+3)÷6
 

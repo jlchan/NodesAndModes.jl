@@ -1,10 +1,37 @@
+"""
+    vandermonde(N, r, s, t)
+
+Computes generalized Vandermonde matrix.
+"""
 vandermonde(N, r, s, t) = first(basis(N,r,s,t))
+"""
+    grad_vandermonde(N, r, s, t)
+
+Computes generalized Vandermonde-derivative matrices.
+"""
 grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
 
 """
     basis(N, r, s, t)
 
+Computes orthonormal basis of degree N at points (r,s,t)
+
+# Examples
 ```jldoctest
+julia> N = 1; r,s,t = nodes(N);
+
+julia> V,Vr,Vs,Vt = basis(N,r,s,t);
+
+julia> V
+ 8×8 Array{Float64,2}:
+ 0.353553  -0.612372  -0.612372   1.06066  -0.612372   1.06066   1.06066  -1.83712
+ 0.353553  -0.612372   0.612372  -1.06066  -0.612372   1.06066  -1.06066   1.83712
+ 0.353553  -0.612372  -0.612372   1.06066   0.612372  -1.06066  -1.06066   1.83712
+ ⋮                                                     ⋮
+ 0.353553   0.612372   0.612372   1.06066  -0.612372  -1.06066  -1.06066  -1.83712
+ 0.353553   0.612372  -0.612372  -1.06066   0.612372   1.06066  -1.06066  -1.83712
+ 0.353553   0.612372   0.612372   1.06066   0.612372   1.06066   1.06066   1.83712
+```
 """
 function basis(N, r, s, t)
     Np = convert(Int,(N+1)^3)
@@ -30,9 +57,23 @@ end
 """
     nodes(N)
 
+Computes optimized interpolation nodes of degree N.
+
 # Examples
-r,s,t = nodes(N)
 ```jldoctest
+julia> N = 1; r,s,t = nodes(N);
+
+julia> [r s t]
+ 8×3 Array{Float64,2}:
+ -1.0  -1.0  -1.0
+ -1.0   1.0  -1.0
+  1.0  -1.0  -1.0
+  1.0   1.0  -1.0
+ -1.0  -1.0   1.0
+ -1.0   1.0   1.0
+  1.0  -1.0   1.0
+  1.0   1.0   1.0
+```
 """
 function nodes(N)
     r1D,w1D = gauss_lobatto_quad(0,0,N)
@@ -42,14 +83,13 @@ end
 """
     equi_nodes(N)
 
-Compute optimized interpolation nodes using blend & warp method on equilateral
-triangles for polynomial of order N, with Np points
+Compute equispaced nodes of degree N.
 
 # Examples
-r,s,t = equi_nodes(N)
 ```jldoctest
+julia> r,s,t = equi_nodes(1);
+```
 """
-
 function equi_nodes(N)
     r1D = LinRange(-1,1,N+1)
     return vec.(meshgrid(r1D,r1D,r1D))
@@ -57,9 +97,13 @@ end
 
 """
     quad_nodes(N)
+
+Compute quadrature nodes and weights of degree N.
+
 # Examples
-rq,sq,tq,wq = quad_nodes(2)
 ```jldoctest
+julia> r,s,t,w = quad_nodes(2)
+```
 """
 function quad_nodes(N)
     r1D,w1D = gauss_quad(0,0,N)
