@@ -1,6 +1,3 @@
-vandermonde(N, r, s) = first(basis(N,r,s))
-grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]
-
 """
     basis(N,r,s)
 

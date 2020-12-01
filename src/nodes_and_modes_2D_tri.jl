@@ -316,32 +316,5 @@ function basis(N,r,s)
     return V2D,V2Dr,V2Ds
 end
 
-"""
-    vandermonde(N,r)
-
-Computes the generalized Vandermonde matrix V of degree N at points r.
-
-# Examples
-```jldoctest
-julia> N = 1; r = nodes(N); V = vandermonde(N,r)
- 2×2 Array{Float64,2}:
- 0.707107  -1.22474
- 0.707107   1.22474
-```
-"""
-vandermonde(N, r, s) = first(basis(N,r,s))
-
-"""
-    grad_vandermonde(N,r,s)
-
-Computes the generalized Vandermonde matrix V of degree N at points r.
-
-# Examples
-```jldoctest
-julia> N = 1; r = nodes(N); Vr = grad_vandermonde(N,r)
- 2×2 Array{Float64,2}:
- 0.0  1.22474
- 0.0  1.22474
-```
-"""
-grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]
+#
+# grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]

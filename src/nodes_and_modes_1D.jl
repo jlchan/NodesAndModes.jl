@@ -22,12 +22,18 @@ function gauss_lobatto_quad(α, β, N)
         x[2] = 1.0
         w[1] = 1.0
         w[2] = 1.0
+    elseif N==2
+        x[1] = -1
+        x[2] = 0
+        x[3] = 1
+        w[1] = 0.333333333333333
+        w[2] = 1.333333333333333
+        w[3] = 0.333333333333333
     else
-        xint, w = gauss_quad(α+1, β+1, N-2)
-        x = [-1 transpose(xint) 1]
-
-        V = vandermonde(N,x)
-        w = vec(sum(inv(V*V'),dims=2))
+        xint, wint = gauss_quad(α+1, β+1, N-2)
+        x = vcat(-1,xint,1)
+        wend = 2/(N*(N+1))
+        w = vcat(wend, (@. wint / (1-xint^2)) ,wend)
     end
     return x[:],w[:]
 end
@@ -222,33 +228,3 @@ julia> w
 ```
 """
 quad_nodes(N) = gauss_quad(0,0,N)
-
-"""
-    vandermonde(N,r)
-
-Computes the generalized Vandermonde matrix V of degree N at points r.
-
-# Examples
-```jldoctest
-julia> N = 1; r = nodes(N); V = vandermonde(N,r)
- 2×2 Array{Float64,2}:
- 0.707107  -1.22474
- 0.707107   1.22474
-```
-"""
-vandermonde(N,r) = first(basis(N,r))
-
-"""
-    grad_vandermonde(N,r)
-
-Computes the generalized Vandermonde matrix V of degree N at points r.
-
-# Examples
-```jldoctest
-julia> N = 1; r = nodes(N); Vr = grad_vandermonde(N,r)
- 2×2 Array{Float64,2}:
- 0.0  1.22474
- 0.0  1.22474
-```
-"""
-grad_vandermonde(N,r) = last(basis(N,r))

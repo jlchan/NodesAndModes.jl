@@ -2,9 +2,6 @@
 ##### 3D modes on pyramids
 #####
 
-vandermonde(N, r, s, t) = first(basis(N,r,s,t))
-grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
-
 """
     basis(N,r,s,t,tol=1e-12)
 
@@ -148,7 +145,7 @@ function stroud_quad_nodes(N)
     a,c,b = vec.(meshgrid(a1D, c1D, a1D))
     wa,wc,wb = vec.(meshgrid(w1D,wc1D,w1D))
     w = @. wa*wb*wc
-    w = (8/3)*w./sum(w); # scale by b*h/3 = volume of pyr. b = 4, h = 2 for biunit
+    w = (8/3)*w./sum(w) # scale by b*h/3 = volume of pyr. b = 4, h = 2 for biunit
 
     return abctorst(a,b,c)...,w
 end

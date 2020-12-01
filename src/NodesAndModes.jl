@@ -12,10 +12,21 @@ include("meshgrid.jl")
 include("warpblend_interp_nodes.jl")
 
 # export submodules for each element type
-export Line # 1D
-export Tri #2D
+##################
+# 1D elements
+##################
+export Line
+
+##################
+# 2D elements
+##################
+export Tri
 export Quad
-export Hex #3D
+
+##################
+# 3D elements
+##################
+export Hex
 export Wedge
 export Pyr
 export Tet
@@ -29,6 +40,7 @@ import LinearAlgebra: diagm, eigen
 import SpecialFunctions: gamma
 using ..NodesAndModes
 include("nodes_and_modes_1D.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -42,6 +54,7 @@ using DelimitedFiles # to read quadrature node data
 using ..NodesAndModes
 import ..build_warped_nodes
 include("nodes_and_modes_2D_tri.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -53,6 +66,7 @@ module Quad
 using ..NodesAndModes
 import ..meshgrid
 include("nodes_and_modes_2D_quad.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -66,6 +80,7 @@ using ..NodesAndModes
 import ..meshgrid
 import ..build_warped_nodes
 include("nodes_and_modes_3D_tet.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -78,6 +93,7 @@ import ..meshgrid
 import ..build_warped_nodes
 using ..NodesAndModes
 include("nodes_and_modes_3D_pyr.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -89,6 +105,7 @@ module Wedge
 import ..meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_wedge.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -100,6 +117,7 @@ module Hex
 import ..meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_hex.jl")
+include("vdm.jl") # VDM and grad_VDM
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end

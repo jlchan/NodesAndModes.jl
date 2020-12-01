@@ -2,9 +2,6 @@
 ##### 3D modes on pyramids
 #####
 
-vandermonde(N, r, s, t) = first(basis(N,r,s,t))
-grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
-
 """
     basis(N, r, s, t)
 

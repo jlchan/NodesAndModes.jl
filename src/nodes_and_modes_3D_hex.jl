@@ -1,17 +1,4 @@
 """
-    vandermonde(N, r, s, t)
-
-Computes generalized Vandermonde matrix.
-"""
-vandermonde(N, r, s, t) = first(basis(N,r,s,t))
-"""
-    grad_vandermonde(N, r, s, t)
-
-Computes generalized Vandermonde-derivative matrices.
-"""
-grad_vandermonde(N, r, s, t) = basis(N,r,s,t)[2:4]
-
-"""
     basis(N, r, s, t)
 
 Computes orthonormal basis of degree N at points (r,s,t)
