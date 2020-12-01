@@ -2,7 +2,23 @@ vandermonde(N, r, s) = first(basis(N,r,s))
 grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]
 
 """
-function V,Vr,Vs = basis
+    basis(N,r,s)
+
+Computes orthonormal basis of degree N at coordinates (r,s)
+
+# Examples
+```jldoctest
+julia> N = 1; r,s = nodes(N);
+
+julia> V,Vr,Vs = basis(N,r,s);
+
+julia> V
+ 4×4 Array{Float64,2}:
+ 0.5  -0.866025  -0.866025   1.5
+ 0.5  -0.866025   0.866025  -1.5
+ 0.5   0.866025  -0.866025  -1.5
+ 0.5   0.866025   0.866025   1.5
+```
 """
 function basis(N,r,s)
     Np = convert(Int,(N+1)*(N+1))
@@ -24,11 +40,26 @@ end
 """
     nodes(N)
 
-Compute optimized interpolation nodes using blend & warp method on equilateral
-triangles for polynomial of order N, with Np points
+Compute optimized interpolation nodes of degree N
 
 # Examples
 ```jldoctest
+julia> N = 1; r,s = nodes(N);
+
+julia> r
+ 4-element Array{Float64,1}:
+ -1.0
+  1.0
+ -1.0
+  1.0
+
+julia> s
+ 4-element Array{Float64,1}:
+ -1.0
+ -1.0
+  1.0
+  1.0
+```
 """
 
 function nodes(N)
@@ -40,11 +71,12 @@ end
 """
     equi_nodes(N)
 
-Compute optimized interpolation nodes using blend & warp method on equilateral
-triangles for polynomial of order N, with Np points
+Compute equispaced nodes of degree N.
 
 # Examples
 ```jldoctest
+julia> N = 1; r,s = equi_nodes(N);
+```
 """
 
 function equi_nodes(N)
@@ -56,13 +88,20 @@ end
 """
     quad_nodes(N)
 
-Compute optimized interpolation nodes using blend & warp method on equilateral
-triangles for polynomial of order N, with Np points
+Compute quadrature nodes and weights of degree N
 
 # Examples
 ```jldoctest
-"""
+julia> N = 1; r,s,w = quad_nodes(N);
 
+julia> [r s w]
+ 4×3 Array{Float64,2}:
+ -0.57735  -0.57735  1.0
+  0.57735  -0.57735  1.0
+ -0.57735   0.57735  1.0
+  0.57735   0.57735  1.0
+```
+"""
 function quad_nodes(N)
     r1D,w1D = gauss_quad(0,0,N)
     s,r = meshgrid(r1D)

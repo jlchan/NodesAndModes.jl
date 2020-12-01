@@ -1,13 +1,17 @@
 module NodesAndModes
-using LinearAlgebra
-using SpecialFunctions
+
+import LinearAlgebra: diagm, eigen
+import SpecialFunctions: gamma
 
 # export some convenient 1D routines by default
 include("nodes_and_modes_1D.jl")
 export gauss_lobatto_quad, gauss_quad
 export jacobiP, grad_jacobiP
 
-#export submodules
+include("meshgrid.jl")
+include("warpblend_interp_nodes.jl")
+
+# export submodules for each element type
 export Line # 1D
 export Tri #2D
 export Quad
@@ -21,7 +25,8 @@ export Tet
 #####
 
 module Line
-using SpecialFunctions
+import LinearAlgebra: diagm, eigen
+import SpecialFunctions: gamma
 using ..NodesAndModes
 include("nodes_and_modes_1D.jl")
 export vandermonde, grad_vandermonde, basis
@@ -35,8 +40,8 @@ end
 module Tri
 using DelimitedFiles # to read quadrature node data
 using ..NodesAndModes
+import ..build_warped_nodes
 include("nodes_and_modes_2D_tri.jl")
-include("warpblend_interp_nodes.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -45,10 +50,9 @@ end
 ##### Submodule for quads
 #####
 module Quad
-# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
+import ..meshgrid
 include("nodes_and_modes_2D_quad.jl")
-include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -58,24 +62,22 @@ end
 #####
 module Tet
 using DelimitedFiles # to read quadrature node data
-# import VectorizedRoutines.Matlab.meshgrid
 using ..NodesAndModes
+import ..meshgrid
+import ..build_warped_nodes
 include("nodes_and_modes_3D_tet.jl")
-include("warpblend_interp_nodes.jl")
-include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
-export nodes, equi_nodes, quad_nodes # TODO: add nodes
+export nodes, equi_nodes, quad_nodes
 end
 
 #####
 ##### Submodule for pyr
 #####
 module Pyr
-# import VectorizedRoutines.Matlab.meshgrid
+import ..meshgrid
+import ..build_warped_nodes
 using ..NodesAndModes
 include("nodes_and_modes_3D_pyr.jl")
-include("warpblend_interp_nodes.jl")
-include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -84,10 +86,9 @@ end
 ##### Submodule for wedge (prism)
 #####
 module Wedge
-# import VectorizedRoutines.Matlab.meshgrid
+import ..meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_wedge.jl")
-include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end
@@ -96,10 +97,9 @@ end
 ##### Submodule for hexes
 #####
 module Hex
-# import VectorizedRoutines.Matlab.meshgrid
+import ..meshgrid
 using ..NodesAndModes
 include("nodes_and_modes_3D_hex.jl")
-include("meshgrid.jl")
 export vandermonde, grad_vandermonde, basis
 export nodes, equi_nodes, quad_nodes
 end

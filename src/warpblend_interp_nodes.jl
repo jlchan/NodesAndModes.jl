@@ -3,11 +3,17 @@
 ##### and pyramid elements. Wedges/hexes use tensor product nodes
 #####
 
-"function get_edge_list(elem::Symbol)
-    elem = :Tri, :Pyr, or :Tet.
+"""
+    get_edge_list(elem::Symbol)
 
-    Example: edges = get_vertices_edges(:Tri)
-"
+Returns list of edges for a specific element (elem = :Tri, :Pyr, or :Tet).
+
+# Examples
+```jldoctest
+julia> get_edge_list(:Tri)
+ ([1, 2], [2, 3], [3, 1])
+```
+"""
 function get_edge_list(elem::Symbol)
     if elem==:Tri
         return [1,2],[2,3],[3,1]
@@ -35,6 +41,11 @@ function interp_1D_to_line(r1D,v1,v2)
     return map((a,b)->(b-a)*runit .+ a,v1,v2)
 end
 
+"""
+    interp_1D_to_edges(r1D,elem::Symbol)
+
+Interpolates points r1D to the edges of an element (elem = :Tri, :Pyr, or :Tet)
+"""
 function interp_1D_to_edges(r1D,elem::Symbol)
     v = get_vertices(elem)
     edges = get_edge_list(elem)
@@ -46,10 +57,11 @@ function interp_1D_to_edges(r1D,elem::Symbol)
     return vec.(edge_pts)
 end
 
-"
-function edge_basis(N, elem::Symbol, rst...)
-    build VDM matrix for edge basis
-"
+"""
+    edge_basis(N, elem::Symbol, rst...)
+
+returns generalized Vandermonde matrix evaluated using an edge basis.
+"""
 function edge_basis(N, elem::Symbol, rst...)
     vertices = get_vertices(elem)
     edges = get_edge_list(elem)
@@ -57,6 +69,11 @@ function edge_basis(N, elem::Symbol, rst...)
     return edge_basis(N, vertices, edges, Line.basis, vertex_functions, rst...)
 end
 
+"""
+    edge_basis(N, vertices, edges, basis, vertex_functions, rst...)
+
+Computes edge basis given vertex functions and 1D basis.
+"""
 function edge_basis(N, vertices, edges, basis, vertex_functions, rst...)
     V1 = vertex_functions(rst...)
     if N<2
@@ -72,7 +89,7 @@ function edge_basis(N, vertices, edges, basis, vertex_functions, rst...)
 
         # eval 1D edge basis with edge parametrization
         r1D_edge = sum(rst .* dv)
-        V1D,_ = Line.basis(N-2,r1D_edge)
+        V1D,_ = basis(N-2,r1D_edge)
         for i = 1:size(V1D,2)
             V[:,id] = V1D[:,i].*V1[:,e[1]].*V1[:,e[2]]
             id += 1
@@ -81,17 +98,13 @@ function edge_basis(N, vertices, edges, basis, vertex_functions, rst...)
     return V
 end
 
-"
-function build_warped_nodes(N,elem::Symbol,r1D)
+"""
+    build_warped_nodes(N,elem::Symbol,r1D)
 
-Input:
-    N:      polynomial degree
-    elem:   :Tri, :Pyr, or :Tet.
-    r1D:    1D node set for warping
-
-Output:
-    rst:    tuple containing arrays of interpolation points
-"
+Computes degree N warp-and-blend interpolation nodes for elem = :Tri, :Pyr, or
+:Tet based on the 1D node set "r1D". Returns a tuple "rst" containing arrays of
+interpolation points.
+"""
 function build_warped_nodes(N,elem::Symbol,r1D)
     r1D_equi = collect(LinRange(-1,1,N+1))
     rst_edge_equi = interp_1D_to_edges(r1D_equi,elem)

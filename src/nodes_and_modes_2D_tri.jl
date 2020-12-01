@@ -6,9 +6,6 @@
     simplex_2D(a, b, i, j)
 
 Evaluate 2D "Legendre" basis phi_ij at (a,b) returned by rstoab
-
-# Examples
-```jldoctest
 """
 function simplex_2D(a, b, i, j)
     h₁ = jacobiP(a, 0, 0, i)
@@ -21,9 +18,6 @@ end
 
 Evalute the partial derivative w.r.t. (r,s) of 2D "Legendre" polynomial with
 index, or order, (id,jd) at (a,b)
-
-# Examples
-```jldoctest
 """
 
 function grad_simplex_2D(a, b, id, jd)
@@ -57,11 +51,27 @@ end
 """
     rstoab(r, s)
 
-Transfer from reference element coordinate (r,s) to polynomial basis evaluation
-coordinate (a,b)
+Converts from reference element coordinate (r,s) to polynomial basis evaluation
+coordinates (a,b) on the [-1,1]^2
 
 # Examples
 ```jldoctest
+julia> r,s = nodes(1);
+
+julia> a,b = rstoab(r,s);
+
+julia> a
+ 3-element Array{Float64,1}:
+ -0.9999999999999999
+  1.0
+  1.0
+
+julia> b
+ 3-element Array{Float64,1}:
+ -0.9999999999999999
+  0.9999999999999999
+ -0.9999999999999999
+```
 """
 function rstoab(r, s)
     a = zeros(length(r))
@@ -79,11 +89,13 @@ end
 """
     equi_nodes_tri(N)
 
-Compute optimized interpolation nodes using blend & warp method on equilateral
-triangles for polynomial of order N, with Np points
+Compute equispaced nodes of degree N on the biunit right triangle.
 
 # Examples
 ```jldoctest
+julia> r,s = equi_nodes_tri(1)
+ ([-1.0, -1.0, 1.0], [-1.0, 1.0, -1.0])
+```
 """
 
 function equi_nodes_tri(N)
@@ -113,6 +125,26 @@ Returns quadrature nodes which exactly integrate degree N polynomials
 
 # Examples
 ```jldoctest
+julia> r,s,w = quad_nodes_tri(2);
+
+julia> r
+ 3-element Array{Float64,1}:
+ -0.666666666666667
+  0.333333333333333
+ -0.666666666666667
+
+julia> s
+ 3-element Array{Float64,1}:
+ -0.666666666666667
+ -0.666666666666667
+  0.333333333333333
+
+julia> w
+ 3-element Array{Float64,1}:
+ 0.666666666666667
+ 0.666666666666667
+ 0.666666666666667
+```
 """
 
 function quad_nodes_tri(N)
@@ -130,6 +162,38 @@ function quad_nodes_tri(N)
     return r[:], s[:], w[:]
 end
 
+"""
+    stroud_quad_nodes(N)
+
+Returns Stroud-type quadrature nodes constructed from the tensor product of
+(N+1) x (N+1) Gauss-Jacobi nodes
+
+# Examples
+```jldoctest
+julia> r,s,w = Tri.stroud_quad_nodes(1);
+
+julia> r
+ 4-element Array{Float64,1}:
+ -0.6428825434727672
+ -0.8499377795547838
+  0.33278049202940285
+ -0.43996016900185175
+
+julia> s
+ 4-element Array{Float64,1}:
+ -0.6898979485566357
+  0.2898979485566356
+ -0.6898979485566357
+  0.2898979485566356
+
+julia> w
+ 4-element Array{Float64,1}:
+ 0.6360827634879543
+ 0.36391723651204555
+ 0.6360827634879543
+ 0.36391723651204555
+```
+"""
 function stroud_quad_nodes(N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
@@ -143,15 +207,29 @@ function stroud_quad_nodes(N)
     return vec.((r,s,w))
 end
 
-
 """
     nodes(N)
 
+Computes interpolation nodes of degree N.
+
 # Examples
 ```jldoctest
+julia> r,s = nodes(1);
+
+julia> r
+ 3-element Array{Float64,1}:
+ -0.9999999999999999
+ -0.9999999999999999
+  0.9999999999999999
+
+julia> s
+ 3-element Array{Float64,1}:
+ -0.9999999999999999
+  0.9999999999999999
+ -0.9999999999999999
+```
 """
 function nodes(N)
-    #return wb_nodes_tri(N)
     r1D,_ = gauss_lobatto_quad(0,0,N)
     return build_warped_nodes(N,:Tri,r1D)
 end
@@ -159,8 +237,16 @@ end
 """
     equi_nodes(N)
 
+Computes equally spaced nodes of degree N.
+
 # Examples
 ```jldoctest
+julia> equi_nodes(2)
+ 3-element Array{Float64,1}:
+ -1.0
+  0.0
+  1.0
+```
 """
 function equi_nodes(N)
     equi_nodes_tri(N)
@@ -169,10 +255,31 @@ end
 
 """
     quad_nodes(N)
-    returns quadrature nodes which exactly integrate degree 2N polynomials
+
+returns quadrature nodes which exactly integrate degree N polynomials
 
 # Examples
 ```jldoctest
+julia> r,s,w = quad_nodes(1);
+
+julia> r
+ 3-element Array{Float64,1}:
+ -0.666666666666667
+  0.333333333333333
+ -0.666666666666667
+
+julia> s
+ 3-element Array{Float64,1}:
+ -0.666666666666667
+ -0.666666666666667
+  0.333333333333333
+
+julia> w
+ 3-element Array{Float64,1}:
+ 0.666666666666667
+ 0.666666666666667
+ 0.666666666666667
+```
 """
 
 function quad_nodes(N)
@@ -181,8 +288,17 @@ function quad_nodes(N)
 end
 
 """
-function basis(N,r,s)
-    basis: computes Vandermonde matrices for a basis + its derivatives
+    basis(N,r,s)
+
+Computes the generalized Vandermonde matrix V of degree N (along with the
+derivative matrix Vr) at coordinates r,s.
+
+# Examples
+```jldoctest
+julia> r,s = nodes(2);
+
+julia> V,Vr,Vs = basis(N,r,s);
+```
 """
 
 function basis(N,r,s)
@@ -200,5 +316,32 @@ function basis(N,r,s)
     return V2D,V2Dr,V2Ds
 end
 
+"""
+    vandermonde(N,r)
+
+Computes the generalized Vandermonde matrix V of degree N at points r.
+
+# Examples
+```jldoctest
+julia> N = 1; r = nodes(N); V = vandermonde(N,r)
+ 2×2 Array{Float64,2}:
+ 0.707107  -1.22474
+ 0.707107   1.22474
+```
+"""
 vandermonde(N, r, s) = first(basis(N,r,s))
+
+"""
+    grad_vandermonde(N,r,s)
+
+Computes the generalized Vandermonde matrix V of degree N at points r.
+
+# Examples
+```jldoctest
+julia> N = 1; r = nodes(N); Vr = grad_vandermonde(N,r)
+ 2×2 Array{Float64,2}:
+ 0.0  1.22474
+ 0.0  1.22474
+```
+"""
 grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]
