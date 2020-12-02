@@ -1,6 +1,5 @@
-using Pkg
-pkg"activate .."
-
+# using Pkg
+# pkg"activate .."
 using Documenter
 using NodesAndModes
 
