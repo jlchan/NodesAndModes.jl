@@ -1,6 +1,6 @@
 # NodesAndModes
 
-`NodesAndModes.jl` is a package to compute nodes (interpolation and quadrature points) and modes (orthogonal polynomials) for nodal DG methods on various reference elements.
+`NodesAndModes.jl` is a package to compute nodes (interpolation and quadrature points) and modes (orthogonal polynomials) on various reference elements for use in high order finite element and nodal discontinuous Galerkin (DG) methods.
 
 The codes inspired by the Matlab codes for the book "Nodal Discontinuous Galerkin methods" by Hesthaven and Warburton (2007) and high order interpolation nodes on triangles, tetrahedra, and pyramids using the "Interpolatory Warp and Blend" procedure from [Chan and Warburton 2015](https://epubs.siam.org/doi/abs/10.1137/141000105).
 
@@ -21,7 +21,7 @@ This package is registered and can be installed via `] add NodesAndModes`. Julia
 
 Each module exports the following functions:
 - `basis`: computes Vandermonde matrix (columns are evaluations of orthogonal polynomials at different points) and derivative matrices (columns are derivatives of orthogonal polynomials at different points) constructed using orthogonal polynomials on the reference element
-- `nodes`: computes (non-uniform) interpolation nodes on the reference element.
+- `nodes`: computes (non-uniform) interpolation nodes on the reference element. All interpolation nodes
 - `quad_nodes`: computes quadrature nodes and weights on the reference element. `quad_nodes(N)` returns a quadrature rule exact for degree 2N polynomials (e.g., exact integration of the mass matrix).
 - `equi_nodes`: computes equispaced nodes on the reference element (for plotting)
 
@@ -56,7 +56,7 @@ julia> Dr,Ds = (A->A/V).((Vr,Vs))
 ```
 such that `Dr*f(r,s) ≈ df/dr`.
 
-A mass matrix `M` and weak differentation matrices `Qr, Qs` in finite element or DG methods can be computed via
+A mass matrix `M` and weak differentation matrices `Qr, Qs` in finite element or DG methods can be computed using quadrature via
 ```julia
 julia> using LinearAlgebra
 julia> using NodesAndModes.Tri

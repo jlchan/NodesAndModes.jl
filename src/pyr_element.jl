@@ -77,7 +77,9 @@ end
 """
     nodes(N)
 
-Computes interpolation nodes of degree N.
+Computes interpolation nodes of degree N. Edge nodes coincide with (N+1)-point Lobatto
+points. Triangular face nodes coincide with Tri.nodes(N), quadrilateral face nodes
+coincide with tensor product (N+1)-point Lobatto points.
 """
 function nodes(N)
     r1D,_ = gauss_lobatto_quad(0,0,N)
@@ -118,7 +120,9 @@ end
 """
     stroud_quad_nodes(N)
 
-Computes quadrature nodes and weights which are exact for degree N polynomials.
+Returns Stroud-type quadrature nodes constructed from the tensor product of (N+1)-point
+Gauss-Jacobi rules. Exact for degree 2N polynomials
+
 """
 function stroud_quad_nodes(N)
 

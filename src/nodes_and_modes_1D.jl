@@ -1,8 +1,7 @@
 """
     gauss_lobatto_quad(α, β, N)
 
-Computes Legendre-Gauss-Lobatto quadrature points and weights.
-
+Computes Legendre-Gauss-Lobatto quadrature points and weights with Jacobi weights α,β.
 """
 function gauss_lobatto_quad(α, β, N)
 
@@ -37,8 +36,7 @@ end
 """
     gauss_quad(α, β, N)
 
-Compute nodes and weights for Gaussian quadrature with Jacobi weights (α,β)
-
+Compute nodes and weights for Gaussian quadrature with Jacobi weights (α,β).
 """
 function gauss_quad(α, β, N)
     if N == 0
@@ -64,7 +62,6 @@ end
     jacobiP(x, α, β, N)
 
 Evaluate the Jacobi Polynomial (α, β) of order N at points x
-
 """
 function jacobiP(x, α, β, N)
     xp = x
@@ -104,8 +101,7 @@ end
 """
     grad_jacobiP(r, α, β, N)
 
-Evaluate derivative of Jacobi Polynomial (α, β) of order N at r
-
+Evaluate derivative of Jacobi Polynomial (α, β) of order N at points r.
 """
 
 function grad_jacobiP(r, α, β, N)

@@ -50,8 +50,8 @@ end
 """
     quad_nodes(N)
 
-Compute quadrature nodes and weights of degree N
-
+Compute quadrature nodes and weights exact for degree 2N+1 polynomials. Uses a tensor product
+Gauss quadrature rule.
 """
 function quad_nodes(N)
     r1D,w1D = gauss_quad(0,0,N)

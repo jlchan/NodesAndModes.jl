@@ -5,7 +5,7 @@
 """
     simplex_2D(a, b, i, j)
 
-Evaluate 2D "Legendre" basis phi_ij at (a,b) returned by rstoab
+Evaluate 2D PKDO basis phi_ij at points (a,b) on the Duffy domain [-1,1]^2
 """
 function simplex_2D(a, b, i, j)
     h₁ = jacobiP(a, 0, 0, i)
@@ -16,8 +16,8 @@ end
 """
     grad_simplex_2D(a, b, id, jd)
 
-Evalute the partial derivative w.r.t. (r,s) of 2D "Legendre" polynomial with
-index, or order, (id,jd) at (a,b)
+Evalute the partial derivative w.r.t. (r,s) of 2D PKDO polynomials with
+indices (id,jd) at (a,b)
 """
 
 function grad_simplex_2D(a, b, id, jd)
@@ -51,9 +51,8 @@ end
 """
     rstoab(r, s)
 
-Converts from reference element coordinate (r,s) to polynomial basis evaluation
-coordinates (a,b) on the [-1,1]^2
-
+Converts from reference bi-unit right triangle coordinate (r,s) to polynomial
+basis evaluation coordinates (a,b) on the domain [-1,1]^2
 """
 function rstoab(r, s)
     a = zeros(length(r))
@@ -72,7 +71,6 @@ end
     equi_nodes_tri(N)
 
 Compute equispaced nodes of degree N on the biunit right triangle.
-
 """
 
 function equi_nodes_tri(N)
@@ -98,8 +96,7 @@ end
 """
     quad_nodes_tri(N)
 
-Returns quadrature nodes which exactly integrate degree N polynomials
-
+Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate degree N polynomials
 """
 
 function quad_nodes_tri(N)
@@ -120,8 +117,8 @@ end
 """
     stroud_quad_nodes(N)
 
-Returns Stroud-type quadrature nodes constructed from the tensor product of
-(N+1) x (N+1) Gauss-Jacobi nodes
+Returns Stroud-type quadrature nodes constructed from the tensor product of (N+1)-point
+Gauss-Jacobi rules. Exact for degree 2N polynomials
 
 """
 function stroud_quad_nodes(N)
@@ -140,8 +137,7 @@ end
 """
     nodes(N)
 
-Computes interpolation nodes of degree N.
-
+Computes interpolation nodes of degree N. Edge nodes coincide with (N+1)-point Lobatto points.
 """
 function nodes(N)
     r1D,_ = gauss_lobatto_quad(0,0,N)
@@ -152,7 +148,6 @@ end
     equi_nodes(N)
 
 Computes equally spaced nodes of degree N.
-
 """
 function equi_nodes(N)
     equi_nodes_tri(N)
@@ -162,8 +157,7 @@ end
 """
     quad_nodes(N)
 
-returns quadrature nodes which exactly integrate degree 2N polynomials
-
+returns a quadrature rule which exactly integrates degree 2N polynomials
 """
 
 function quad_nodes(N)
@@ -176,7 +170,6 @@ end
 
 Computes the generalized Vandermonde matrix V of degree N (along with the
 derivative matrix Vr) at coordinates r,s.
-
 """
 
 function basis(N,r,s)

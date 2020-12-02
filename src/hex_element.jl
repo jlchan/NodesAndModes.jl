@@ -1,8 +1,7 @@
 """
     basis(N, r, s, t)
 
-Computes orthonormal basis of degree N at points (r,s,t)
-
+Computes orthonormal basis of degree N at points (r,s,t).
 """
 function basis(N, r, s, t)
     Np = convert(Int,(N+1)^3)
@@ -29,7 +28,6 @@ end
     nodes(N)
 
 Computes optimized interpolation nodes of degree N.
-
 """
 function nodes(N)
     r1D,w1D = gauss_lobatto_quad(0,0,N)
@@ -40,7 +38,6 @@ end
     equi_nodes(N)
 
 Compute equispaced nodes of degree N.
-
 """
 function equi_nodes(N)
     r1D = LinRange(-1,1,N+1)
@@ -50,8 +47,8 @@ end
 """
     quad_nodes(N)
 
-Compute quadrature nodes and weights which exactly integrate degree 2N polynomials.
-
+Compute quadrature nodes and weights exact for degree 2N+1 polynomials. Uses a tensor product
+Gauss quadrature rule.
 """
 function quad_nodes(N)
     r1D,w1D = gauss_quad(0,0,N)

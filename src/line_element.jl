@@ -3,7 +3,6 @@
 
 Computes the generalized Vandermonde matrix V of degree N (along with the
 derivative matrix Vr) at points r.
-
 """
 function basis(N,r)
     V1D,Vr1D = ntuple(x->zeros(length(r), N+1),2)
