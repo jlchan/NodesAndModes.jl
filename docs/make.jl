@@ -8,14 +8,14 @@ makedocs(
     modules=[NodesAndModes],
     pages = [
         "Home" => "index.md",
-        "Core 1D routines" => "nodes_and_modes_1D.md",
-        "Line submodule" => "Line.md",
-        "Tri submodule" => "Tri.md",
-        "Quad submodule" => "Quad.md",
-        "Tet submodule" => "Tet.md",
-        "Hex submodule" => "Hex.md",
-        "Wedge submodule" => "Wedge.md",
-        "Pyr submodule" => "Pyr.md",
+        "Line (1D) element" => "Line.md",
+        "Triangular element" => "Tri.md",
+        "Quadrilateral element" => "Quad.md",
+        "Tetrahedral element" => "Tet.md",
+        "Hexahedra element" => "Hex.md",
+        "Wedge element" => "Wedge.md",
+        "Pyramid element" => "Pyr.md",
+        "Helper functions" => "nodes_and_modes_1D.md",
         "Authors" => "authors.md"
     ]
 )
