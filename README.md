@@ -1,4 +1,6 @@
 # NodesAndModes
+[![Docs-stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://jlchan.github.io/NodesAndModes.jl/stable)
+[![Docs-dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://jlchan.github.io/NodesAndModes.jl/dev)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/jlchan/NodesAndModes.jl?svg=true)](https://ci.appveyor.com/project/jlchan/NodesAndModes-jl)
 [![Build status](https://github.com/jlchan/NodesAndModes.jl/workflows/CI/badge.svg)](https://github.com/jlchan/NodesAndModes.jl/actions)
 [![Codecov](https://codecov.io/gh/jlchan/NodesAndModes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/jlchan/NodesAndModes.jl)
