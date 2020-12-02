@@ -31,9 +31,7 @@ Each module exports the following functions:
 - `quad_nodes`: computes quadrature nodes and weights on the reference element. `quad_nodes(N)` returns a quadrature rule exact for degree 2N polynomials (e.g., exact integration of the mass matrix).
 - `equi_nodes`: computes equispaced nodes on the reference element (for plotting)
 
-!!! note
-
-    Each module also exports `vandermonde` and `grad_vandermonde` for similarity with the Matlab codes in Hesthaven/Warburton 2007. These just call the `basis` routine and return either Vandermonde or derivative matrices.
+Each module also exports `vandermonde` and `grad_vandermonde` for similarity with the Matlab codes in Hesthaven/Warburton 2007. These just call the `basis` routine and return either Vandermonde or derivative matrices.
 
 ## Example usage
 

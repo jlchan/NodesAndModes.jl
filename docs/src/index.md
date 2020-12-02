@@ -54,9 +54,9 @@ julia> r,s = nodes(N)
 julia> V,Vr,Vs = basis(N,r,s)
 julia> Dr,Ds = (A->A/V).((Vr,Vs))
 ```
-such that `Dr*f(r,s) ≈ df/dr`.
+such that `Dr*f(r,s) ≈ df/dr`. 
 
-A mass matrix `M` and weak differentation matrices `Qr, Qs` in finite element or DG methods can be computed using quadrature via
+A mass matrix `M` and weak differentation matrices `Qr,Qs` in finite element or DG methods can be computed using quadrature via
 ```julia
 julia> using LinearAlgebra
 julia> using NodesAndModes.Tri
