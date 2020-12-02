@@ -23,5 +23,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/jlchan/NodesAndModes.jl",
+    repo = "github.com/jlchan/NodesAndModes.jl.git",
 )
