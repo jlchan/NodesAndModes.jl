@@ -1,0 +1,7 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+NodesAndModes = "7aca2e03-f7e2-4192-9ec8-f4ca66d597fb"
+
+[compat]
+Documenter = "0.25"
+NodesAndModes = "0.3"
