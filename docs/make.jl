@@ -1,4 +1,5 @@
-# using Pkg; pkg"activate .." # only need this for local builds?
+# using Pkg
+# pkg"activate .." # only need this for local builds?
 using Documenter
 using NodesAndModes
 

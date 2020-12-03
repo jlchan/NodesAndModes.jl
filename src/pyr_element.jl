@@ -120,9 +120,8 @@ end
 """
     stroud_quad_nodes(N)
 
-Returns Stroud-type quadrature nodes constructed from the tensor product of (N+1)-point
-Gauss-Jacobi rules. Exact for degree 2N polynomials
-
+Returns Stroud-type quadrature nodes and weights constructed from the tensor product
+of (N+1)-point Gauss-Jacobi rules. Exact for degree 2N polynomials
 """
 function stroud_quad_nodes(N)
 
