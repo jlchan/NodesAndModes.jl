@@ -16,14 +16,14 @@ This package is registered and can be installed via `] add NodesAndModes`. Julia
 
 ## Package organization
 
-`NodesAndModes.jl` supports seven types of elements in 1D, 2D, and 3D. Routines for each element are packaged into the following submodules
-- NodesAndModes.Line (1D lines/intervals)
-- NodesAndModes.Tri (2D triangles)
-- NodesAndModes.Quad (2D quadrilaterals)
-- NodesAndModes.Tet (3D tetrahedra)
-- NodesAndModes.Hex (3D hexahedra)
-- NodesAndModes.Wedge (3D wedges/prisms)
-- NodesAndModes.Pyr (3D pyramids)
+`NodesAndModes.jl` supports seven types of elements in 1D, 2D, and 3D.
+- Line (1D lines/intervals)
+- Tri (2D triangles)
+- Quad (2D quadrilaterals)
+- Tet (3D tetrahedra)
+- Hex (3D hexahedra)
+- Wedge (3D wedges/prisms)
+- Pyr (3D pyramids)
 
 Each module exports the following functions:
 - `basis`: computes Vandermonde matrix (columns are evaluations of orthogonal polynomials at different points) and derivative matrices (columns are derivatives of orthogonal polynomials at different points) constructed using orthogonal polynomials on the reference element
@@ -31,43 +31,45 @@ Each module exports the following functions:
 - `quad_nodes`: computes quadrature nodes and weights on the reference element. `quad_nodes(N)` returns a quadrature rule exact for degree 2N polynomials (e.g., exact integration of the mass matrix).
 - `equi_nodes`: computes equispaced nodes on the reference element (for plotting)
 
-Each module also exports `vandermonde` and `grad_vandermonde` for similarity with the Matlab codes in Hesthaven/Warburton 2007. These just call the `basis` routine and return either Vandermonde or derivative matrices.
+!!! note
+
+    Each module also exports `vandermonde` and `grad_vandermonde` for similarity with the Matlab codes in Hesthaven/Warburton 2007. These just call the `basis` routine and return either Vandermonde or derivative matrices.
 
 ## Example usage
 
 To compute a 1D Vandermonde matrix using Gauss-Lobatto points and orthonormal polynomials.
 ```julia
-julia> using NodesAndModes.Line
+julia> using NodesAndModes
 julia> N = 2
-julia> r = nodes(N)
-julia> V = vandermonde(N,r)
+julia> r = nodes(Line(),N)
+julia> V = vandermonde(Line(),N,r)
 ```
 
 To compute a 2D triangular Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle (with coordinates `r,s`)
 ```julia
-julia> using NodesAndModes.Tri
+julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(N)
-julia> V = vandermonde(N,r,s)
+julia> r,s = nodes(Tri(),N)
+julia> V = vandermonde(Tri(),N,r,s)
 ```
 Nodal differentiation matrices `Dr` and `Ds` can be computed via
 ```julia
-julia> using NodesAndModes.Tri
+julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(N)
-julia> V,Vr,Vs = basis(N,r,s)
+julia> r,s = nodes(Tri(),N)
+julia> V,Vr,Vs = basis(Tri(),N,r,s)
 julia> Dr,Ds = (A->A/V).((Vr,Vs))
 ```
 such that `Dr*f(r,s) ≈ df/dr`.
 
-A mass matrix `M` and weak differentation matrices `Qr, Qs` in finite element or DG methods can be computed using quadrature via
+A mass matrix `M` and weak differentation matrices `Qr,Qs` in finite element or DG methods can be computed using quadrature via
 ```julia
 julia> using LinearAlgebra
-julia> using NodesAndModes.Tri
+julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(N)
-julia> V = vandermonde(N,r,s)
-julia> rq,sq,wq = quad_nodes(N)
-julia> Vq,Vrq,Vsq = (A->A/V).(basis(N,rq,sq))
+julia> r,s = nodes(Tri(),N)
+julia> V = vandermonde(Tri(),N,r,s)
+julia> rq,sq,wq = quad_nodes(Tri(),N)
+julia> Vq,Vrq,Vsq = (A->A/V).(basis(Tri(),N,rq,sq))
 julia> M,Qr,Qs = (A->Vq'*diagm(wq)*A).((Vq,Vrq,Vsq))
 ```
