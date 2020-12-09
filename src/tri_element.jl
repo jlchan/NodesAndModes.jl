@@ -68,12 +68,40 @@ end
 
 
 """
-    equi_nodes_tri(N)
+    quad_nodes_tri(N)
 
-Compute equispaced nodes of degree N on the biunit right triangle.
+Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate degree N polynomials
 """
 
-function equi_nodes_tri(N)
+function quad_nodes_tri(N)
+
+    if N < 28
+        rsw = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tri_N", N, ".txt"),' ', Float64, '\n')
+        r = rsw[:,1]
+        s = rsw[:,2]
+        w = rsw[:,3]
+    else
+        cubN = convert(Int,ceil((N+1)/2))
+        r,s,w = stroud_quad_nodes(Tri(),cubN)
+    end
+
+    return r[:], s[:], w[:]
+end
+
+function stroud_quad_nodes(elem::Tri,N)
+    cubA,cubWA = gauss_quad(0,0,N)
+    cubB,cubWB = gauss_quad(1,0,N)
+
+    cubA = ones(N+1,1)*cubA'
+    cubB = cubB*ones(1,N+1)
+
+    r = @. 0.5*(1+cubA)*(1-cubB)-1
+    s = cubB
+    w = 0.5*cubWB*(cubWA')
+    return vec.((r,s,w))
+end
+
+function equi_nodes(elem::Tri,N)
     Np = convert(Int,(N+1)*(N+2)/2)
 
     r = zeros(Np)
@@ -93,86 +121,12 @@ function equi_nodes_tri(N)
 end
 
 
-"""
-    quad_nodes_tri(N)
-
-Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate degree N polynomials
-"""
-
-function quad_nodes_tri(N)
-
-    if N < 28
-        rsw = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tri_N", N, ".txt"),' ', Float64, '\n')
-        r = rsw[:,1]
-        s = rsw[:,2]
-        w = rsw[:,3]
-    else
-        cubN = convert(Int,ceil((N+1)/2))
-        r,s,w = stroud_quad_nodes(cubN)
-    end
-
-    return r[:], s[:], w[:]
-end
-
-"""
-    stroud_quad_nodes(N)
-
-Returns Stroud-type quadrature nodes and weights constructed from the tensor product
-of (N+1)-point Gauss-Jacobi rules. Exact for degree 2N polynomials
-
-"""
-function stroud_quad_nodes(N)
-    cubA,cubWA = gauss_quad(0,0,N)
-    cubB,cubWB = gauss_quad(1,0,N)
-
-    cubA = ones(N+1,1)*cubA'
-    cubB = cubB*ones(1,N+1)
-
-    r = @. 0.5*(1+cubA)*(1-cubB)-1
-    s = cubB
-    w = 0.5*cubWB*(cubWA')
-    return vec.((r,s,w))
-end
-
-"""
-    nodes(N)
-
-Computes interpolation nodes of degree N. Edge nodes coincide with (N+1)-point Lobatto points.
-"""
-function nodes(N)
-    r1D,_ = gauss_lobatto_quad(0,0,N)
-    return build_warped_nodes(N,:Tri,r1D)
-end
-
-"""
-    equi_nodes(N)
-
-Computes equally spaced nodes of degree N.
-"""
-function equi_nodes(N)
-    equi_nodes_tri(N)
-end
-
-
-"""
-    quad_nodes(N)
-
-returns a quadrature rule which exactly integrates degree 2N polynomials
-"""
-
-function quad_nodes(N)
+function quad_nodes(elem::Tri,N)
     r,s,w = quad_nodes_tri(2*N)
     return r,s,w
 end
 
-"""
-    basis(N,r,s)
-
-Computes the generalized Vandermonde matrix V of degree N (along with the
-derivative matrix Vr) at coordinates r,s.
-"""
-
-function basis(N,r,s)
+function basis(elem::Tri,N,r,s)
     Np = convert(Int,(N+1)*(N+2)/2)
     V2D,V2Dr,V2Ds = ntuple(x->zeros(length(r), Np),3)
     a, b = rstoab(r, s)
@@ -186,6 +140,3 @@ function basis(N,r,s)
     end
     return V2D,V2Dr,V2Ds
 end
-
-#
-# grad_vandermonde(N, r, s) = basis(N,r,s)[2:3]
