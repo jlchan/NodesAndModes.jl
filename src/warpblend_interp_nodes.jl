@@ -9,6 +9,7 @@
 Returns list of edges for a specific element (elem = Tri(), Pyr(), or Tet()).
 """
 get_edge_list(elem::ElementShape)
+
 get_edge_list(elem::Tri) = [1,2],[2,3],[3,1]
 get_edge_list(elem::Pyr) = [1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5]
 get_edge_list(elem::Tet) = [1,4],[4,3],[3,1],[1,2],[3,2],[4,2]
@@ -16,8 +17,6 @@ get_edge_list(elem::Tet) = [1,4],[4,3],[3,1],[1,2],[3,2],[4,2]
 get_vertices(elem::ElementShape) = equi_nodes(elem,1)
 get_vertex_fxns(elem::ElementShape) =
     (rst...)->vandermonde(elem,1,rst...)/vandermonde(elem,1,equi_nodes(elem,1)...)
-get_equi_nodes(elem::ElementShape,N) = equi_nodes(elem,N)
-
 
 # assumes r1D in [-1,1], v1,v2 are vertices
 function interp_1D_to_line(r1D,v1,v2)
@@ -60,19 +59,18 @@ Computes edge basis given vertex functions and 1D basis.
 """
 function edge_basis(N, vertices, edges, basis1D, vertex_functions, rst...)
     V1 = vertex_functions(rst...)
-    if N<2
+    if N < 2
         return V1
     end
+
     V = zeros(length(first(rst)),length(edges)*(N-1) + length(first(vertices)))
-    V[:,1:size(V1,2)] .= V1
+    V[:,1:size(V1,2)] .= V1 # initialize vertex functions
+
     id = size(V1,2)+1
     for e in edges
-        # unit vector along which the edge runs
-        dv = map(x->x[e[2]]-x[e[1]],vertices)
-        dv = dv ./ sqrt(sum(dv.^2)) # normalize
-
-        # eval 1D edge basis with edge parametrization
-        r1D_edge = sum(rst .* dv)
+        # edge parametrization from paper:
+        # "A Comparison of High-Order Interpolation Nodes for the Pyramid"
+        r1D_edge = V1[:,e[1]]-V1[:,e[2]]
         V1D,_ = basis1D(N-2,r1D_edge)
         for i = 1:size(V1D,2)
             V[:,id] = V1D[:,i].*V1[:,e[1]].*V1[:,e[2]]
@@ -95,8 +93,19 @@ function build_warped_nodes(elem::ElementShape,N,r1D)
     V_edge = edge_basis(elem,N,rst_edge_equi...)
     rst_edge = interp_1D_to_edges(elem,r1D)
 
-    c = (x->V_edge\x).(rst_edge)
+    c = (x->V_edge\x).(rst_edge) # should be lsq solve
 
-    rst_equi = get_equi_nodes(elem,N)
+    rst_equi = equi_nodes(elem,N)
     return (x->edge_basis(elem,N,rst_equi...)*x).(c)
+end
+
+function compute_lobatto_interp(elem::ElementShape,N,r1D)
+    r1D_equi = equi_nodes(Line(),N)
+    rst_edge_equi = interp_1D_to_edges(elem,r1D_equi)
+    V_edge = edge_basis(elem,N,rst_edge_equi...)
+    rst_edge = interp_1D_to_edges(elem,r1D)
+
+    c = (x->V_edge\x).(rst_edge)
+    # @show ((x->V_edge*x).(c) .- rst_edge)
+    return c
 end
