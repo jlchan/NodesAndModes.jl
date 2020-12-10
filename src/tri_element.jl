@@ -10,7 +10,7 @@ Evaluate 2D PKDO basis phi_ij at points (a,b) on the Duffy domain [-1,1]^2
 function simplex_2D(a, b, i, j)
     h₁ = jacobiP(a, 0, 0, i)
     h₂ = jacobiP(b, 2i+1, 0, j)
-    return @. sqrt(2.0)*h₁*h₂*(1-b)^i
+    return @. sqrt(2.0)*h₁*h₂*(1-b)^i # WARNING: (1-b)^i can blow up if N is too large (> 25)
 end
 
 """
@@ -49,15 +49,15 @@ end
 
 
 """
-    rstoab(r, s)
+    rstoab(r, s, tol = 1e-12)
 
 Converts from reference bi-unit right triangle coordinate (r,s) to polynomial
 basis evaluation coordinates (a,b) on the domain [-1,1]^2
 """
-function rstoab(r, s)
+function rstoab(r, s, tol = 1e-12)
     a = zeros(length(r))
     for n = 1:length(r)
-        if s[n] != 1
+        if abs(s[n] - 1) > tol
             a[n] = 2*(1+r[n])/(1-s[n])-1
         else
             a[n] = -1
