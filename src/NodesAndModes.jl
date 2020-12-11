@@ -15,7 +15,7 @@ struct Wedge <: ElementShape end
 struct Pyr <: ElementShape end
 struct Tet <: ElementShape end
 
-# export ElementShape
+export ElementShape
 export Line
 export Tri, Quad
 export Hex, Wedge, Pyr, Tet
