@@ -11,8 +11,8 @@ Returns list of edges for a specific element (elem = Tri(), Pyr(), or Tet()).
 get_edge_list(elem::ElementShape)
 
 get_edge_list(elem::Tri) = [1,2],[2,3],[3,1]
-get_edge_list(elem::Pyr) = [1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5]
 get_edge_list(elem::Tet) = [1,4],[4,3],[3,1],[1,2],[3,2],[4,2]
+get_edge_list(elem::Pyr) = [1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5]
 
 get_vertices(elem::ElementShape) = equi_nodes(elem,1)
 get_vertex_fxns(elem::ElementShape) =
@@ -99,13 +99,14 @@ function build_warped_nodes(elem::ElementShape,N,r1D)
     return (x->edge_basis(elem,N,rst_equi...)*x).(c)
 end
 
-function compute_lobatto_interp(elem::ElementShape,N,r1D)
-    r1D_equi = equi_nodes(Line(),N)
-    rst_edge_equi = interp_1D_to_edges(elem,r1D_equi)
-    V_edge = edge_basis(elem,N,rst_edge_equi...)
-    rst_edge = interp_1D_to_edges(elem,r1D)
 
-    c = (x->V_edge\x).(rst_edge)
-    # @show ((x->V_edge*x).(c) .- rst_edge)
-    return c
-end
+# function compute_lobatto_interp(elem::ElementShape,N,r1D)
+#     r1D_equi = equi_nodes(Line(),N)
+#     rst_edge_equi = interp_1D_to_edges(elem,r1D_equi)
+#     V_edge = edge_basis(elem,N,rst_edge_equi...)
+#     rst_edge = interp_1D_to_edges(elem,r1D)
+#
+#     c = (x->V_edge\x).(rst_edge)
+#     # @show ((x->V_edge*x).(c) .- rst_edge)
+#     return c
+# end

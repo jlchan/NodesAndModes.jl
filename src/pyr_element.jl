@@ -80,7 +80,43 @@ Computes interpolation nodes of degree N. Edge nodes coincide with (N+1)-point L
 points. Triangular face nodes coincide with Tri.nodes(N), quadrilateral face nodes
 coincide with tensor product (N+1)-point Lobatto points.
 """
-nodes(elem::Pyr,N)
+function nodes(elem::Pyr,N)
+
+    if N == 1
+        return equi_nodes(Pyr(),N)
+    end
+
+    # append quad face nodes
+    r1D_equi = equi_nodes(Line(),N)
+    rst_equi = interp_1D_to_edges(Pyr(),r1D_equi)
+    quad_face_pts_equi = (vec.(meshgrid(r1D_equi[2:end-1]))...,-ones((N-1)*(N-1)))
+    append!.(rst_equi,quad_face_pts_equi)
+
+    # append quad face nodes
+    r1D = nodes(Line(),N)
+    rst_lobatto = interp_1D_to_edges(Pyr(),r1D)
+    quad_face_pts = (vec.(meshgrid(r1D[2:end-1]))...,-ones((N-1)*(N-1)))
+    append!.(rst_lobatto,quad_face_pts)
+
+    # append quad face "bubble" basis functions
+    function edge_face_pyr_basis(N,rst)
+        V_edge = edge_basis(Pyr(),N,rst...)
+        # WARNING: assumes first 4 vertices of Pyr = quad vertices
+        # also assumes first 5 cols of V_edge = vertex functions for Pyr
+        V_quad_face = zeros(length(first(rst)),(N-1)*(N-1))
+        V_quad = vandermonde(Quad(),N-2,rst[1],rst[2])
+        V_quad_bubble = @. V_edge[:,1]*V_edge[:,2]*V_edge[:,3]*V_edge[:,4]
+        for i = 1:size(V_quad_face,2)
+            @. V_quad_face[:,i] = V_quad_bubble * V_quad[:,i]
+        end
+        return hcat(V_edge,V_quad_face)
+    end
+
+    # same interp problem as before
+    V_edge_face = edge_face_pyr_basis(N,rst_equi)
+    c = (x->V_edge_face\x).(rst_lobatto) # should be lsq solve
+    return (x->edge_face_pyr_basis(N,equi_nodes(elem,N))*x).(c)
+end
 
 function equi_nodes(elem::Pyr,N)
     Np = (N+1)*(N+2)*(2*N+3)/6
