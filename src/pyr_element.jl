@@ -3,16 +3,15 @@
 #####
 
 """
-    basis(N,r,s,t,tol=1e-12)
+    basis(elem::Pyr,N,r,s,t,tol=1e-12)
 
 Computes orthonormal semi-nodal basis on the biunit pyramid element.
 
 Warning: nodal derivative matrices may contain errors for nodes at t = 1.
 A way to avoid this is to use weak differentiation matrices computed using
 quadrature rules with only interior nodes.
-
 """
-function basis(N,r,s,t,tol=1e-12)
+function basis(elem::Pyr,N,r,s,t,tol=1e-12)
 
     # convert to abc
     a = @. 2*(r+1)/(1-t)-1
@@ -38,9 +37,9 @@ function basis(N,r,s,t,tol=1e-12)
     ind = 1
     for k = 0:N
         # make nodal quad basis
-        bq,aq,wab = Quad.quad_nodes(k)
-        VDM,_ = Quad.basis(k,aq,bq)
-        VDMab,Va,Vb = Quad.basis(k,a,b)
+        bq,aq,wab = quad_nodes(Quad(),k)
+        VDM,_ = basis(Quad(),k,aq,bq)
+        VDMab,Va,Vb = basis(Quad(),k,a,b)
         Vab,DVa,DVb = map(A->A/VDM,(VDMab,Va,Vb))
 
         CNk = (N+2) / (2^(2*k+2)*(2*k+3))
@@ -62,12 +61,12 @@ function basis(N,r,s,t,tol=1e-12)
 end
 
 """
-    abctorst(a,b,c)
+    abctorst(elem::Pyr,a,b,c)
 
 Converts from Stroud coordinates (a,b,c) on [-1,1]^3 to reference element
 coordinates (r,s,t).
 """
-function abctorst(a,b,c)
+function abctorst(elem::Pyr,a,b,c)
     r = @. .5*(1+a)*(1-c) - 1
     s = @. .5*(1+b)*(1-c) - 1
     t = @. c
@@ -75,23 +74,51 @@ function abctorst(a,b,c)
 end
 
 """
-    nodes(N)
+    nodes(elem::Pyr,N)
 
 Computes interpolation nodes of degree N. Edge nodes coincide with (N+1)-point Lobatto
 points. Triangular face nodes coincide with Tri.nodes(N), quadrilateral face nodes
 coincide with tensor product (N+1)-point Lobatto points.
 """
-function nodes(N)
-    r1D,_ = gauss_lobatto_quad(0,0,N)
-    return build_warped_nodes(N,:Pyr,r1D)
+function nodes(elem::Pyr,N)
+
+    if N == 1
+        return equi_nodes(Pyr(),N)
+    end
+
+    # append quad face nodes
+    r1D_equi = equi_nodes(Line(),N)
+    rst_equi = interp_1D_to_edges(Pyr(),r1D_equi)
+    quad_face_pts_equi = (vec.(meshgrid(r1D_equi[2:end-1]))...,-ones((N-1)*(N-1)))
+    append!.(rst_equi,quad_face_pts_equi)
+
+    # append quad face nodes
+    r1D = nodes(Line(),N)
+    rst_lobatto = interp_1D_to_edges(Pyr(),r1D)
+    quad_face_pts = (vec.(meshgrid(r1D[2:end-1]))...,-ones((N-1)*(N-1)))
+    append!.(rst_lobatto,quad_face_pts)
+
+    # append quad face "bubble" basis functions
+    function edge_face_pyr_basis(N,rst)
+        V_edge = edge_basis(Pyr(),N,rst...)
+        # WARNING: assumes first 4 vertices of Pyr = quad vertices
+        # also assumes first 5 cols of V_edge = vertex functions for Pyr
+        V_quad_face = zeros(length(first(rst)),(N-1)*(N-1))
+        V_quad = vandermonde(Quad(),N-2,rst[1],rst[2])
+        V_quad_bubble = @. V_edge[:,1]*V_edge[:,2]*V_edge[:,3]*V_edge[:,4]
+        for i = 1:size(V_quad_face,2)
+            @. V_quad_face[:,i] = V_quad_bubble * V_quad[:,i]
+        end
+        return hcat(V_edge,V_quad_face)
+    end
+
+    # same interp problem as before
+    V_edge_face = edge_face_pyr_basis(N,rst_equi)
+    c = (x->V_edge_face\x).(rst_lobatto) # should be lsq solve
+    return (x->edge_face_pyr_basis(N,equi_nodes(elem,N))*x).(c)
 end
 
-"""
-    equi_nodes(N)
-
-Computes equispaced nodes of degree N.
-"""
-function equi_nodes(N)
+function equi_nodes(elem::Pyr,N)
     Np = (N+1)*(N+2)*(2*N+3)/6
     a,b,c = ntuple(x->Float64[],3)
     c1D = LinRange(-1,1,N+1)
@@ -105,25 +132,12 @@ function equi_nodes(N)
         ck = c1D[N+1-k]*one.(ak)
         append!.((a,b,c),(ak,bk,ck))
     end
-    return abctorst(a,b,c)
+    return abctorst(elem,a,b,c)
 end
 
-"""
-    quad_nodes(N)
+quad_nodes(elem::Pyr,N) = stroud_quad_nodes(elem,N)
 
-Computes quadrature nodes and weights which are exact for degree 2N polynomials.
-"""
-function quad_nodes(N)
-    return stroud_quad_nodes(N)
-end
-
-"""
-    stroud_quad_nodes(N)
-
-Returns Stroud-type quadrature nodes and weights constructed from the tensor product
-of (N+1)-point Gauss-Jacobi rules. Exact for degree 2N polynomials
-"""
-function stroud_quad_nodes(N)
+function stroud_quad_nodes(elem::Pyr,N)
 
     a1D, w1D = gauss_quad(0,0,N)
     c1D, wc1D = gauss_quad(2,0,N)
@@ -133,5 +147,5 @@ function stroud_quad_nodes(N)
     w = @. wa*wb*wc
     w = (8/3)*w./sum(w) # scale by b*h/3 = volume of pyr. b = 4, h = 2 for biunit
 
-    return abctorst(a,b,c)...,w
+    return abctorst(elem,a,b,c)...,w
 end

@@ -69,13 +69,7 @@ function grad_simplex_3D(a, b, c, id, jd, kd)
 end
 
 
-"""
-    equi_nodes(N)
-
-Compute equispaced nodes of degree N on a tet
-"""
-
-function equi_nodes(N)
+function equi_nodes(elem::Tet,N)
     Np = (N+1)*(N+2)*(N+3) ÷ 6
     r1D = LinRange(-1,1,N+1)
     r,s,t = ntuple(x->zeros(Np),3)
@@ -94,16 +88,6 @@ function equi_nodes(N)
     return r,s,t
 end
 
-"""
-    nodes(N)
-
-Computes interpolation nodes of degree N.  Edge nodes coincide with (N+1)-point Lobatto points,
-while face nodes coincide with Tr.nodes(N).
-"""
-function nodes(N)
-    r1D,_ = gauss_lobatto_quad(0,0,N)
-    return build_warped_nodes(N,:Tet,r1D)
-end
 
 """
     quad_nodes_tet(N)
@@ -120,19 +104,13 @@ function quad_nodes_tet(N)
         w = rstw[:,4]
     else
         cubN = convert(Int,ceil((N+1)/2))
-        r,s,t,w = stroud_quad_nodes(cubN)
+        r,s,t,w = stroud_quad_nodes(Tet(),cubN)
     end
 
     return r,s,t,w
 end
 
-"""
-    stroud_quad_nodes(N)
-
-Returns Stroud-type quadrature nodes and weights constructed from the tensor product
-of (N+1)-point Gauss-Jacobi rules. Exact for degree 2N polynomials
-"""
-function stroud_quad_nodes(N)
+function stroud_quad_nodes(elem::Tet,N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
     cubC,cubWC = gauss_quad(2,0,N)
@@ -148,20 +126,10 @@ function stroud_quad_nodes(N)
     return r,s,t,w
 end
 
-"""
-    quad_nodes(N)
 
-Returns quadrature nodes and weights which exactly integrate degree 2N polynomials.
-"""
+quad_nodes(elem::Tet,N) = quad_nodes_tet(2*N)
 
-quad_nodes(N) = quad_nodes_tet(2*N)
-
-"""
-    basis(N, r, s, t)
-
-Computes orthonormal basis of degree N at points (r,s,t)
-"""
-function basis(N,r,s,t)
+function basis(elem::Tet,N,r,s,t)
     Np = (N+1)*(N+2)*(N+3)÷6
 
     V,Vr,Vs,Vt = ntuple(x->zeros(length(r),Np),4)

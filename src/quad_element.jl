@@ -1,10 +1,5 @@
-"""
-    basis(N,r,s)
 
-Computes orthonormal basis of degree N at coordinates (r,s)
-
-"""
-function basis(N,r,s)
+function basis(elem::Quad,N,r,s)
     Np = convert(Int,(N+1)*(N+1))
     sk = 1
     V,Vr,Vs = ntuple(x->zeros(length(r), Np),3)
@@ -19,41 +14,21 @@ function basis(N,r,s)
     return V,Vr,Vs
 end
 
-# ===================================================
 
-"""
-    nodes(N)
-
-Compute optimized interpolation nodes of degree N
-
-"""
-
-function nodes(N)
+function nodes(elem::Quad,N)
     r1D,w1D = gauss_lobatto_quad(0,0,N)
     s,r = meshgrid(r1D)
     return r[:], s[:]
 end
 
-"""
-    equi_nodes(N)
 
-Compute equispaced nodes of degree N.
-
-"""
-
-function equi_nodes(N)
+function equi_nodes(elem::Quad,N)
     r1D = LinRange(-1,1,N+1)
     s,r = meshgrid(r1D)
     return r[:], s[:]
 end
 
-"""
-    quad_nodes(N)
-
-Compute quadrature nodes and weights exact for degree 2N+1 polynomials. Uses a tensor product
-Gauss quadrature rule.
-"""
-function quad_nodes(N)
+function quad_nodes(elem::Quad,N)
     r1D,w1D = gauss_quad(0,0,N)
     s,r = meshgrid(r1D)
     ws,wr = meshgrid(w1D)
