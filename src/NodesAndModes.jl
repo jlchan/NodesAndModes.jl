@@ -6,16 +6,16 @@ import SpecialFunctions: gamma
 include("meshgrid.jl")
 
 # each type of element shape - used for dispatch only
-abstract type ElementShape end
-struct Line <: ElementShape end
-struct Quad <: ElementShape end
-struct Tri <: ElementShape end
-struct Hex <: ElementShape end
-struct Wedge <: ElementShape end
-struct Pyr <: ElementShape end
-struct Tet <: ElementShape end
+abstract type AbstractElemShape end
+struct Line <: AbstractElemShape end
+struct Quad <: AbstractElemShape end
+struct Tri <: AbstractElemShape end
+struct Hex <: AbstractElemShape end
+struct Wedge <: AbstractElemShape end
+struct Pyr <: AbstractElemShape end
+struct Tet <: AbstractElemShape end
 
-export ElementShape
+export AbstractElemShape
 export Line
 export Tri, Quad
 export Hex, Wedge, Pyr, Tet

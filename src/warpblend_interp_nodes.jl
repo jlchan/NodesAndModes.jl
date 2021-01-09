@@ -4,18 +4,18 @@
 #####
 
 """
-    get_edge_list(elem::ElementShape)
+    get_edge_list(elem::AbstractElemShape)
 
 Returns list of edges for a specific element (elem = Tri(), Pyr(), or Tet()).
 """
-get_edge_list(elem::ElementShape)
+get_edge_list(elem::AbstractElemShape)
 
 get_edge_list(elem::Tri) = [1,2],[2,3],[3,1]
 get_edge_list(elem::Tet) = [1,4],[4,3],[3,1],[1,2],[3,2],[4,2]
 get_edge_list(elem::Pyr) = [1,2],[2,4],[3,4],[3,1],[1,5],[2,5],[3,5],[4,5]
 
-get_vertices(elem::ElementShape) = equi_nodes(elem,1)
-get_vertex_fxns(elem::ElementShape) =
+get_vertices(elem::AbstractElemShape) = equi_nodes(elem,1)
+get_vertex_fxns(elem::AbstractElemShape) =
     (rst...)->vandermonde(elem,1,rst...)/vandermonde(elem,1,equi_nodes(elem,1)...)
 
 # assumes r1D in [-1,1], v1,v2 are vertices
@@ -25,11 +25,11 @@ function interp_1D_to_line(r1D,v1,v2)
 end
 
 """
-    interp_1D_to_edges(elem::ElementShape, r1D)
+    interp_1D_to_edges(elem::AbstractElemShape, r1D)
 
 Interpolates points r1D to the edges of an element (elem = :Tri, :Pyr, or :Tet)
 """
-function interp_1D_to_edges(elem::ElementShape, r1D)
+function interp_1D_to_edges(elem::AbstractElemShape, r1D)
     v = get_vertices(elem)
     edges = get_edge_list(elem)
     edge_pts = ntuple(x->zeros(length(r1D),length(edges)),length(v))
@@ -41,11 +41,11 @@ function interp_1D_to_edges(elem::ElementShape, r1D)
 end
 
 """
-    edge_basis(elem::ElementShape, N, rst...)
+    edge_basis(elem::AbstractElemShape, N, rst...)
 
 returns generalized Vandermonde matrix evaluated using an edge basis.
 """
-function edge_basis(elem::ElementShape, N, rst...)
+function edge_basis(elem::AbstractElemShape, N, rst...)
     vertices = get_vertices(elem)
     edges = get_edge_list(elem)
     vertex_functions = get_vertex_fxns(elem)
@@ -81,13 +81,13 @@ function edge_basis(N, vertices, edges, basis1D, vertex_functions, rst...)
 end
 
 """
-    build_warped_nodes(elem::ElementShape,N,r1D)
+    build_warped_nodes(elem::AbstractElemShape,N,r1D)
 
 Computes degree N warp-and-blend interpolation nodes for elem = Tri(), Pyr(), or
 Tet() based on the 1D node set "r1D". Returns a tuple "rst" containing arrays of
 interpolation points.
 """
-function build_warped_nodes(elem::ElementShape,N,r1D)
+function build_warped_nodes(elem::AbstractElemShape,N,r1D)
     r1D_equi = equi_nodes(Line(),N)
     rst_edge_equi = interp_1D_to_edges(elem,r1D_equi)
     V_edge = edge_basis(elem,N,rst_edge_equi...)
@@ -100,7 +100,7 @@ function build_warped_nodes(elem::ElementShape,N,r1D)
 end
 
 
-# function compute_lobatto_interp(elem::ElementShape,N,r1D)
+# function compute_lobatto_interp(elem::AbstractElemShape,N,r1D)
 #     r1D_equi = equi_nodes(Line(),N)
 #     rst_edge_equi = interp_1D_to_edges(elem,r1D_equi)
 #     V_edge = edge_basis(elem,N,rst_edge_equi...)
