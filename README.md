@@ -12,7 +12,7 @@ The codes inspired by the Matlab codes for the book "Nodal Discontinuous Galerki
 
 ## Installation
 
-This package is registered and can be installed via `] add NodesAndModes`. Julia v1.4 is required.
+This package is registered and can be installed via `] add NodesAndModes`. Julia v1.3 is required.
 
 ## Package organization
 
