@@ -2,7 +2,7 @@
 # https://github.com/ChrisRackauckas/VectorizedRoutines.jl/blob/master/src/matlab.jl
 #
 # using VectorizedRoutines.jl directly causes Pkg versioning issues with SpecialFunctions.jl
-# Not sure why, so just put the meshgrid code directly in here.
+# Not sure why, so I just put the meshgrid code directly in here.
 
 """
 meshgrid(vx)
