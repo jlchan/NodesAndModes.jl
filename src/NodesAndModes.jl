@@ -1,7 +1,7 @@
 module NodesAndModes
 
 using DelimitedFiles # to read quadrature node data
-import LinearAlgebra: diagm, eigen
+import LinearAlgebra: diagm, eigen, Symmetric
 import SpecialFunctions: gamma
 include("meshgrid.jl")
 
