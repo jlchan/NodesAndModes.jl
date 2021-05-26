@@ -4,7 +4,7 @@
 Computes the generalized Vandermonde matrix V of degree N at points (r,s,t).
 """
 vandermonde(elem::AbstractElemShape, N, rst...) = first(basis(elem,N,rst...))
-vandermonde(elem::AbstractElemShape, N, r) = first(basis(elem,N,r)) # specialize for 1D
+vandermonde(elem::Line, N, r) = first(basis(elem,N,r)) # specialize for 1D
 
 """
     grad_vandermonde(elem::AbstractElemShape, N, rst...)
@@ -12,7 +12,7 @@ vandermonde(elem::AbstractElemShape, N, r) = first(basis(elem,N,r)) # specialize
 Computes the generalized Vandermonde derivative matrix V of degree N at points (r,s,t).
 """
 grad_vandermonde(elem::AbstractElemShape, N, rst...) = basis(elem, N, rst...)[2:end]
-grad_vandermonde(elem::AbstractElemShape, N, r) = last(basis(elem,N,r)) # specialize for 1D
+grad_vandermonde(elem::Line, N, r) = last(basis(elem,N,r)) # specialize for 1D
 
 
 """
