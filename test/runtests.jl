@@ -222,7 +222,7 @@ end
     @test sum(tq.*wq)≈ -2/3
 end
 
-if VERSION >= v"1.6"
+if VERSION >= v"1.6" # apparently inference got better after 1.5?
     @testset "Inferrability for $elementType" for elementType in [Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex()] 
         N = 1
         if elementType==Line()
