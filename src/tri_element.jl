@@ -76,7 +76,7 @@ Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate d
 function quad_nodes_tri(N)
 
     if N < 28
-        rsw = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tri_N", N, ".txt"),' ', Float64, '\n')
+        rsw::Matrix{Float64} = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tri_N", N, ".txt"),' ', Float64, '\n')         
         r = rsw[:,1]
         s = rsw[:,2]
         w = rsw[:,3]
@@ -92,8 +92,7 @@ function stroud_quad_nodes(elem::Tri,N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
 
-    cubA = ones(N+1,1)*cubA'
-    cubB = cubB*ones(1,N+1)
+    cubA,cubB = vec.(meshgrid(cubA,cubB))
 
     r = @. 0.5*(1+cubA)*(1-cubB)-1
     s = cubB
@@ -121,9 +120,8 @@ function equi_nodes(elem::Tri,N)
 end
 
 
-function quad_nodes(elem::Tri,N)
-    r,s,w = quad_nodes_tri(2*N)
-    return r,s,w
+function quad_nodes(elem::Tri,N)    
+    return quad_nodes_tri(2*N)
 end
 
 function basis(elem::Tri,N,r,s)

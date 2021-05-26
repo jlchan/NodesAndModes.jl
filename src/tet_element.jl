@@ -97,7 +97,7 @@ Returns quadrature nodes and weights which exactly integrate degree N polynomial
 function quad_nodes_tet(N)
 
     if N<16
-        rstw = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tet_N", N, ".txt"),' ', Float64, '\n')
+        rstw::Matrix{Float64} = readdlm(string(@__DIR__,"/QuadratureData/quad_nodes_tet_N", N, ".txt"),' ', Float64, '\n')
         r = rstw[:,1]
         s = rstw[:,2]
         t = rstw[:,3]
