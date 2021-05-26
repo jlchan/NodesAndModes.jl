@@ -223,7 +223,6 @@ end
 end
 
 @testset "Inferrability for $elementType" for elementType in [Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex()] 
-
     N = 1
     if elementType==Line()
         @test (@inferred gauss_quad(0,0,N)) == ([-0.5773502691896257, 0.5773502691896257], [0.9999999999999998, 0.9999999999999998])
