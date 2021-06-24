@@ -74,15 +74,12 @@ function equi_nodes(elem::Tet,N)
     r1D = LinRange(-1,1,N+1)
     r,s,t = ntuple(x->zeros(Np),3)
     sk = 1
-    for i = 0:N
-        for j = 0:N-i
-            for k = 0:N-i-j
-                r[sk] = r1D[i+1]
-                s[sk] = r1D[j+1]
-                t[sk] = r1D[k+1]
-                sk += 1
-            end
-        end
+    #for i = 0:N, j = 0:N-i, k = 0:N-i-j
+    for k = 0:N, j = 0:N-k, i = 0:N-j-k
+        r[sk] = r1D[i+1]
+        s[sk] = r1D[j+1]
+        t[sk] = r1D[k+1]
+        sk += 1
     end
 
     return r,s,t
