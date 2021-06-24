@@ -1,7 +1,7 @@
 name = "NodesAndModes"
 uuid = "7aca2e03-f7e2-4192-9ec8-f4ca66d597fb"
 authors = ["Jesse Chan", "Yimin Lin"]
-version = "0.5.1"
+version = "0.6.0"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
