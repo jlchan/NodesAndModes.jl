@@ -131,6 +131,15 @@ end
     @test Dt*t ≈ ones(length(t))
 end
 
+@testset "Test for Kronecker structure in the Hex basis matrix" begin
+    tol = 5e2*eps()
+    N = 3
+    VDM_1D = vandermonde(Line(), N, nodes(Line(), N))
+    VDM_quad_1D = vandermonde(Line(), N, quad_nodes(Line(), N)[1])
+    @test abs(norm(vandermonde(Hex(), N, nodes(Hex(), N)...) - kron(VDM_1D, VDM_1D, VDM_1D))) < tol
+    @test abs(norm(vandermonde(Hex(), N, quad_nodes(Hex(), N)[1:3]...) - kron(VDM_quad_1D, VDM_quad_1D, VDM_quad_1D))) < tol
+end
+
 @testset "3D pyr tests" begin
     tol = 1e3*eps()
 
