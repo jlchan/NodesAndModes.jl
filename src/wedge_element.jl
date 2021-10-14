@@ -10,10 +10,10 @@ function basis(elem::Wedge,N,r,s,t)
     id = 1
     for i = 1:size(V_tri,2)
         for j = 1:size(V_1D,2)
-            V[:,id]  = @. V_tri[:,i]  * V_1D[:,j]
-            Vr[:,id] = @. Vr_tri[:,i] * V_1D[:,j]
-            Vs[:,id] = @. Vs_tri[:,i] * V_1D[:,j]
-            Vt[:,id] = @. V_tri[:,i]  * Vt_1D[:,j]
+            @. V[:,id]  = V_tri[:,i]  * V_1D[:,j]
+            @. Vr[:,id] = Vr_tri[:,i] * V_1D[:,j]
+            @. Vs[:,id] = Vs_tri[:,i] * V_1D[:,j]
+            @. Vt[:,id] = V_tri[:,i]  * Vt_1D[:,j]
             id += 1
         end
     end

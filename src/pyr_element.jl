@@ -50,10 +50,10 @@ function basis(elem::Pyr,N,r,s,t,tol=1e-12)
 
         for ij = 1:(k+1)^2
             scale = 1/sqrt(CNk*wab[ij]) # normalization
-            V[:,ind]  = @. scale*Vab[:,ij]*pc
-            Vr[:,ind] = @. scale*(DVa[:,ij]*dadr)*pc
-            Vs[:,ind] = @. scale*(DVb[:,ij]*dbds)*pc
-            Vt[:,ind] = @. scale*((DVa[:,ij]*dadt + DVb[:,ij]*dbdt)*pc + Vab[:,ij]*dpc*dcdt)
+            @. V[:,ind]  = scale*Vab[:,ij]*pc
+            @. Vr[:,ind] = scale*(DVa[:,ij]*dadr)*pc
+            @. Vs[:,ind] = scale*(DVb[:,ij]*dbds)*pc
+            @. Vt[:,ind] = scale*((DVa[:,ij]*dadt + DVb[:,ij]*dbdt)*pc + Vab[:,ij]*dpc*dcdt)
             ind += 1
         end
     end
