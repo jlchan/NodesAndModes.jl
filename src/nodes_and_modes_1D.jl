@@ -49,8 +49,9 @@ function gauss_quad(α, β, N)
     end
 
     J = zeros(N+1, N+1)
-    h₁ = @. 2*(0:N)+α+β
-    J = diagm(0 => @. -1/2*(α^2-β^2)/(h₁+2)/h₁) + diagm(1 => @. 2/(h₁[1:N]+2)*sqrt((1:N)*((1:N)+α+β)*((1:N)+α)*((1:N)+β)/(h₁[1:N]+1)/(h₁[1:N]+3)))
+    h₁ = @. 2*(0:N)+α+β    
+    J = diagm(0 => @. -1/2*(α^2-β^2)/(h₁+2)/h₁) + 
+        diagm(1 => @. 2/(h₁[1:N]+2) * sqrt((1:N) * ((1:N)+α+β) * ((1:N)+α) * ((1:N)+β) / (h₁[1:N]+1) / (h₁[1:N]+3)))
     if α + β < 10*eps()
         J[1,1] = 0.0
     end
@@ -66,31 +67,27 @@ end
 Evaluate the Jacobi Polynomial (α, β) of order N at points x
 """
 function jacobiP(x, α, β, N)
-    xp = permutedims(vec(copy(x)))
-    # if size(xp, 2) == 1
-    #     xp = permutedims(x)
-    # end
 
-    PL = zeros(N+1,length(xp))
-    γ₀ = 2^(α+β+1)/(α+β+1)*gamma(α+1)*gamma(β+1)/gamma(α+β+1)
-    PL[1,:] .= 1.0/sqrt(γ₀)
+    PL = zeros(N+1, length(x))
+    γ₀ = 2^(α+β+1) / (α+β+1) * gamma(α+1) * gamma(β+1) / gamma(α+β+1)
+    @. PL[1,:] = 1.0/sqrt(γ₀)
     if N == 0
         return vec(PL)
     end
 
-    γ₁ = (α+1)*(β+1)/(α+β+3)*γ₀
-    PL[2,:] = ((α+β+2) .* xp/2 .+ (α-β)/2) / sqrt(γ₁)
+    γ₁ = (α+1) * (β+1) / (α+β+3) * γ₀
+    @. PL[2, :] = ((α+β+2) * x/2 + (α-β)/2) / sqrt(γ₁)
     if N == 1        
         return PL[N+1,:]
     end
 
-    aold = 2/(2+α+β)*sqrt((α+1)*(β+1)/(α+β+3))
+    aold = 2 / (2+α+β) * sqrt((α+1) * (β+1) / (α + β + 3))
 
     for i = 1:N-1
         h₁ = 2i+α+β
-        anew = 2/(h₁+2)*sqrt((i+1)*(i+1+α+β)*(i+1+α)*(i+1+β)/(h₁+1)/(h₁+3))
-        bnew = -(α^2-β^2)/h₁/(h₁+2)
-        PL[i+2,:] = 1/anew*(-aold*permutedims(PL[i,:]).+(xp.-bnew).*permutedims(PL[i+1,:]))
+        anew = 2 / (h₁+2) * sqrt((i+1) * (i+1+α+β) * (i+1+α) * (i+1+β) / (h₁+1) / (h₁+3))
+        bnew = -(α^2-β^2) / h₁ / (h₁+2)
+        @. PL[i+2,:] = 1 / anew * (-aold * PL[i,:] .+ (x .- bnew) .* PL[i+1,:])
         aold = anew
     end
     
@@ -103,10 +100,10 @@ end
 Evaluate derivative of Jacobi Polynomial (α, β) of order N at points r.
 """
 
-function grad_jacobiP(r, α, β, N)
-    dP = zeros(length(r))
+function grad_jacobiP(r, α, β, N)    
     if N != 0
-        dP = sqrt(N*(N+α+β+1))*jacobiP(r,α+1,β+1,N-1)
+        return sqrt(N * (N+α+β+1)) * jacobiP(r, α+1, β+1, N-1)
+    else
+        return zeros(length(r))
     end
-    return dP
 end
