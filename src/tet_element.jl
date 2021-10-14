@@ -145,11 +145,13 @@ function basis(elem::Tet,N,r,s,t)
     for i = 0:N
         for j = 0:N-i
             for k = 0:N-i-j
-                V[:,sk] = simplex_3D(a,b,c,i,j,k)
-                Vr[:,sk],Vs[:,sk],Vt[:,sk] = grad_simplex_3D(a,b,c,i,j,k)
+                V[:, sk] .= simplex_3D(a, b, c, i, j, k)
+                # should have fewer allocations than previous implementation:
+                # `Vr[:,sk], Vs[:,sk], Vt[:,sk] = grad_simplex(...)`
+                map((out, x) -> out .= x, view.((Vr, Vs, Vt), :, sk), grad_simplex_3D(a, b, c, i, j, k))
                 sk += 1
             end
         end
     end
-    return V,Vr,Vs,Vt
+    return V, Vr, Vs, Vt
 end
