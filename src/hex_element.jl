@@ -2,13 +2,16 @@ function basis(elem::Hex, N, r, s, t)
     Np = convert(Int,(N+1)^3)
     sk = 1
     V, Vr, Vs, Vt = ntuple(x->zeros(length(r), Np),4)
-    for i=0:N
-        for j=0:N
-            for k=0:N
-                V[:,sk]  .= jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*jacobiP(t, 0, 0, k)
-                Vr[:,sk] .= grad_jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*jacobiP(t,0,0,k)
-                Vs[:,sk] .= jacobiP(r, 0, 0, i).*grad_jacobiP(s, 0, 0, j).*jacobiP(t,0,0,k)
-                Vt[:,sk] .= jacobiP(r, 0, 0, i).*jacobiP(s, 0, 0, j).*grad_jacobiP(t,0,0,k)
+    for k=0:N
+        for i=0:N
+            for j=0:N
+                P_i = jacobiP(r, 0, 0, i)
+                P_j = jacobiP(s, 0, 0, j)
+                P_k = jacobiP(t, 0, 0, k)
+                V[:,sk]  .= P_i .* P_j .* P_k
+                Vr[:,sk] .= grad_jacobiP(r, 0, 0, i) .* P_j .* P_k
+                Vs[:,sk] .= P_i .* grad_jacobiP(s, 0, 0, j) .* P_k
+                Vt[:,sk] .= P_i .* P_j .* grad_jacobiP(t,0,0,k)
                 sk += 1
             end
         end
@@ -20,7 +23,7 @@ end
 # ===================================================
 
 function nodes(elem::Hex, N)
-    r1D,w1D = gauss_lobatto_quad(0,0,N)
+    r1D, _ = gauss_lobatto_quad(0,0,N)
     return vec.(meshgrid(r1D,r1D,r1D))
 end
 
