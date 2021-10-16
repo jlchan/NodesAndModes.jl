@@ -1,24 +1,33 @@
 function basis(elem::Hex, N, r, s, t)
-    Np = convert(Int,(N+1)^3)
-    sk = 1
-    V, Vr, Vs, Vt = ntuple(x->zeros(length(r), Np),4)
-    for k=0:N
-        for i=0:N
-            for j=0:N
-                P_i = jacobiP(r, 0, 0, i)
-                P_j = jacobiP(s, 0, 0, j)
-                P_k = jacobiP(t, 0, 0, k)
-                V[:,sk]  .= P_i .* P_j .* P_k
-                Vr[:,sk] .= grad_jacobiP(r, 0, 0, i) .* P_j .* P_k
-                Vs[:,sk] .= P_i .* grad_jacobiP(s, 0, 0, j) .* P_k
-                Vt[:,sk] .= P_i .* P_j .* grad_jacobiP(t,0,0,k)
-                sk += 1
+    Np = convert(Int, (N+1)^3)
+    V, Vr, Vs, Vt = ntuple(x->zeros(length(r), Np), 4)
+    tmp_array = zeros(N+1)
+    for ii in eachindex(r, s, t)                                                
+        sk = 1
+        for k in 0:N
+            P_k = jacobiP(t[ii], 0, 0, k, tmp_array)
+            dP_k = grad_jacobiP(t[ii], 0, 0, k, tuple(tmp_array))
+            for i in 0:N
+                P_i = jacobiP(r[ii], 0, 0, i, tmp_array)
+                dP_i = grad_jacobiP(r[ii], 0, 0, i, tuple(tmp_array))
+                for j in 0:N
+                    P_j = jacobiP(s[ii], 0, 0, j, tmp_array)
+                    dP_j = grad_jacobiP(s[ii], 0, 0, j, tuple(tmp_array))
+                    
+                    V[ii, sk]  = P_i * P_j * P_k
+                    Vr[ii, sk] = dP_i * P_j * P_k
+                    Vs[ii, sk] = P_i * dP_j * P_k
+                    Vt[ii, sk] = P_i * P_j * dP_k
+                   
+                    sk += 1
+                end                
             end
         end
     end
 
     return V, Vr, Vs, Vt
 end
+
 
 # ===================================================
 
