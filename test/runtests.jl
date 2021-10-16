@@ -36,76 +36,73 @@ using LinearAlgebra
     end
 end
 
+area(elem::Quad) = 4.0
+area(elem::Tri) = 2.0
+
 @testset "2D $elem basis tests" for elem in (Tri(), Quad())
-    area(elem::Quad) = 4.0
-    area(elem::Tri) = 2.0
 
-    @testset begin
-        tol = 1e2*eps()
+    tol = 1e2*eps()
 
-        N = 3
-        rq, sq, wq = quad_nodes(elem, N)
-        @test sum(wq) ≈ area(elem) 
+    N = 3
+    rq, sq, wq = quad_nodes(elem, N)
+    @test sum(wq) ≈ area(elem) 
 
-        Vq = vandermonde(elem, N, rq, sq)
-        @test Vq' * diagm(wq) * Vq ≈ I
+    Vq = vandermonde(elem, N, rq, sq)
+    @test Vq' * diagm(wq) * Vq ≈ I
 
-        r, s = nodes(elem, N)
-        V = vandermonde(elem, N, r, s)
-        Dr, Ds = (A->A / V).(grad_vandermonde(elem, N, r, s))
-        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) < tol
-        @test norm(Dr * s) + norm(Ds * r) < tol
-        @test Dr * r ≈ ones(length(r))
-        @test Ds * s ≈ ones(length(s))
+    r, s = nodes(elem, N)
+    V = vandermonde(elem, N, r, s)
+    Dr, Ds = (A->A / V).(grad_vandermonde(elem, N, r, s))
+    @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) < tol
+    @test norm(Dr * s) + norm(Ds * r) < tol
+    @test Dr * r ≈ ones(length(r))
+    @test Ds * s ≈ ones(length(s))
 
-        r, s = equi_nodes(elem, N)
-        V = vandermonde(elem, N, r, s)
-        Dr,Ds = (A->A / V).(grad_vandermonde(elem, N, r, s))
-        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) < tol
-        @test norm(Dr * s) + norm(Ds * r) < tol
-        @test Dr*r ≈ ones(length(r))
-        @test Ds*s ≈ ones(length(s))
-    end
+    r, s = equi_nodes(elem, N)
+    V = vandermonde(elem, N, r, s)
+    Dr,Ds = (A->A / V).(grad_vandermonde(elem, N, r, s))
+    @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) < tol
+    @test norm(Dr * s) + norm(Ds * r) < tol
+    @test Dr*r ≈ ones(length(r))
+    @test Ds*s ≈ ones(length(s))
 end
+
+volume(elem::Hex) = 8
+volume(elem::Wedge) = 4
+volume(elem::Pyr) = 8/3
+volume(elem::Tet) = 4/3
 
 @testset "3D $elem basis tests" for elem in (Hex(), Wedge(), Pyr(), Tet())
 
-    volume(elem::Hex) = 8
-    volume(elem::Wedge) = 4
-    volume(elem::Pyr) = 8/3
-    volume(elem::Tet) = 4/3
+    tol = 5e2*eps()
 
-    @testset "3D tests for $elem" begin
-        tol = 5e2*eps()
-
-        N = 3
-        rq, sq, tq, wq = quad_nodes(elem,N)
-        @test sum(wq) ≈ volume(elem)
-        if elem==Hex()
-            @test abs(sum(rq .* wq)) + abs(sum(sq .* wq)) + abs(sum(tq .* wq)) < tol
-        end
-
-        Vq = vandermonde(elem, N, rq, sq, tq)
-        @test Vq' * diagm(wq) * Vq ≈ I
-
-        r, s, t = nodes(elem, N)
-        V = vandermonde(elem, N, r, s, t)
-        Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem,N, r, s, t))
-        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
-        @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
-        @test Dr * r ≈ ones(length(r))
-        @test Ds * s ≈ ones(length(s))
-        @test Dt * t ≈ ones(length(t))
-
-        r, s, t = equi_nodes(elem, N)
-        V = vandermonde(elem,N, r, s, t)
-        Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem, N, r, s, t))
-        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
-        @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
-        @test Dr * r ≈ ones(length(r))
-        @test Ds * s ≈ ones(length(s))
-        @test Dt * t ≈ ones(length(t))
+    N = 3
+    rq, sq, tq, wq = quad_nodes(elem,N)
+    @test sum(wq) ≈ volume(elem)
+    if elem==Hex()
+        @test abs(sum(rq .* wq)) + abs(sum(sq .* wq)) + abs(sum(tq .* wq)) < tol
     end
+
+    Vq = vandermonde(elem, N, rq, sq, tq)
+    @test Vq' * diagm(wq) * Vq ≈ I
+
+    r, s, t = nodes(elem, N)
+    V = vandermonde(elem, N, r, s, t)
+    Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem,N, r, s, t))
+    @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
+    @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
+    @test Dr * r ≈ ones(length(r))
+    @test Ds * s ≈ ones(length(s))
+    @test Dt * t ≈ ones(length(t))
+
+    r, s, t = equi_nodes(elem, N)
+    V = vandermonde(elem,N, r, s, t)
+    Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem, N, r, s, t))
+    @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
+    @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
+    @test Dr * r ≈ ones(length(r))
+    @test Ds * s ≈ ones(length(s))
+    @test Dt * t ≈ ones(length(t))    
 end
 
 @testset "Test for Kronecker structure in the Hex basis matrix" begin
