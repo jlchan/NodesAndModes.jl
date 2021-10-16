@@ -36,99 +36,76 @@ using LinearAlgebra
     end
 end
 
-@testset "2D tri tests" begin
-    tol = 1e2*eps()
+@testset "2D $elem basis tests" for elem in (Tri(), Quad())
+    area(elem::Quad) = 4.0
+    area(elem::Tri) = 2.0
 
-    N = 3
-    rq,sq,wq = quad_nodes(Tri(),N)
-    @test sum(wq)≈2
-    @test sum(rq.*wq)≈ -2/3
-    @test sum(sq.*wq)≈ -2/3
+    @testset begin
+        tol = 1e2*eps()
 
-    Vq = vandermonde(Tri(),N,rq,sq)
-    @test Vq'*diagm(wq)*Vq ≈ I
+        N = 3
+        rq, sq, wq = quad_nodes(elem, N)
+        @test sum(wq) ≈ area(elem) 
 
-    r,s = nodes(Tri(),N)
-    V = vandermonde(Tri(),N,r,s)
-    Dr,Ds = (A->A/V).(grad_vandermonde(Tri(),N,r,s))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
-    @test norm(Dr*s)+norm(Ds*r) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
+        Vq = vandermonde(elem, N, rq, sq)
+        @test Vq' * diagm(wq) * Vq ≈ I
 
-    r,s = equi_nodes(Tri(),N)
-    V = vandermonde(Tri(),N,r,s)
-    Dr,Ds = (A->A/V).(grad_vandermonde(Tri(),N,r,s))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
-    @test norm(Dr*s)+norm(Ds*r) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
+        r, s = nodes(elem, N)
+        V = vandermonde(elem, N, r, s)
+        Dr, Ds = (A->A / V).(grad_vandermonde(elem, N, r, s))
+        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) < tol
+        @test norm(Dr * s) + norm(Ds * r) < tol
+        @test Dr * r ≈ ones(length(r))
+        @test Ds * s ≈ ones(length(s))
 
-    # test duffy quadrature too
-    N = 14
-    rq,sq,wq = quad_nodes(Tri(),N)
-    @test sum(wq)≈2
-    @test sum(rq.*wq)≈ -2/3
-    @test sum(sq.*wq)≈ -2/3
+        r, s = equi_nodes(elem, N)
+        V = vandermonde(elem, N, r, s)
+        Dr,Ds = (A->A / V).(grad_vandermonde(elem, N, r, s))
+        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) < tol
+        @test norm(Dr * s) + norm(Ds * r) < tol
+        @test Dr*r ≈ ones(length(r))
+        @test Ds*s ≈ ones(length(s))
+    end
 end
 
-@testset "2D quad tests" begin
-    tol = 1e2*eps()
+@testset "3D $elem basis tests" for elem in (Hex(), Wedge(), Pyr(), Tet())
 
-    N = 3
-    rq,sq,wq = quad_nodes(Quad(),N)
-    @test sum(wq) ≈ 4
-    @test abs(sum(rq.*wq)) < tol
-    @test abs(sum(sq.*wq)) < tol
+    volume(elem::Hex) = 8
+    volume(elem::Wedge) = 4
+    volume(elem::Pyr) = 8/3
+    volume(elem::Tet) = 4/3
 
-    Vq = vandermonde(Quad(),N,rq,sq)
-    @test Vq'*diagm(wq)*Vq ≈ I
+    @testset "3D tests for $elem" begin
+        tol = 5e2*eps()
 
-    r,s = nodes(Quad(),N)
-    V = vandermonde(Quad(),N,r,s)
-    Dr,Ds = (A->A/V).(grad_vandermonde(Quad(),N,r,s))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
-    @test norm(Dr*s)+norm(Ds*r) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
+        N = 3
+        rq, sq, tq, wq = quad_nodes(elem,N)
+        @test sum(wq) ≈ volume(elem)
+        if elem==Hex()
+            @test abs(sum(rq .* wq)) + abs(sum(sq .* wq)) + abs(sum(tq .* wq)) < tol
+        end
 
-    r,s = equi_nodes(Quad(),N)
-    V = vandermonde(Quad(),N,r,s)
-    Dr,Ds = (A->A/V).(grad_vandermonde(Quad(),N,r,s))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) < tol
-    @test norm(Dr*s)+norm(Ds*r) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-end
+        Vq = vandermonde(elem, N, rq, sq, tq)
+        @test Vq' * diagm(wq) * Vq ≈ I
 
-@testset "3D hex tests" begin
-    tol = 5e2*eps()
+        r, s, t = nodes(elem, N)
+        V = vandermonde(elem, N, r, s, t)
+        Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem,N, r, s, t))
+        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
+        @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
+        @test Dr*r ≈ ones(length(r))
+        @test Ds*s ≈ ones(length(s))
+        @test Dt*t ≈ ones(length(t))
 
-    N = 3
-    rq,sq,tq,wq = quad_nodes(Hex(),N)
-    @test sum(wq) ≈ 8
-    @test abs(sum(rq.*wq))+abs(sum(sq.*wq))+abs(sum(tq.*wq)) < tol
-
-    Vq = vandermonde(Hex(),N,rq,sq,tq)
-    @test Vq'*diagm(wq)*Vq ≈ I
-
-    r,s,t = nodes(Hex(),N)
-    V = vandermonde(Hex(),N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(grad_vandermonde(Hex(),N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
-
-    r,s,t = equi_nodes(Hex(),N)
-    V = vandermonde(Hex(),N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(grad_vandermonde(Hex(),N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
+        r, s, t = equi_nodes(elem, N)
+        V = vandermonde(elem,N, r, s, t)
+        Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem, N, r, s, t))
+        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
+        @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
+        @test Dr * r ≈ ones(length(r))
+        @test Ds * s ≈ ones(length(s))
+        @test Dt * t ≈ ones(length(t))
+    end
 end
 
 @testset "Test for Kronecker structure in the Hex basis matrix" begin
@@ -140,112 +117,39 @@ end
     @test abs(norm(vandermonde(Hex(), N, quad_nodes(Hex(), N)[1:3]...) - kron(VDM_quad_1D, VDM_quad_1D, VDM_quad_1D))) < tol
 end
 
-@testset "3D pyr tests" begin
+# test high order quadrature
+@testset "Simplicial Stroud quadrature" begin
     tol = 1e3*eps()
 
-    N = 3
-    rq,sq,tq,wq = quad_nodes(Pyr(),N)
-    @test sum(wq) ≈ 8/3
+    N = 14
+    rq, sq, wq = quad_nodes(Tri(), N)
+    @test sum(wq) ≈ 2
+    @test sum(rq .* wq) ≈ -2/3
+    @test sum(sq .* wq) ≈ -2/3
 
-    Vq = vandermonde(Pyr(),N,rq,sq,tq)
-    @test Vq'*diagm(wq)*Vq ≈ I
-
-    r,s,t = nodes(Pyr(),N)
-    V = vandermonde(Pyr(),N,r,s,t)
-    rq,sq,tq,wq = quad_nodes(Pyr(),N)
-    Vq,Vr,Vs,Vt = (A->A/V).(basis(Pyr(),N,rq,sq,tq))
-    M = Vq'*diagm(wq)*Vq
-    Dr,Ds,Dt = (A->M\(Vq'*diagm(wq)*A)).((Vr,Vs,Vt))
-    # Dr,Ds,Dt = (A->A/V).(Pyr.grad_vandermonde(N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
-end
-
-@testset "3D wedge tests" begin
-    tol = 1e3*eps()
-
-    N = 3
-    rq,sq,tq,wq = quad_nodes(Wedge(),N)
-    @test sum(wq) ≈ 4
-    @test abs(sum(tq.*wq)) < tol
-
-    Vq = vandermonde(Wedge(),N,rq,sq,tq)
-    @test Vq'*diagm(wq)*Vq ≈ I
-
-    r,s,t = nodes(Wedge(),N)
-    V = vandermonde(Wedge(),N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(grad_vandermonde(Wedge(),N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
-
-    r,s,t = equi_nodes(Wedge(),N)
-    V = vandermonde(Wedge(),N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(grad_vandermonde(Wedge(),N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
-end
-
-@testset "3D tet tests" begin
-    tol = 1e3*eps()
-
-    N = 3
-    rq,sq,tq,wq = quad_nodes(Tet(),N)
-    @test sum(wq) ≈ 4/3
-
-    Vq = vandermonde(Tet(),N,rq,sq,tq)
-    @test Vq'*diagm(wq)*Vq ≈ I
-
-    r,s,t = nodes(Tet(),N)
-    V = vandermonde(Tet(),N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(grad_vandermonde(Tet(),N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
-
-    r,s,t = equi_nodes(Tet(),N)
-    V = vandermonde(Tet(),N,r,s,t)
-    Dr,Ds,Dt = (A->A/V).(grad_vandermonde(Tet(),N,r,s,t))
-    @test norm(sum(Dr,dims=2)) + norm(sum(Ds,dims=2)) + norm(sum(Dt,dims=2)) < tol
-    @test norm(Dr*s)+norm(Dr*t)+norm(Ds*r)+norm(Ds*t)+norm(Dt*r)+norm(Dt*s) < tol
-    @test Dr*r ≈ ones(length(r))
-    @test Ds*s ≈ ones(length(s))
-    @test Dt*t ≈ ones(length(t))
-
-    # test high order quadrature
     N = 8
-    rq,sq,tq,wq = quad_nodes(Tet(),N)
-    @test sum(wq)≈4/3
-    @test sum(rq.*wq)≈ -2/3
-    @test sum(sq.*wq)≈ -2/3
-    @test sum(tq.*wq)≈ -2/3
+    rq, sq, tq, wq = quad_nodes(Tet(), N)
+    @test sum(wq) ≈ 4/3
+    @test sum(rq .* wq) ≈ -2/3
+    @test sum(sq .* wq) ≈ -2/3
+    @test sum(tq .* wq) ≈ -2/3
 end
 
 if VERSION >= v"1.6" # apparently inference got better after 1.5?
-    @testset "Inferrability for $elementType" for elementType in [Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex()] 
+    @testset "Inferrability for $elementType" for elementType in (Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex())
         N = 1
-        if elementType==Line()
-            @test_nowarn (@inferred gauss_quad(0,0,N)) == ([-0.5773502691896257, 0.5773502691896257], [0.9999999999999998, 0.9999999999999998])
-            @test_nowarn (@inferred gauss_lobatto_quad(0,0,N)) == ([-1.0, 1.0], [1.0, 1.0])
+        if elementType == Line()
+            @test_nowarn (@inferred gauss_quad(0, 0, N)) == ([-0.5773502691896257, 0.5773502691896257], [0.9999999999999998, 0.9999999999999998])
+            @test_nowarn (@inferred gauss_lobatto_quad(0, 0, N)) == ([-1.0, 1.0], [1.0, 1.0])
         end
         
-        @test_nowarn @inferred nodes(elementType,N)
-        @test_nowarn @inferred quad_nodes(elementType,N)
-        @test_nowarn @inferred equi_nodes(elementType,N)
-        if elementType==Line()
-            @test_nowarn @inferred basis(elementType,N,nodes(elementType,N))
+        @test_nowarn @inferred nodes(elementType, N)
+        @test_nowarn @inferred quad_nodes(elementType, N)
+        @test_nowarn @inferred equi_nodes(elementType, N)
+        if elementType == Line()
+            @test_nowarn @inferred basis(elementType, N, nodes(elementType,N))
         else
-            @test_nowarn @inferred basis(elementType,N,nodes(elementType,N)...)
+            @test_nowarn @inferred basis(elementType, N, nodes(elementType,N)...)
         end
     end
 end
