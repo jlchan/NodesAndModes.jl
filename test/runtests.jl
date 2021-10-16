@@ -93,9 +93,9 @@ end
         Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem,N, r, s, t))
         @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
         @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
-        @test Dr*r ≈ ones(length(r))
-        @test Ds*s ≈ ones(length(s))
-        @test Dt*t ≈ ones(length(t))
+        @test Dr * r ≈ ones(length(r))
+        @test Ds * s ≈ ones(length(s))
+        @test Dt * t ≈ ones(length(t))
 
         r, s, t = equi_nodes(elem, N)
         V = vandermonde(elem,N, r, s, t)
