@@ -74,7 +74,7 @@ volume(elem::Tet) = 4/3
 
 @testset "3D $elem basis tests" for elem in (Hex(), Wedge(), Pyr(), Tet())
 
-    tol = 5e2*eps()
+    tol = 5e2 * eps()
 
     N = 3
     rq, sq, tq, wq = quad_nodes(elem,N)
@@ -86,23 +86,45 @@ volume(elem::Tet) = 4/3
     Vq = vandermonde(elem, N, rq, sq, tq)
     @test Vq' * diagm(wq) * Vq ≈ I
 
-    r, s, t = nodes(elem, N)
-    V = vandermonde(elem, N, r, s, t)
-    Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem,N, r, s, t))
-    @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
-    @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
-    @test Dr * r ≈ ones(length(r))
-    @test Ds * s ≈ ones(length(s))
-    @test Dt * t ≈ ones(length(t))
+    if elem != Pyr()
+        r, s, t = nodes(elem, N)
+        V = vandermonde(elem, N, r, s, t)
+        Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem, N, r, s, t))
+        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
+        @test norm(Dr * s) + norm(Dr * t) < tol
+        @test norm(Ds * r) + norm(Ds * t) < tol
+        @test norm(Dt * r) + norm(Dt * s) < tol
+        @test Dr * r ≈ ones(length(r))
+        @test Ds * s ≈ ones(length(s))
+        @test Dt * t ≈ ones(length(t))
 
-    r, s, t = equi_nodes(elem, N)
-    V = vandermonde(elem,N, r, s, t)
-    Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem, N, r, s, t))
-    @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
-    @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
-    @test Dr * r ≈ ones(length(r))
-    @test Ds * s ≈ ones(length(s))
-    @test Dt * t ≈ ones(length(t))    
+        r, s, t = equi_nodes(elem, N)
+        V = vandermonde(elem, N, r, s, t)
+        Dr, Ds, Dt = (A->A / V).(grad_vandermonde(elem, N, r, s, t))
+        @test norm(sum(Dr, dims=2)) + norm(sum(Ds, dims=2)) + norm(sum(Dt, dims=2)) < tol
+        @test norm(Dr * s) + norm(Dr * t) + norm(Ds * r) + norm(Ds * t) + norm(Dt * r) + norm(Dt * s) < tol
+        @test Dr * r ≈ one.(r)
+        @test Ds * s ≈ one.(s)
+        @test Dt * t ≈ one.(t)   
+    elseif elem == Pyr()
+        r, s, t = nodes(elem, N)
+        rq, sq, tq, wq = quad_nodes(elem, N)        
+        Vq, Vr, Vs, Vt = (A -> A / vandermonde(elem, N, r, s, t)).(basis(elem, N, rq, sq, tq))
+        M = Vq' * diagm(wq) * Vq
+
+        # construct weak differentiation matrices instead of nodal differentiation matrices since 
+        # the pyramid basis is singular at the node at the tip of the pyramid. 
+        Dr, Ds, Dt = (A -> M \ (Vq' * diagm(wq) * A)).((Vr, Vs, Vt))
+        @test norm(sum(Dr, dims=2)) < tol
+        @test norm(sum(Ds, dims=2)) < tol
+        @test norm(sum(Dt, dims=2)) < tol
+        @test norm(Dr * s) + norm(Dr * t) < tol
+        @test norm(Ds * r) + norm(Ds * t) < tol
+        @test norm(Dt * r) + norm(Dt * s) < tol
+        @test Dr * r ≈ one.(r)
+        @test Ds * s ≈ one.(s)
+        @test Dt * t ≈ one.(t)
+    end
 end
 
 @testset "Test for Kronecker structure in the Hex basis matrix" begin
