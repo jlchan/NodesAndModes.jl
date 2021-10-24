@@ -65,6 +65,14 @@ area(elem::Tri) = 2.0
     @test norm(Dr * s) + norm(Ds * r) < tol
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
+
+    # check for Kronecker structure
+    if elem == Quad()
+        r, s = nodes(elem, N)
+        V = vandermonde(elem, N, r, s)
+        V1D = vandermonde(Line(), N, nodes(Line(), N))
+        @test V ≈ kron(V1D, V1D)
+    end
 end
 
 volume(elem::Hex) = 8
