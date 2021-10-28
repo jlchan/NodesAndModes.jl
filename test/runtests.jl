@@ -72,6 +72,11 @@ area(elem::Tri) = 2.0
         V = vandermonde(elem, N, r, s)
         V1D = vandermonde(Line(), N, nodes(Line(), N))
         @test V ≈ kron(V1D, V1D)
+
+        rq, sq = quad_nodes(elem, N)
+        Vq = vandermonde(elem, N, rq, sq)
+        Vq1D = vandermonde(Line(), N, quad_nodes(Line(), N)[1])
+        @test Vq ≈ kron(Vq1D, Vq1D)
     end
 end
 
