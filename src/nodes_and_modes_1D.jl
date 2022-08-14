@@ -62,81 +62,82 @@ function gauss_quad(α, β, N)
 end
 
 """
-    jacobiP(x, α, β, N, tmp_array=zeros(N+1))
-    jacobiP(x::AbstractArray, α, β, N)
+    jacobiP(x, α, β, N)
+    jacobiP!(out, x, α, β, N)    
+    jacobiP(x::T, α, β, N) where {T <: Real}
 
 Evaluate the Jacobi Polynomial (α, β) of order N at points x. 
-Can optionally specify `tmp_array` of length > N+1 to avoid allocations.
+Can optionally specify the output array `out` to avoid allocations.
 """
-function jacobiP(x, α, β, N, tmp_array=zeros(N+1))
+# vectorized version. 
+function jacobiP(x, α, β, N)
+    PL = zeros(length(x))
+    return jacobiP!(PL, x, α, β, N)
+end
 
-    PL = tmp_array
-    γ₀ = 2^(α+β+1) / (α+β+1) * gamma(α+1) * gamma(β+1) / gamma(α+β+1)
-    PL[1] = 1.0 / sqrt(γ₀)
+# non-allocating vector version
+function jacobiP!(out, x, α, β, N)    
+    for i in eachindex(x)
+        out[i] = jacobiP(x[i], α, β, N)
+    end
+    return out
+end
+
+# non-allocating scalar version of jacobiP
+function jacobiP(x::T, α, β, N) where {T <: Real}
+
+    γ₀ = 2^(α + β + 1) / (α + β + 1) * gamma(α + 1) * gamma(β + 1) / gamma(α + β + 1)
+    PL = 1.0 / sqrt(γ₀)
     if N == 0
-        return PL[1]
+        return PL
     end
 
-    γ₁ = (α+1) * (β+1) / (α+β+3) * γ₀
-    PL[2] = ((α+β+2) * x/2 + (α-β)/2) / sqrt(γ₁)
+    γ₁ = (α + 1) * (β + 1) / (α + β + 3) * γ₀
+    PL_prev = PL
+    PL = ((α + β + 2) * x / 2 + (α - β) / 2) / sqrt(γ₁)
     if N == 1        
-        return PL[N+1]
+        return PL
     end
 
     aold = 2 / (2+α+β) * sqrt((α+1) * (β+1) / (α + β + 3))
-
+    PL_prev2 = PL_prev
+    PL_prev = PL
     for i = 1:N-1
         h₁ = 2i + α + β
         anew = 2 / (h₁+2) * sqrt((i+1) * (i+1+α+β) * (i+1+α) * (i+1+β) / (h₁+1) / (h₁+3))
         bnew = -(α^2-β^2) / h₁ / (h₁+2)
-        PL[i+2] = 1 / anew * (-aold * PL[i] + (x - bnew) * PL[i+1])
+        PL = 1 / anew * (-aold * PL_prev2 + (x - bnew) * PL_prev)
         aold = anew
+
+        # reset recursion
+        PL_prev2 = PL_prev
+        PL_prev = PL
     end
     
-    return PL[N+1]
-end
-
-# vectorized version. 
-# TODO: deprecate?
-function jacobiP(x::AbstractArray, α, β, N)
-
-    PL = zeros(N+1, length(x))
-    γ₀ = 2^(α+β+1) / (α+β+1) * gamma(α+1) * gamma(β+1) / gamma(α+β+1)
-    @. PL[1,:] = 1.0/sqrt(γ₀)
-    if N == 0
-        return vec(PL)
-    end
-
-    γ₁ = (α+1) * (β+1) / (α+β+3) * γ₀
-    @. PL[2, :] = ((α+β+2) * x/2 + (α-β)/2) / sqrt(γ₁)
-    if N == 1        
-        return PL[N+1,:]
-    end
-
-    aold = 2 / (2+α+β) * sqrt((α+1) * (β+1) / (α + β + 3))
-
-    for i = 1:N-1
-        h₁ = 2i+α+β
-        anew = 2 / (h₁+2) * sqrt((i+1) * (i+1+α+β) * (i+1+α) * (i+1+β) / (h₁+1) / (h₁+3))
-        bnew = -(α^2-β^2) / h₁ / (h₁+2)
-        @. PL[i+2,:] = 1 / anew * (-aold * PL[i,:] .+ (x .- bnew) .* PL[i+1,:])
-        aold = anew
-    end
-    
-    return PL[N+1,:]
+    return PL
 end
 
 """
     grad_jacobiP(r, α, β, N, tmp_array=())
 
 Evaluate derivative of Jacobi polynomial (α, β) of order N at points r.
-Pass in `tmp_array = tuple(zeros(N+1))` to avoid allocations.
 """
+function grad_jacobiP(r, α, β, N)
+    out = zeros(length(r))
+    return grad_jacobiP!(out, r, α, β, N)
+end
 
-function grad_jacobiP(r, α, β, N, tmp_array=())    
+function grad_jacobiP!(out, r, α, β, N)
+    for i in eachindex(r)
+        out[i] = grad_jacobiP(r[i], α, β, N)
+    end
+    return out
+end
+
+function grad_jacobiP(r::T, α, β, N) where {T <: Real}
     if N != 0
-        return sqrt(N * (N+α+β+1)) * jacobiP(r, α+1, β+1, N-1, tmp_array...)
+        return sqrt(N * (N+α+β+1)) * jacobiP(r, α+1, β+1, N-1)
     else
-        return zero(r) 
+        return zero(typeof(r))
     end
 end

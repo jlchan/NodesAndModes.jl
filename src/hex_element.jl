@@ -5,14 +5,14 @@ function basis(elem::Hex, N, r, s, t)
     for ii in eachindex(r, s, t)                                                
         sk = 1
         for k in 0:N
-            P_k = jacobiP(t[ii], 0, 0, k, tmp_array)
-            dP_k = grad_jacobiP(t[ii], 0, 0, k, tuple(tmp_array))
+            P_k = jacobiP(t[ii], 0, 0, k)
+            dP_k = grad_jacobiP(t[ii], 0, 0, k)
             for i in 0:N
-                P_i = jacobiP(r[ii], 0, 0, i, tmp_array)
-                dP_i = grad_jacobiP(r[ii], 0, 0, i, tuple(tmp_array))
+                P_i = jacobiP(r[ii], 0, 0, i)
+                dP_i = grad_jacobiP(r[ii], 0, 0, i)
                 for j in 0:N
-                    P_j = jacobiP(s[ii], 0, 0, j, tmp_array)
-                    dP_j = grad_jacobiP(s[ii], 0, 0, j, tuple(tmp_array))
+                    P_j = jacobiP(s[ii], 0, 0, j)
+                    dP_j = grad_jacobiP(s[ii], 0, 0, j)
                     
                     V[ii, sk]  = P_i * P_j * P_k
                     Vr[ii, sk] = dP_i * P_j * P_k
