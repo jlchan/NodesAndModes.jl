@@ -43,21 +43,21 @@ Compute nodes and weights for Gaussian quadrature with Jacobi weights (α,β).
 """
 function gauss_quad(α, β, N)
     if N == 0
-        x = [-(α-β)/(α+β+2)]
+        x = [-(α - β) / (α + β + 2)]
         w = [2.]
         return x, w
     end
 
     J = zeros(N+1, N+1)
-    h₁ = @. 2*(0:N)+α+β    
-    J = diagm(0 => @. -1/2*(α^2-β^2)/(h₁+2)/h₁) + 
-        diagm(1 => @. 2/(h₁[1:N]+2) * sqrt((1:N) * ((1:N)+α+β) * ((1:N)+α) * ((1:N)+β) / (h₁[1:N]+1) / (h₁[1:N]+3)))
-    if α + β < 10*eps()
+    h₁ = @. 2 * (0:N) + α + β    
+    J = diagm(0 => @. -1/2 * (α^2 - β^2) / (h₁ + 2) / h₁) + 
+        diagm(1 => @. 2 / (h₁[1:N] + 2) * sqrt((1:N) * ((1:N) + α + β) * ((1:N) + α) * ((1:N) + β) / (h₁[1:N] + 1) / (h₁[1:N] + 3)))
+    if α + β < 10 * eps()
         J[1,1] = 0.0
     end
 
     x, V = eigen(Symmetric(J+J'))
-    w = @. transpose(V[1,:])^2 * 2^(α+β+1) / (α+β+1) * gamma(α+1) * gamma(β+1) / gamma(α+β+1)
+    w = @. transpose(V[1,:])^2 * 2^(α + β + 1) / (α + β + 1) * gamma(α + 1) * gamma(β + 1) / gamma(α + β + 1)
     return x[:], w[:]
 end
 
