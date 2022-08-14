@@ -168,20 +168,22 @@ end
 end
 
 if VERSION >= v"1.6" # apparently inference got better after 1.5?
-    @testset "Inferrability for $elementType" for elementType in (Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex())
-        N = 1
-        if elementType == Line()
-            @test_nowarn (@inferred gauss_quad(0, 0, N)) == ([-0.5773502691896257, 0.5773502691896257], [0.9999999999999998, 0.9999999999999998])
-            @test_nowarn (@inferred gauss_lobatto_quad(0, 0, N)) == ([-1.0, 1.0], [1.0, 1.0])
-        end
-        
-        @test_nowarn @inferred nodes(elementType, N)
-        @test_nowarn @inferred quad_nodes(elementType, N)
-        @test_nowarn @inferred equi_nodes(elementType, N)
-        if elementType == Line()
-            @test_nowarn @inferred basis(elementType, N, nodes(elementType,N))
-        else
-            @test_nowarn @inferred basis(elementType, N, nodes(elementType,N)...)
+    @testset "Inferrability tests" begin
+        for elementType in (Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex())
+            N = 1
+            if elementType == Line()
+                @test_nowarn (@inferred gauss_quad(0, 0, N)) == ([-0.5773502691896257, 0.5773502691896257], [0.9999999999999998, 0.9999999999999998])
+                @test_nowarn (@inferred gauss_lobatto_quad(0, 0, N)) == ([-1.0, 1.0], [1.0, 1.0])
+            end
+            
+            @test_nowarn @inferred nodes(elementType, N)
+            @test_nowarn @inferred quad_nodes(elementType, N)
+            @test_nowarn @inferred equi_nodes(elementType, N)
+            if elementType == Line()
+                @test_nowarn @inferred basis(elementType, N, nodes(elementType,N))
+            else
+                @test_nowarn @inferred basis(elementType, N, nodes(elementType,N)...)
+            end
         end
     end
 end
