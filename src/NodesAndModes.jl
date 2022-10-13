@@ -11,9 +11,10 @@ struct Line <: AbstractElemShape end
 struct Quad <: AbstractElemShape end
 struct Tri <: AbstractElemShape end
 struct Hex <: AbstractElemShape end
+struct Tet <: AbstractElemShape end
 
-# adding an optional container for the node ids 
-# on each face 
+# `node_ids_by_face` is an optional container for node ids of each face, since there is more than
+# one face type for both Wedge and Pyramid types.
 struct Wedge{T} <: AbstractElemShape 
     node_ids_by_face::T
 end
@@ -23,7 +24,6 @@ struct Pyr{T} <: AbstractElemShape
 end
 Pyr() = Pyr(nothing)
 
-struct Tet <: AbstractElemShape end
 
 export AbstractElemShape
 export Line
