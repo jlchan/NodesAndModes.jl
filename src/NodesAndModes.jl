@@ -11,8 +11,18 @@ struct Line <: AbstractElemShape end
 struct Quad <: AbstractElemShape end
 struct Tri <: AbstractElemShape end
 struct Hex <: AbstractElemShape end
-struct Wedge <: AbstractElemShape end
-struct Pyr <: AbstractElemShape end
+
+# adding an optional container for the node ids 
+# on each face 
+struct Wedge{T} <: AbstractElemShape 
+    node_ids_by_face::T
+end
+Wedge() = Wedge(nothing)
+struct Pyr{T} <: AbstractElemShape 
+    node_ids_by_face::T
+end
+Pyr() = Pyr(nothing)
+
 struct Tet <: AbstractElemShape end
 
 export AbstractElemShape
