@@ -8,8 +8,8 @@ function basis(::Wedge, N, r, s, t)
     Np = (N+1) * (N+2) * (N+1) ÷ 2
     V, Vr, Vs, Vt = ntuple(x->zeros(length(r), Np), 4)
     id = 1
-    for i in axes(V_tri, 2)
-        for j in axes(V_1D, 2)
+    for j in axes(V_1D, 2)
+        for i in axes(V_tri, 2)
             @. V[:,id]  = V_tri[:,i]  * V_1D[:,j]
             @. Vr[:,id] = Vr_tri[:,i] * V_1D[:,j]
             @. Vs[:,id] = Vs_tri[:,i] * V_1D[:,j]
