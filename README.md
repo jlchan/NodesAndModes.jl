@@ -38,35 +38,35 @@ To compute a 1D Vandermonde matrix using Gauss-Lobatto points and orthonormal po
 ```julia
 julia> using NodesAndModes
 julia> N = 2
-julia> r = nodes(Line(),N)
-julia> V = vandermonde(Line(),N,r)
+julia> r = nodes(Line(), N)
+julia> V = vandermonde(Line(), N, r)
 ```
 
-To compute a 2D triangular Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle (with coordinates `r,s`)
+To compute a 2D triangular Vandermonde matrix from Warp & Blend points (see [Warburton 2006](http://dx.doi.org/10.1007/s10665-006-9086-6)) and orthonormal polynomials on the triangle (with coordinates `r, s`)
 ```julia
 julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(Tri(),N)
-julia> V = vandermonde(Tri(),N,r,s)
+julia> r, s = nodes(Tri(), N)
+julia> V = vandermonde(Tri(), N, r, s)
 ```
 Nodal differentiation matrices `Dr` and `Ds` can be computed via
 ```julia
 julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(Tri(),N)
-julia> V,Vr,Vs = basis(Tri(),N,r,s)
-julia> Dr,Ds = (A->A/V).((Vr,Vs))
+julia> r,s = nodes(Tri(), N)
+julia> V, Vr, Vs = basis(Tri(), N, r, s)
+julia> Dr, Ds = (A -> A/V).((Vr, Vs))
 ```
-such that `Dr*f(r,s) ≈ df/dr`.
+such that `Dr * f(r,s) ≈ df/dr`.
 
-A mass matrix `M` and weak differentation matrices `Qr,Qs` in finite element or DG methods can be computed using quadrature via
+A mass matrix `M` and weak differentation matrices `Qr, Qs` in finite element or DG methods can be computed using quadrature via
 ```julia
 julia> using LinearAlgebra
 julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(Tri(),N)
-julia> V = vandermonde(Tri(),N,r,s)
-julia> rq,sq,wq = quad_nodes(Tri(),N)
-julia> Vq,Vrq,Vsq = (A->A/V).(basis(Tri(),N,rq,sq))
-julia> M,Qr,Qs = (A->Vq'*diagm(wq)*A).((Vq,Vrq,Vsq))
+julia> r, s = nodes(Tri(), N)
+julia> V = vandermonde(Tri(), N, r, s)
+julia> rq, sq, wq = quad_nodes(Tri(), N)
+julia> Vq, Vrq, Vsq = (A->A/V).(basis(Tri(), N, rq, sq))
+julia> M, Qr, Qs = (A->Vq' * diagm(wq) * A).((Vq, Vrq, Vsq))
 ```
