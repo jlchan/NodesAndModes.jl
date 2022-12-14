@@ -77,6 +77,9 @@ area(elem::Tri) = 2.0
         Vq = vandermonde(elem, N, rq, sq)
         Vq1D = vandermonde(Line(), N, quad_nodes(Line(), N)[1])
         @test Vq ≈ kron(Vq1D, Vq1D)
+
+        @test NodesAndModes.get_edge_list(Quad()) == ([1,2], [2,3], [3,4], [4,1])
+        @test NodesAndModes.face_basis(Quad(), N, r, s) ≈ NodesAndModes.edge_basis(Quad(), N, r, s)
     end
 end
 
