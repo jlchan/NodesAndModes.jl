@@ -135,6 +135,15 @@ function find_face_nodes(::Wedge, r, s, t, tol=50*eps())
     return fv1, fv2, fv3, fv4, fv5
 end
 
+function find_face_nodes(::Pyr, r, s, t, tol=50*eps())
+    fv1 = findall(@. abs(r + 1) < tol)  # +/- r tri faces
+    fv2 = findall(@. abs(r + t) < tol)   
+    fv3 = findall(@. abs(s + 1) < tol)  # +/- s tri faces
+    fv4 = findall(@. abs(s + t) < tol)  
+    fv5 = findall(@. abs(t + 1) < tol)  # bottom quad face
+    return fv1, fv2, fv3, fv4, fv5
+end
+
 # face vertices = face nodes of degree 1
 face_vertices(::Line) = 1, 2
 face_vertices(elem) = find_face_nodes(elem, nodes(elem, 1)...)
