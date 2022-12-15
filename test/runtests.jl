@@ -113,6 +113,8 @@ num_faces(::Hex) = 6
     Vq = vandermonde(elem, N, rq, sq, tq)
     @test Vq' * diagm(wq) * Vq ≈ I
 
+    @test length(NodesAndModes.face_vertices(elem)) == num_faces(elem)
+
     if elem != Pyr()
         r, s, t = nodes(elem, N)
         V = vandermonde(elem, N, r, s, t)
@@ -133,9 +135,6 @@ num_faces(::Hex) = 6
         @test Dr * r ≈ one.(r)
         @test Ds * s ≈ one.(s)
         @test Dt * t ≈ one.(t)   
-
-        # TODO: add this test for Pyr when implemented
-        @test length(NodesAndModes.face_vertices(elem)) == num_faces(elem)
         
     elseif elem == Pyr()
         r, s, t = nodes(elem, N)
