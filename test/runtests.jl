@@ -34,6 +34,8 @@ using LinearAlgebra
         @test norm(sum(Dr,dims=2)) < tol
         @test Dr*r ≈ ones(N+1)
     end
+
+    @test NodesAndModes.face_vertices(Line()) == (1, 2)
 end
 
 area(elem::Quad) = 4.0
@@ -66,6 +68,10 @@ area(elem::Tri) = 2.0
     @test Dr*r ≈ ones(length(r))
     @test Ds*s ≈ ones(length(s))
 
+    # elem is either a tri or quad type
+    num_faces = (elem == Tri()) ? 3 : 4
+    @test length(NodesAndModes.face_vertices(elem)) == num_faces
+
     # check for Kronecker structure
     if elem == Quad()
         r, s = nodes(elem, N)
@@ -87,6 +93,11 @@ volume(elem::Hex) = 8
 volume(elem::Wedge) = 4
 volume(elem::Pyr) = 8/3
 volume(elem::Tet) = 4/3
+
+num_faces(::Tet) = 4
+num_faces(::Wedge) = 5
+num_faces(::Pyr) = 5
+num_faces(::Hex) = 6
 
 @testset "3D $elem basis tests" for elem in (Hex(), Wedge(), Pyr(), Tet())
 
@@ -122,6 +133,10 @@ volume(elem::Tet) = 4/3
         @test Dr * r ≈ one.(r)
         @test Ds * s ≈ one.(s)
         @test Dt * t ≈ one.(t)   
+
+        # TODO: add this test for Pyr when implemented
+        @test length(NodesAndModes.face_vertices(elem)) == num_faces(elem)
+        
     elseif elem == Pyr()
         r, s, t = nodes(elem, N)
         rq, sq, tq, wq = quad_nodes(elem, N)        
