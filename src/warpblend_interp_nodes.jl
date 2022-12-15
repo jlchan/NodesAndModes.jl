@@ -142,14 +142,7 @@ face_vertices(elem) = find_face_nodes(elem, nodes(elem, 1)...)
 # for 2D elements, an edge is the same as a face
 face_basis(elem::T, N, rst...) where {T <: Union{Tri, Quad}} = edge_basis(elem, N, rst...)
 
-# # version for 3D elements, where edges and faces are different.  
-# function face_basis(elem::T, N, rst...) where {T <: Union{Hex}}
-#     V1 = vertex_functions(rst...)
-#     if N < 2
-#         return V1
-#     end
-#     # TODO: finish
-# end
+# TODO: version for 3D elements with the same types of faces
 
 """
     build_warped_nodes(elem::AbstractElemShape, N, r1D)
