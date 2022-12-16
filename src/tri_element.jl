@@ -72,7 +72,6 @@ end
 
 Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate degree N polynomials
 """
-
 function quad_nodes_tri(N)
 
     if N < 28
