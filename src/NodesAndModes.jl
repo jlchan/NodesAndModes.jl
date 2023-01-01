@@ -6,24 +6,24 @@ import SpecialFunctions: gamma
 include("meshgrid.jl")
 
 # each type of element shape - used for dispatch only
-abstract type AbstractElemShape end
-struct Line <: AbstractElemShape end
-struct Quad <: AbstractElemShape end
-struct Tri <: AbstractElemShape end
-struct Hex <: AbstractElemShape end
-struct Tet <: AbstractElemShape end
+abstract type AbstractElemShape{NDIMS} end
+struct Line <: AbstractElemShape{1} end
+struct Quad <: AbstractElemShape{2} end
+struct Tri <: AbstractElemShape{2} end
+struct Hex <: AbstractElemShape{3} end
+struct Tet <: AbstractElemShape{3} end
 
 # `node_ids_by_face` is an optional container for node ids of each face, since there is more than
 # one face type for both Wedge and Pyramid types.
-struct Wedge{T} <: AbstractElemShape 
+struct Wedge{T} <: AbstractElemShape{3}
     node_ids_by_face::T
 end
 Wedge() = Wedge(nothing)
-struct Pyr{T} <: AbstractElemShape 
+
+struct Pyr{T} <: AbstractElemShape{3}
     node_ids_by_face::T
 end
 Pyr() = Pyr(nothing)
-
 
 export AbstractElemShape
 export Line
