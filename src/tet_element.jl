@@ -99,7 +99,7 @@ function quad_nodes_tet(N)
         s = rstw[:,2]
         t = rstw[:,3]
         w = rstw[:,4]
-    elseif N<21
+    elseif N < 21
         r,s,t,w = jaskowiec_sukumar_quad_nodes(Tet(),N)
     else
         cubN = convert(Int,ceil((N+1)/2))
