@@ -191,8 +191,8 @@ end
     @test abs(norm(vandermonde(Hex(), N, quad_nodes(Hex(), N)[1:3]...) - kron(VDM_quad_1D, VDM_quad_1D, VDM_quad_1D))) < tol
 end
 
-# test high order quadrature
-@testset "Simplicial Stroud quadrature" begin
+# test high order symmetric quadrature rules
+@testset "Simplicial symmetric quadrature" begin
     tol = 1e3*eps()
 
     N = 14
@@ -202,6 +202,24 @@ end
     @test sum(sq .* wq) ≈ -2/3
 
     N = 8
+    rq, sq, tq, wq = quad_nodes(Tet(), N)
+    @test sum(wq) ≈ 4/3
+    @test sum(rq .* wq) ≈ -2/3
+    @test sum(sq .* wq) ≈ -2/3
+    @test sum(tq .* wq) ≈ -2/3
+end
+
+# test high order Stroud quadrature
+@testset "Simplicial Stroud quadrature" begin
+    tol = 1e3*eps()
+
+    N = 26
+    rq, sq, wq = quad_nodes(Tri(), N)
+    @test sum(wq) ≈ 2
+    @test sum(rq .* wq) ≈ -2/3
+    @test sum(sq .* wq) ≈ -2/3
+
+    N = 11
     rq, sq, tq, wq = quad_nodes(Tet(), N)
     @test sum(wq) ≈ 4/3
     @test sum(rq .* wq) ≈ -2/3

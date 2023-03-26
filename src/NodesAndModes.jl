@@ -34,7 +34,7 @@ export Hex, Wedge, Pyr, Tet
 
 # shared functions
 export vandermonde, grad_vandermonde, basis
-export nodes, equi_nodes, quad_nodes
+export nodes, equi_nodes, quad_nodes, stroud_quad_nodes
 include("common_functions.jl") # VDM, grad_VDM, and docs
 
 # interp nodes for Tet(), Tri()
@@ -62,6 +62,8 @@ include("quad_element.jl")
 include("hex_element.jl")
 include("wedge_element.jl")
 include("pyr_element.jl")
+
+export jaskowiec_sukumar_quad_nodes
 include("tet_element.jl")
 
 end # module

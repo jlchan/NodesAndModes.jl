@@ -99,12 +99,31 @@ function quad_nodes_tet(N)
         s = rstw[:,2]
         t = rstw[:,3]
         w = rstw[:,4]
+    elseif N < 21
+        r, s, t, w = jaskowiec_sukumar_quad_nodes(Tet(), N)
     else
         cubN = convert(Int,ceil((N+1)/2))
         r,s,t,w = stroud_quad_nodes(Tet(),cubN)
     end
 
     return r,s,t,w
+end
+
+"""
+    jaskowiek_sukumar_quad_nodes(elem::Tet)
+
+Symmetric quadrature rules on the tetrahedron of degree up to 20 from:
+
+Jaśkowiec, J, Sukumar, N., "High-order symmetric cubature rules for tetrahedra and pyramids." Int J Numer Methods Eng. 122(1): 148-171, 2021.
+"""
+function jaskowiec_sukumar_quad_nodes(elem::Tet, N)
+    if N > 20
+        @error "Jaskowiek-Sukumar quadrature rules not available for N > 20."
+    end
+
+    rstw::Matrix{Float64} = readdlm(string(@__DIR__,"/QuadratureData/jaskowiec_sukumar_nodes_tet_N", N, ".txt"), ' ', Float64, '\n')
+
+    return rstw[:,1], rstw[:,2], rstw[:,3], rstw[:,4]
 end
 
 function stroud_quad_nodes(elem::Tet,N)

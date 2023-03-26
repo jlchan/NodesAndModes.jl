@@ -73,7 +73,7 @@ Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate d
 """
 function quad_nodes_tri(N)
 
-    if N < 28
+    if N < 51
         rsw::Matrix{Float64} = readdlm(string(@__DIR__, "/QuadratureData/quad_nodes_tri_N", N, ".txt"), ' ', Float64, '\n')
         r = rsw[:, 1]
         s = rsw[:, 2]
