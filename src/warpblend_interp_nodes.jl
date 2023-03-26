@@ -10,16 +10,30 @@ Returns list of edges for a specific element (elem = Tri(), Pyr(), or Tet()).
 """
 get_edge_list(elem::AbstractElemShape)
 
-get_edge_list(elem::Tri)  = [1,2], [2,3], [3,1]
-get_edge_list(elem::Quad) = [1,2], [2,3], [3,4], [4,1] # not used directly but included for completeness
-get_edge_list(elem::Tet)  = [1,4], [4,3], [3,1], [1,2], [3,2], [4,2]
-get_edge_list(elem::Pyr)  = [1,2], [2,4], [3,4], [3,1], [1,5], [2,5], [3,5], [4,5]
+get_edge_list(::Tri)  = SVector(1, 2), SVector(2, 3), SVector(3, 1)
+get_edge_list(::Quad) = SVector(1, 2), SVector(2, 3), SVector(3, 4), SVector(4, 1) # not used directly but included for completeness
+get_edge_list(::Tet)  = SVector(1, 4), SVector(4, 3), SVector(3, 1), SVector(1, 2), SVector(3, 2), SVector(4, 2)
+get_edge_list(::Pyr)  = SVector(1, 2), SVector(2, 4), SVector(3, 4), SVector(3, 1), SVector(1, 5), SVector(2, 5), SVector(3, 5), SVector(4, 5)
+
+# edges = recursive ±xyz ordering on each face
+# 
+#    6 ---- 8
+#  / |    / |
+# 5 ---- 7  |
+# | 2 ___| 4
+# |/     |/ 
+# 1 ---- 3      
+ 
+get_edge_list(::Hex) = SVector(1, 5), SVector(3, 7), SVector(2, 6), SVector(4, 8), 
+                       SVector(1, 3), SVector(2, 4), SVector(1, 2), SVector(3, 4), 
+                       SVector(5, 7), SVector(6, 8), SVector(5, 6), SVector(7, 8)                        
+
 
 get_vertices(elem::AbstractElemShape) = equi_nodes(elem, 1)
 get_vertex_fxns(elem::AbstractElemShape) =
-    (rst...)->vandermonde(elem, 1, rst...) / vandermonde(elem, 1, equi_nodes(elem, 1)...)
+    (rst...) -> vandermonde(elem, 1, rst...) / vandermonde(elem, 1, equi_nodes(elem, 1)...)
 
-# assumes r1D in [-1,1], v1,v2 are vertices
+# assumes r1D in [-1,1], v1, v2 are vertices
 function interp_1D_to_line(r1D, v1, v2)
     runit = @. (1 + r1D) / 2
     return map((a,b) -> (b-a) * runit .+ a, v1, v2)
@@ -33,10 +47,10 @@ Interpolates points r1D to the edges of an element (elem = :Tri, :Pyr, or :Tet)
 function interp_1D_to_edges(elem::AbstractElemShape, r1D)
     v = get_vertices(elem)
     edges = get_edge_list(elem)
-    edge_pts = ntuple(x->zeros(length(r1D),length(edges)),length(v))
-    for (i,e) in enumerate(edges)
-        edge_pts_i = interp_1D_to_line(r1D,getindex.(v,e[1]),getindex.(v,e[2]))
-        setindex!.(edge_pts,edge_pts_i,:,i)
+    edge_pts = ntuple(x -> zeros(length(r1D), length(edges)), length(v))
+    for (i, e) in enumerate(edges)
+        edge_pts_i = interp_1D_to_line(r1D, getindex.(v, e[1]), getindex.(v, e[2]))
+        setindex!.(edge_pts, edge_pts_i, :, i)
     end
     return vec.(edge_pts)
 end
@@ -117,7 +131,7 @@ function find_face_nodes(::Hex, r, s, t, tol=50*eps())
 end
 
 function find_face_nodes(::Tet, r, s, t, tol=50*eps())
-    fv1 = findall(@. abs(s +1) < tol)
+    fv1 = findall(@. abs(s + 1) < tol)
     fv2 = findall(@. abs(r + s + t + 1) < tol)
     fv3 = findall(@. abs(r + 1) < tol)
     fv4 = findall(@. abs(t + 1) < tol)
@@ -151,7 +165,66 @@ face_vertices(elem) = find_face_nodes(elem, nodes(elem, 1)...)
 # for 2D elements, an edge is the same as a face
 face_basis(elem::T, N, rst...) where {T <: Union{Tri, Quad}} = edge_basis(elem, N, rst...)
 
-# TODO: version for 3D elements with the same types of faces
+num_vertices(::Hex) = 8
+num_faces(::Hex) = 6
+face_type(::Hex) = Quad()
+num_face_only_nodes(::Hex, N) = (N - 1)^2
+
+num_vertices(::Tet) = 4
+num_faces(::Tet) = 4
+face_type(::Tet) = Tri()
+# 3 edges per face * (N-1) nodes per edge, 3 vertices
+num_face_only_nodes(::Tet, N) = max(0, (N + 1) * (N + 2) ÷ 2 - (3 * (N-1) + 3)) 
+
+function pointwise_product_of_columns(A)
+    a = ones(size(A, 1))
+    for A_i in eachcol(A)
+        @. a *= A_i
+    end
+    return a
+end
+
+# specialized face basis for Hexahedra
+function face_basis(elem, N, r, s, t)
+
+    if (elem isa Wedge) || (elem isa Pyr)
+        @error "Face bases for wedges and pyramids not yet supported"
+    end
+        
+    V_edge = edge_basis(elem, N, r, s, t)    
+    if (N < 2 && elem isa Hex) || (N < 3 && elem isa Tet)
+        return V_edge    
+    end
+
+    # initialize vertex and edge basis functions
+    V = zeros(length(r), size(V_edge, 2) + num_faces(elem) * num_face_only_nodes(elem, N))
+    V[:, 1:size(V_edge, 2)] .= V_edge
+    id = size(V_edge, 2) + 1
+
+    V1 = view(V_edge, :, 1:num_vertices(elem))
+    r1, s1 = nodes(face_type(elem), 1)
+    face_vertices = NodesAndModes.face_vertices(elem)
+    for fids in face_vertices
+
+        # compute face coordinates as a barycentric combo of reference vertices
+        rf = sum([V1[:, fids[i]] * r1[i] for i in eachindex(r1, s1)])
+        sf = sum([V1[:, fids[i]] * s1[i] for i in eachindex(r1, s1)])
+        
+        # extend face polynomials linearly
+        linear_face_basis = pointwise_product_of_columns(V1[:, fids])
+        if elem isa Hex
+            V_face = vandermonde(face_type(elem), N-2, rf, sf)
+        elseif elem isa Tet
+            V_face = vandermonde(face_type(elem), N-3, rf, sf)
+        end 
+        for i in axes(V_face, 2)
+            @. V[:, id] = V_face[:, i] * linear_face_basis
+            id += 1
+        end
+    end
+
+    return V
+end
 
 """
     build_warped_nodes(elem::AbstractElemShape, N, r1D)

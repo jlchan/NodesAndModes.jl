@@ -3,6 +3,8 @@ module NodesAndModes
 using DelimitedFiles # to read quadrature node data
 import LinearAlgebra: diagm, eigen, Symmetric
 import SpecialFunctions: gamma
+using StaticArrays: SVector
+
 include("meshgrid.jl")
 
 # each type of element shape - used for dispatch only
