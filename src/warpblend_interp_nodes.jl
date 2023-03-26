@@ -165,7 +165,57 @@ face_vertices(elem) = find_face_nodes(elem, nodes(elem, 1)...)
 # for 2D elements, an edge is the same as a face
 face_basis(elem::T, N, rst...) where {T <: Union{Tri, Quad}} = edge_basis(elem, N, rst...)
 
-# TODO: version for 3D elements with the same types of faces
+num_vertices(::Hex) = 8
+num_faces(::Hex) = 6
+num_face_nodes(::Hex, N) = (N - 1)^2
+face_type(::Hex) = Quad()
+
+num_vertices(::Tet) = 4
+num_faces(::Tet) = 4
+num_face_nodes(::Tet, N) = (N - 1) * (N) ÷ 2 # Np(N-2)
+face_type(::Tet) = Tri()
+
+function pointwise_product_of_columns(A)
+    a = ones(size(A, 1))
+    for A_i in eachcol(A)
+        @. a *= A_i
+    end
+    return a
+end
+
+# specialized face basis for Hexahedra
+function face_basis(elem, N, r, s, t)
+        
+    V_edge = edge_basis(elem, N, r, s, t)    
+    if N < 2
+        return V_edge
+    end
+
+    # initialize vertex and edge basis functions
+    V = zeros(length(r), size(V_edge, 2) + num_faces(elem) * num_face_nodes(elem, N))
+    V[:, 1:size(V_edge, 2)] .= V_edge
+    id = size(V_edge, 2) + 1
+
+    V1 = view(V_edge, :, 1:num_vertices(elem))
+    r1, s1 = nodes(face_type(elem), 1)
+    face_vertices = NodesAndModes.face_vertices(elem)
+    for fids in face_vertices
+
+        # compute face coordinates as a barycentric combo of reference vertices
+        rf = sum([V1[:, fids[i]] * r1[i] for i in eachindex(r1, s1)])
+        sf = sum([V1[:, fids[i]] * s1[i] for i in eachindex(r1, s1)])
+        
+        # extend face polynomials linearly
+        linear_face_basis = pointwise_product_of_columns(V1[:, fids])            
+        V_face = vandermonde(face_type(elem), N-2, rf, sf)
+        for i in axes(V_face, 2)
+            @. V[:, id] = V_face[:, i] * linear_face_basis
+            id += 1
+        end
+    end
+
+    return V
+end
 
 """
     build_warped_nodes(elem::AbstractElemShape, N, r1D)
