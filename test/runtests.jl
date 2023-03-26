@@ -211,7 +211,7 @@ end
 
 # test high order Stroud quadrature
 @testset "Simplicial Stroud quadrature" begin
-    tol = 1e3*eps()
+    tol = 1e3*eps()    
 
     N = 26
     rq, sq, wq = quad_nodes(Tri(), N)
@@ -225,6 +225,8 @@ end
     @test sum(rq .* wq) ≈ -2/3
     @test sum(sq .* wq) ≈ -2/3
     @test sum(tq .* wq) ≈ -2/3
+
+    @test_throws ArgumentError jaskowiec_sukumar_quad_nodes(Tet(), 21)
 end
 
 if VERSION >= v"1.6" # apparently inference got better after 1.5?
