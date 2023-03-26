@@ -167,13 +167,14 @@ face_basis(elem::T, N, rst...) where {T <: Union{Tri, Quad}} = edge_basis(elem, 
 
 num_vertices(::Hex) = 8
 num_faces(::Hex) = 6
-num_face_only_nodes(::Hex, N) = (N - 1)^2
 face_type(::Hex) = Quad()
+num_face_only_nodes(::Hex, N) = (N - 1)^2
 
 num_vertices(::Tet) = 4
 num_faces(::Tet) = 4
-num_face_only_nodes(::Tet, N) = (N - 1) * (N) ÷ 2 # Np(N-2)
 face_type(::Tet) = Tri()
+# 3 edges per face * (N-1) nodes per edge, 3 vertices
+num_face_only_nodes(::Tet, N) = max(0, (N + 1) * (N + 2) ÷ 2 - (3 * (N-1) + 3)) 
 
 function pointwise_product_of_columns(A)
     a = ones(size(A, 1))
@@ -206,8 +207,12 @@ function face_basis(elem, N, r, s, t)
         sf = sum([V1[:, fids[i]] * s1[i] for i in eachindex(r1, s1)])
         
         # extend face polynomials linearly
-        linear_face_basis = pointwise_product_of_columns(V1[:, fids])            
-        V_face = vandermonde(face_type(elem), N-2, rf, sf)
+        linear_face_basis = pointwise_product_of_columns(V1[:, fids])
+        if elem isa Hex
+            V_face = vandermonde(face_type(elem), N-2, rf, sf)
+        elseif elem isa Tet
+            V_face = vandermonde(face_type(elem), N-3, rf, sf)
+        end 
         for i in axes(V_face, 2)
             @. V[:, id] = V_face[:, i] * linear_face_basis
             id += 1

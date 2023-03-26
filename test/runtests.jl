@@ -159,13 +159,15 @@ end
 
 # these can be used for transfinite interpolation
 @testset "3D face bases (no interior nodes)" for elem in (Hex(), Tet())
-    N = 2
+    N = 3
     r, s, t = equi_nodes(elem, N)
     V = NodesAndModes.face_basis(elem, N, r, s, t)
     if elem isa Hex
-        @test size(V, 2) == 26
+        @test size(NodesAndModes.face_basis(Hex(), 2, r, s, t), 2) == 26
+        @test size(V, 2) == 56
     elseif elem isa Tet
-        @test V ≈ NodesAndModes.edge_basis(elem, N, r, s, t)
+        @test NodesAndModes.face_basis(elem, 2, r, s, t) ≈ NodesAndModes.edge_basis(elem, 2, r, s, t)
+        @test size(V, 2) == 20
     end
     @test minimum(svdvals(V)) > 0 # invertibility
     @test norm(V * (V \ (1 .+ r + s + t)) - (1 .+ r + s + t)) < 100 * eps() # polynomial recovery
