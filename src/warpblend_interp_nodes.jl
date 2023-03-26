@@ -187,8 +187,8 @@ end
 function face_basis(elem, N, r, s, t)
         
     V_edge = edge_basis(elem, N, r, s, t)    
-    if N < 2
-        return V_edge
+    if (N < 2 && elem isa Hex) || (N < 3 && elem isa Tet)
+        return V_edge    
     end
 
     # initialize vertex and edge basis functions
