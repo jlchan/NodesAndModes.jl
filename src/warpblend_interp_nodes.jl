@@ -186,6 +186,10 @@ end
 
 # specialized face basis for Hexahedra
 function face_basis(elem, N, r, s, t)
+
+    if (elem isa Wedge) || (elem isa Pyr)
+        @error "Face bases for wedges and pyramids not yet supported"
+    end
         
     V_edge = edge_basis(elem, N, r, s, t)    
     if (N < 2 && elem isa Hex) || (N < 3 && elem isa Tet)
