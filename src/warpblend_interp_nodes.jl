@@ -167,12 +167,12 @@ face_basis(elem::T, N, rst...) where {T <: Union{Tri, Quad}} = edge_basis(elem, 
 
 num_vertices(::Hex) = 8
 num_faces(::Hex) = 6
-num_face_nodes(::Hex, N) = (N - 1)^2
+num_face_only_nodes(::Hex, N) = (N - 1)^2
 face_type(::Hex) = Quad()
 
 num_vertices(::Tet) = 4
 num_faces(::Tet) = 4
-num_face_nodes(::Tet, N) = (N - 1) * (N) ÷ 2 # Np(N-2)
+num_face_only_nodes(::Tet, N) = (N - 1) * (N) ÷ 2 # Np(N-2)
 face_type(::Tet) = Tri()
 
 function pointwise_product_of_columns(A)
@@ -192,7 +192,7 @@ function face_basis(elem, N, r, s, t)
     end
 
     # initialize vertex and edge basis functions
-    V = zeros(length(r), size(V_edge, 2) + num_faces(elem) * num_face_nodes(elem, N))
+    V = zeros(length(r), size(V_edge, 2) + num_faces(elem) * num_face_only_nodes(elem, N))
     V[:, 1:size(V_edge, 2)] .= V_edge
     id = size(V_edge, 2) + 1
 
