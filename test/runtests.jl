@@ -157,6 +157,20 @@ num_faces(::Hex) = 6
     end
 end
 
+# these can be used for transfinite interpolation
+@testset "3D face bases (no interior nodes)" for elem in (Hex(), Tet())
+    N = 2
+    r, s, t = equi_nodes(elem, N)
+    V = NodesAndModes.face_basis(elem, N, r, s, t)
+    if elem isa Hex
+        @test size(V, 2) == 26
+    elseif elem isa Tet
+        @test V ≈ NodesAndModes.edge_basis(elem, N, r, s, t)
+    end
+    @test minimum(svdvals(V)) > 0 # invertibility
+    @test norm(V * (V \ (1 .+ r + s + t)) - (1 .+ r + s + t)) < 100 * eps() # polynomial recovery
+end
+
 @testset "Test for Kronecker structure in the Hex basis matrix" begin
     tol = 5e2*eps()
     N = 3
