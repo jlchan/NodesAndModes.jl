@@ -24,7 +24,7 @@ Default routine for elem = Tet(), Pyr(), Tri().
 For Quad(), Hex(), Wedge() elements, nodes(...) returns interpolation points constructed
 using a tensor product of lower-dimensional nodes. 
 """
-nodes(elem::AbstractElemShape,N) = build_warped_nodes(elem,N,nodes(Line(),N))
+nodes(elem::AbstractElemShape,N) = build_warped_nodes(elem, N, nodes(Line(),N))
 
 
 
