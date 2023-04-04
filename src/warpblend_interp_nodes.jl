@@ -6,12 +6,11 @@
 """
     get_edge_list(elem::AbstractElemShape)
 
-Returns list of edges for a specific element (elem = Tri(), Pyr(), or Tet()).
+Returns list of edges for a specific element (elem = Tri(), Pyr(), Hex(), or Tet()).
 """
 get_edge_list(elem::AbstractElemShape)
 
-get_edge_list(::Tri)  = SVector(1, 2), SVector(2, 3), SVector(3, 1)
-get_edge_list(::Quad) = SVector(1, 3), SVector(2, 4), SVector(1, 2), SVector(3, 4) 
+get_edge_list(elem::Union{Tri, Quad}) = SVector{2}.(find_face_nodes(elem, equi_nodes(elem, 1)...))
 get_edge_list(::Tet)  = SVector(1, 4), SVector(4, 3), SVector(3, 1), SVector(1, 2), SVector(3, 2), SVector(4, 2)
 get_edge_list(::Pyr)  = SVector(1, 2), SVector(2, 4), SVector(3, 4), SVector(3, 1), SVector(1, 5), SVector(2, 5), SVector(3, 5), SVector(4, 5)
 
@@ -26,7 +25,7 @@ get_edge_list(::Pyr)  = SVector(1, 2), SVector(2, 4), SVector(3, 4), SVector(3, 
  
 get_edge_list(::Hex) = SVector(1, 5), SVector(3, 7), SVector(2, 6), SVector(4, 8), 
                        SVector(1, 3), SVector(2, 4), SVector(1, 2), SVector(3, 4), 
-                       SVector(5, 7), SVector(6, 8), SVector(5, 6), SVector(7, 8)                        
+                       SVector(5, 7), SVector(6, 8), SVector(5, 6), SVector(7, 8)
 
 
 get_vertices(elem::AbstractElemShape) = equi_nodes(elem, 1)
