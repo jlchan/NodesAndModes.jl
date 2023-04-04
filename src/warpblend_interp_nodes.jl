@@ -11,7 +11,7 @@ Returns list of edges for a specific element (elem = Tri(), Pyr(), or Tet()).
 get_edge_list(elem::AbstractElemShape)
 
 get_edge_list(::Tri)  = SVector(1, 2), SVector(2, 3), SVector(3, 1)
-get_edge_list(::Quad) = SVector(1, 2), SVector(2, 3), SVector(3, 4), SVector(4, 1) # not used directly but included for completeness
+get_edge_list(::Quad) = SVector(1, 3), SVector(2, 4), SVector(1, 2), SVector(3, 4) 
 get_edge_list(::Tet)  = SVector(1, 4), SVector(4, 3), SVector(3, 1), SVector(1, 2), SVector(3, 2), SVector(4, 2)
 get_edge_list(::Pyr)  = SVector(1, 2), SVector(2, 4), SVector(3, 4), SVector(3, 1), SVector(1, 5), SVector(2, 5), SVector(3, 5), SVector(4, 5)
 
