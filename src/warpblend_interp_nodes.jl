@@ -91,7 +91,7 @@ function edge_basis(N, vertices, edges, basis1D, vertex_functions, rst...)
         r1D_edge = V1[:,e[1]] - V1[:,e[2]]
         V1D, _ = basis1D(N-2, r1D_edge)
         for i in axes(V1D, 2)
-            V[:,id] = V1D[:,i] .* V1[:,e[1]] .* V1[:,e[2]]
+            V[:, id] = V1D[:, i] .* V1[:, e[1]] .* V1[:, e[2]]
             id += 1
         end
     end
