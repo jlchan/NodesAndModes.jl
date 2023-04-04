@@ -24,7 +24,7 @@ Using VectorizedRoutines.jl directly causes Pkg versioning issues with SpecialFu
 """
 function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T}) where {T}
     m, n = length(vy), length(vx)
-    return repeat(reshape(vx, 1, n),m,1), repeat(reshape(vy, m, 1),1,n)
+    return repeat(reshape(vx, 1, n), m, 1), repeat(reshape(vy, m, 1), 1, n)
 end
 
 """
