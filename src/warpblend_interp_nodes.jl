@@ -183,7 +183,7 @@ function pointwise_product_of_columns(A)
     return a
 end
 
-# specialized face basis for Hexahedra
+# 3D face basis
 function face_basis(elem, N, r, s, t)
 
     if (elem isa Wedge) || (elem isa Pyr)
