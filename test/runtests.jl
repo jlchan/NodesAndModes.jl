@@ -232,7 +232,8 @@ end
     @test_throws ArgumentError jaskowiec_sukumar_quad_nodes(Tet(), 21)
 end
 
-if VERSION >= v"1.6" # apparently inference got better after 1.5?
+# apparently inference got better after 1.5 but breaks in 1.10. 
+if VERSION >= v"1.6" && VERSION < v"1.10" 
     @testset "Inferrability tests" begin
         for elementType in (Line(), Tri(), Quad(), Tet(), Pyr(), Wedge(), Hex())
             N = 1
