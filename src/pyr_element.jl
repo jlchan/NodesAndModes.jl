@@ -14,8 +14,8 @@ quadrature rules with only interior nodes.
 function basis(elem::Pyr, N, r, s, t, tol = 1e3*eps())
 
     # convert to abc
-    a = @. 2*(r+1)/(1-t)-1
-    b = @. 2*(s+1)/(1-t)-1
+    a = @. 2 * (r + 1) / (1 - t) - 1
+    b = @. 2 * (s + 1) / (1 - t) - 1
     c = t
 
     # fix top point
@@ -25,8 +25,8 @@ function basis(elem::Pyr, N, r, s, t, tol = 1e3*eps())
     b[ids] .= -1
 
     # change of vars from a to b
-    dadr = @. 2 / (1-t)
-    dbds = @. 2 / (1-t)
+    dadr = @. 2 / (1 - t)
+    dbds = @. 2 / (1 - t)
     dadt = @. (2 * r + 2) / (1 - t)^2
     dbdt = @. (2 * s + 2) / (1 - t)^2
     dcdt = 1
