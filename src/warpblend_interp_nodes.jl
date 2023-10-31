@@ -108,7 +108,7 @@ function find_face_nodes(::Tri, r, s, tol=50*eps())
     e1 = findall(@. abs(s + 1) < tol)
     e2 = findall(@. abs(r + s) < tol)
     e3 = findall(@. abs(r + 1) < tol)
-    return e1, reverse(e2), reverse(e3)
+    return e1, e2, reverse(e3)
 end
 
 function find_face_nodes(::Quad, r, s, tol=50*eps())
