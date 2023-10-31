@@ -6,3 +6,5 @@
 /dev/
 docs/build
 docs/Manifest.toml
+
+.vscode/settings.json
