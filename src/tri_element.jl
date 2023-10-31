@@ -106,12 +106,18 @@ function equi_nodes(::Tri, N)
 
     r1D = LinRange(-1, 1, N+1)
     sk = 1
-    for i = 0:N
-        for j = 0:N-i
-            r[sk] = r1D[i+1]
-            s[sk] = r1D[j+1]
-            sk += 1
-        end
+
+    # order so that the nodes change fastest in the x-direction,
+    # then the y-direction. For N=1, the nodes should be
+    #   
+    # 3
+    # | \
+    # 1---2
+
+    for j = 0:N, i = 0:N-j 
+        r[sk] = r1D[i+1]
+        s[sk] = r1D[j+1]
+        sk += 1
     end
 
     return r[:], s[:]
