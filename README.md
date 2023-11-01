@@ -5,9 +5,9 @@
 
 # NodesAndModes
 
-`NodesAndModes.jl` is a package to compute nodes (interpolation and quadrature points) and modes (orthogonal polynomials) on various reference elements for use in high order finite element and nodal discontinuous Galerkin (DG) methods.
+`NodesAndModes.jl` is a package to compute nodes (interpolation and quadrature points) and modes (orthogonal polynomials) on various reference elements for use in high order finite element and nodal discontinuous Galerkin (DG) methods. The codes inspired by the Matlab codes for the book "Nodal Discontinuous Galerkin methods" by Hesthaven and Warburton (2007) and high order interpolation nodes on triangles, tetrahedra, and pyramids using the "Interpolatory Warp and Blend" procedure from [Chan and Warburton 2015](https://epubs.siam.org/doi/abs/10.1137/141000105).
 
-The codes inspired by the Matlab codes for the book "Nodal Discontinuous Galerkin methods" by Hesthaven and Warburton (2007) and high order interpolation nodes on triangles, tetrahedra, and pyramids using the "Interpolatory Warp and Blend" procedure from [Chan and Warburton 2015](https://epubs.siam.org/doi/abs/10.1137/141000105).
+Note that NodesAndModes.jl only computes interpolation nodes (nodes) and basis functions (modes). See [StartUpDG.jl](https://github.com/jlchan/StartUpDG.jl) for generating meshes, connectivity arrays, and geometric terms associated with nodal DG methods. 
 
 ## Installation
 
