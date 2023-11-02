@@ -6,4 +6,4 @@ NodesAndModes = "7aca2e03-f7e2-4192-9ec8-f4ca66d597fb"
 [compat]
 Documenter = "0.25, 0.26, 0.27"
 DocumenterTools = "0.1"
-NodesAndModes = "0.9"
+NodesAndModes = "0.9, 1"
