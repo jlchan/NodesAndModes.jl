@@ -53,7 +53,7 @@ Nodal differentiation matrices `Dr` and `Ds` can be computed via
 ```julia
 julia> using NodesAndModes
 julia> N = 2
-julia> r,s = nodes(Tri(), N)
+julia> r, s = nodes(Tri(), N)
 julia> V, Vr, Vs = basis(Tri(), N, r, s)
 julia> Dr, Ds = (A -> A/V).((Vr, Vs))
 ```
