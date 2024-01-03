@@ -72,6 +72,14 @@ area(elem::Tri) = 2.0
     num_faces = (elem == Tri()) ? 3 : 4
     @test length(NodesAndModes.face_vertices(elem)) == num_faces
 
+    if elem == Tri()
+        a, b = NodesAndModes.abtors(Tri(), r, s)
+        r2, s2 = NodesAndModes.rstoab(Tri(), a, b)
+        r3, s3 = NodesAndModes.rstoab(a, b)
+        @test r ≈ r2 ≈ r3
+        @test s ≈ s2 ≈ s3
+    end
+
     # check for Kronecker structure
     if elem == Quad()
         r, s = nodes(elem, N)
