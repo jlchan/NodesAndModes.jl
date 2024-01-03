@@ -157,6 +157,12 @@ num_faces(::Hex) = 6
         @test Dr * r ≈ one.(r)
         @test Ds * s ≈ one.(s)
         @test Dt * t ≈ one.(t)
+
+        a, b, c = NodesAndModes.rsttoabc(Pyr(), rq, sq, tq)
+        r2, s2, t2 = NodesAndModes.abctorst(Pyr(), a, b, c)
+        @test r2 ≈ rq 
+        @test s2 ≈ sq 
+        @test t2 ≈ tq 
     end
 end
 

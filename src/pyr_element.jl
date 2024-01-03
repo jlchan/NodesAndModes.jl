@@ -63,15 +63,29 @@ end
 """
     abctorst(elem::Pyr,a,b,c)
 
-Converts from Stroud coordinates (a,b,c) on [-1,1]^3 to reference element
-coordinates (r,s,t).
+Converts from Stroud coordinates (a,b,c) on [-1,1]^3 to reference
+element coordinates (r,s,t).
 """
-function abctorst(elem::Pyr,a,b,c)
-    r = @. .5 * (1+a) * (1-c) - 1
-    s = @. .5 * (1+b) * (1-c) - 1
+function abctorst(elem::Pyr, a, b, c)
+    r = @. .5 * (1 + a) * (1 - c) - 1
+    s = @. .5 * (1 + b) * (1 - c) - 1
     t = @. c
     return r, s, t
 end
+
+"""
+    rsttoabc(elem::Pyr,a,b,c)
+
+Converts from reference element coordinates (r,s,t) to Stroud 
+coordinates (a,b,c) on [-1,1]^3.
+"""
+function rsttoabc(::Pyr, r, s, t)
+    a = @. 2 * (r + 1) / (1 - t) - 1 
+    b = @. 2 * (s + 1) / (1 - t) - 1
+    c = @. t
+    return a, b, c
+end
+
 
 """
     nodes(elem::Pyr,N)

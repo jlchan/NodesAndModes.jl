@@ -125,7 +125,20 @@ function jaskowiec_sukumar_quad_nodes(elem::Tet, N)
     return rstw[:,1], rstw[:,2], rstw[:,3], rstw[:,4]
 end
 
-function stroud_quad_nodes(elem::Tet,N)
+function abctorst(::Tet, a, b, c)
+    r = @. .5 * (1+a) * .5 * (1-b) * (1-c) - 1
+    s = @. .5 * (1+b) * (1-c) - 1
+    t = copy(c)
+    return r, s, t
+end
+
+function rsttoabc(::Tet, r, s, t)
+    a = @. 2 * (1+r) / (-s-t) - 1
+    b = @. 2 * (1+s) / (1-t) - 1
+    c = copy(t)
+    return a, b, c
+end
+
 function stroud_quad_nodes(elem::Tet, N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
@@ -134,12 +147,10 @@ function stroud_quad_nodes(elem::Tet, N)
     a,b,c = vec.(meshgrid(cubA,cubB,cubC))
     wa,wb,wc = vec.(meshgrid(cubWA,cubWB,cubWC))
 
-    r = @. .5*(1+a)*.5*(1-b)*(1-c)-1
-    s = @. .5*(1+b)*(1-c)-1
-    t = c
-    w = @. wa*wb*wc
-    w = (4/3)*w./sum(w)
-    return r,s,t,w
+    r, s, t = abctorst(elem, a, b, c)
+    w = @. wa * wb * wc
+    w = (4/3) * w ./ sum(w)
+    return r, s, t, w
 end
 
 quad_nodes(elem::Tet, N) = quad_nodes_tet(2 * N)
@@ -149,9 +160,7 @@ function basis(elem::Tet, N, r, s, t)
 
     V, Vr, Vs, Vt = ntuple(x -> zeros(length(r), Np), 4)
     
-    a = @. 2*(1+r)/(-s-t)-1
-    b = @. 2*(1+s)/(1-t)-1
-    c = t
+    a, b, c = rsttoabc(elem, r, s, t)
 
     tol = 1e-14
     ida = @. abs(s+t) < tol
