@@ -8,10 +8,10 @@
 Evaluate 3D "Legendre" basis phi_ijk at (a,b,c) coordinates on the [-1,1] cube
 """
 function simplex_3D(a, b, c, i, j, k)
-    h1 = jacobiP(a,0,0,i)
-    h2 = jacobiP(b,2*i+1,0,j)
-    h3 = jacobiP(c,2*(i+j)+2,0,k)
-    return @. 2*sqrt(2)*h1*h2*((1-b)^i)*h3*((1-c)^(i+j))
+    h1 = jacobiP(a, 0,0, i)
+    h2 = jacobiP(b, 2*i+1, 0, j)
+    h3 = jacobiP(c, 2*(i+j)+2, 0, k)
+    return @. 2 * sqrt(2) * h1 * h2 * ((1-b)^i) * h3 * ((1-c)^(i+j))
 end
 
 """
@@ -22,50 +22,50 @@ index, or order, (id,jd,kd) at (a,b,c)
 """
 
 function grad_simplex_3D(a, b, c, id, jd, kd)
-    fa = jacobiP(a,0,0,id)
-    gb = jacobiP(b,2*id+1,0,jd)
-    hc = jacobiP(c,2*(id+jd)+2,0,kd)
+    fa = jacobiP(a, 0, 0, id)
+    gb = jacobiP(b, 2*id+1, 0, jd)
+    hc = jacobiP(c, 2*(id+jd)+2, 0, kd)
 
-    dfa = grad_jacobiP(a,0,0,id)
-    dgb = grad_jacobiP(b,2*id+1,0,jd)
-    dhc = grad_jacobiP(c,2*(id+jd)+2,0,kd)
+    dfa = grad_jacobiP(a, 0, 0, id)
+    dgb = grad_jacobiP(b, 2*id+1, 0, jd)
+    dhc = grad_jacobiP(c, 2*(id+jd)+2, 0, kd)
 
     # r-derivative
-    V3Dr = @. dfa.*(gb.*hc)
-    if id>0
-        V3Dr = @. V3Dr*((0.5*(1-b))^(id-1))
+    V3Dr = @. dfa * (gb * hc)
+    if id > 0
+        V3Dr = @. V3Dr * ((0.5 * (1-b))^(id-1))
     end
-    if id+jd>0
-        V3Dr = @. V3Dr*((0.5*(1-c))^(id+jd-1))
+    if id+jd > 0
+        V3Dr = @. V3Dr * ((0.5 * (1-c))^(id+jd-1))
     end
 
     # s-derivative
-    V3Ds = @. 0.5*(1+a)*V3Dr
-    tmp = @. dgb*((0.5*(1-b))^id)
-    if id>0
-        tmp = @. tmp+(-0.5*id)*(gb*(0.5*(1-b))^(id-1))
+    V3Ds = @. 0.5 * (1+a) * V3Dr
+    tmp = @. dgb * ((0.5 * (1-b))^id)
+    if id > 0
+        tmp = @. tmp + (-0.5*id) * (gb * (0.5*(1-b))^(id-1))
     end
-    if id+jd>0
-        tmp = @. tmp*((0.5*(1-c))^(id+jd-1))
+    if id+jd > 0
+        tmp = @. tmp * ((0.5 * (1-c))^(id+jd-1))
     end
-    tmp = @. fa*(tmp*hc)
-    V3Ds = @. V3Ds+tmp
+    tmp = @. fa * (tmp * hc)
+    V3Ds = @. V3Ds + tmp
 
     # t-derivative
-    V3Dt = @. 0.5*(1+a).*V3Dr+0.5*(1+b)*tmp
-    tmp = @. dhc*((0.5*(1-c))^(id+jd))
-    if id+jd>0
-      tmp = @. tmp-0.5*(id+jd)*(hc*((0.5*(1-c))^(id+jd-1)))
+    V3Dt = @. 0.5 * (1+a) * V3Dr + 0.5 * (1+b) * tmp
+    tmp = @. dhc * ((0.5 * (1-c))^(id+jd))
+    if id+jd > 0
+      tmp = @. tmp - 0.5 * (id+jd) * (hc * ((0.5 * (1-c))^(id+jd-1)))
     end
-    tmp = @. fa*(gb*tmp)
-    tmp = @. tmp*((0.5*(1-b))^id)
-    V3Dt = @. V3Dt+tmp
+    tmp = @. fa * (gb * tmp)
+    tmp = @. tmp * ((0.5 * (1-b))^id)
+    V3Dt = @. V3Dt + tmp
 
     # normalize
-    V3Dr = @. V3Dr*(2^(2*id+jd+1.5))
-    V3Ds = @. V3Ds*(2^(2*id+jd+1.5))
-    V3Dt = @. V3Dt*(2^(2*id+jd+1.5))
-    return V3Dr,V3Ds,V3Dt
+    V3Dr = @. V3Dr * (2^(2*id+jd + 1.5))
+    V3Ds = @. V3Ds * (2^(2*id+jd + 1.5))
+    V3Dt = @. V3Dt * (2^(2*id+jd + 1.5))
+    return V3Dr, V3Ds, V3Dt
 end
 
 
@@ -126,6 +126,7 @@ function jaskowiec_sukumar_quad_nodes(elem::Tet, N)
 end
 
 function stroud_quad_nodes(elem::Tet,N)
+function stroud_quad_nodes(elem::Tet, N)
     cubA,cubWA = gauss_quad(0,0,N)
     cubB,cubWB = gauss_quad(1,0,N)
     cubC,cubWC = gauss_quad(2,0,N)
@@ -141,14 +142,13 @@ function stroud_quad_nodes(elem::Tet,N)
     return r,s,t,w
 end
 
+quad_nodes(elem::Tet, N) = quad_nodes_tet(2 * N)
 
-quad_nodes(elem::Tet,N) = quad_nodes_tet(2*N)
+function basis(elem::Tet, N, r, s, t)
+    Np = (N+1) * (N+2) * (N+3) ÷ 6
 
-function basis(elem::Tet,N,r,s,t)
-    Np = (N+1)*(N+2)*(N+3)÷6
-
-    V,Vr,Vs,Vt = ntuple(x->zeros(length(r),Np),4)
-
+    V, Vr, Vs, Vt = ntuple(x -> zeros(length(r), Np), 4)
+    
     a = @. 2*(1+r)/(-s-t)-1
     b = @. 2*(1+s)/(1-t)-1
     c = t

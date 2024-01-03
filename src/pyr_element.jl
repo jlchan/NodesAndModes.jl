@@ -119,8 +119,7 @@ function nodes(elem::Pyr, N)
 end
 
 function equi_nodes(elem::Pyr, N)
-    # Np = (N+1)*(N+2)*(2*N+3)/6
-    a, b, c = ntuple(x->Float64[],3)
+    a, b, c = ntuple(x -> Float64[], 3)
     c1D = LinRange(-1, 1, N+1)
     for k = N:-1:0
         if k==0
@@ -129,8 +128,8 @@ function equi_nodes(elem::Pyr, N)
             r1D = LinRange(-1, 1, k + 1)
         end
         ak, bk = vec.(meshgrid(r1D, r1D))
-        ck = c1D[N + 1 - k]*one.(ak)
-        append!.((a, b, c),(ak, bk, ck))
+        ck = c1D[N + 1 - k] * one.(ak)
+        append!.((a, b, c), (ak, bk, ck))
     end
     return abctorst(elem, a, b, c)
 end
@@ -145,7 +144,7 @@ function stroud_quad_nodes(elem::Pyr, N)
     a, c, b = vec.(meshgrid(a1D, c1D, a1D))
     wa, wc, wb = vec.(meshgrid(w1D, wc1D, w1D))
     w = @. wa * wb * wc
-    w = (8/3) * w ./ sum(w) # scale by b*h/3 = volume of pyr. b = 4, h = 2 for biunit
+    w = (8 / 3) * w ./ sum(w) # scale by b*h/3 = volume of pyr. b = 4, h = 2 for biunit
 
     return abctorst(elem, a, b, c)..., w
 end
