@@ -63,7 +63,22 @@ function rstoab(r, s, tol = 1e-12)
             a[n] = -1
         end
     end
-    return a, s
+    b = copy(s)
+    return a, b
+end
+
+rstoab(::Tri, r, s, kwargs...) = rstoab(r, s, kwargs...)
+
+"""
+    abtors(Tri(), r, s, tol = 1e-12)
+
+Converts from polynomial basis evaluation coordinates (a,b) on the 
+domain [-1,1]^2 to reference bi-unit right triangle coordinate (r,s).
+"""
+function abtors(::Tri, a, b)
+    r = @. 0.5 * (a + 1) * (1 - b) - 1
+    s = copy(b)
+    return r, s
 end
 
 """
@@ -92,8 +107,7 @@ function stroud_quad_nodes(::Tri, N)
 
     cubA, cubB = vec.(meshgrid(cubA, cubB))
 
-    r = @. 0.5 * (1+cubA) * (1-cubB) - 1
-    s = cubB
+    r, s = abtors(Tri(), cubA, cubB)
     w = 0.5 * cubWB * (cubWA')
     return vec.((r, s, w))
 end

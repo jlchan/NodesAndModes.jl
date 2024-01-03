@@ -72,6 +72,14 @@ area(elem::Tri) = 2.0
     num_faces = (elem == Tri()) ? 3 : 4
     @test length(NodesAndModes.face_vertices(elem)) == num_faces
 
+    if elem == Tri()
+        a, b = NodesAndModes.abtors(Tri(), r, s)
+        r2, s2 = NodesAndModes.rstoab(Tri(), a, b)
+        r3, s3 = NodesAndModes.rstoab(a, b)
+        @test r ≈ r2 ≈ r3
+        @test s ≈ s2 ≈ s3
+    end
+
     # check for Kronecker structure
     if elem == Quad()
         r, s = nodes(elem, N)
@@ -157,6 +165,12 @@ num_faces(::Hex) = 6
         @test Dr * r ≈ one.(r)
         @test Ds * s ≈ one.(s)
         @test Dt * t ≈ one.(t)
+
+        a, b, c = NodesAndModes.rsttoabc(Pyr(), rq, sq, tq)
+        r2, s2, t2 = NodesAndModes.abctorst(Pyr(), a, b, c)
+        @test r2 ≈ rq 
+        @test s2 ≈ sq 
+        @test t2 ≈ tq 
     end
 end
 
