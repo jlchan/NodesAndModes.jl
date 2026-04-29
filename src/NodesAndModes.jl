@@ -8,31 +8,34 @@ using StaticArrays: SVector
 include("meshgrid.jl")
 
 # each type of element shape - used for dispatch only
-abstract type AbstractElemShape{NDIMS} end
+abstract type AbstractElementShape{NDIMS} end
 
-abstract type AbstractTensorProductElement{NDIMS} <: AbstractElemShape{NDIMS} end
+abstract type AbstractTensorProductElement{NDIMS} <: AbstractElementShape{NDIMS} end
 struct Line <: AbstractTensorProductElement{1} end
 struct Quad <: AbstractTensorProductElement{2} end
 struct Hex <: AbstractTensorProductElement{3} end
 
-abstract type AbstractSimplexElement{NDIMS} <: AbstractElemShape{NDIMS} end
+abstract type AbstractSimplexElement{NDIMS} <: AbstractElementShape{NDIMS} end
 struct Tri <: AbstractSimplexElement{2} end
 struct Tet <: AbstractSimplexElement{3} end
 
 # `node_ids_by_face` is an optional container for node ids of each face, since there is more than
 # one face type for both Wedge and Pyramid types.
-struct Wedge{T} <: AbstractElemShape{3}
+struct Wedge{T} <: AbstractElementShape{3}
     node_ids_by_face::T
 end
 Wedge() = Wedge(nothing)
 
-struct Pyr{T} <: AbstractElemShape{3}
+struct Pyr{T} <: AbstractElementShape{3}
     node_ids_by_face::T
 end
 Pyr() = Pyr(nothing)
 
-export AbstractElemShape
-export AbstractTensorProductElement, AbstractSimplexElement
+# TODO: deprecate AbstractElemShape{NDIMS} - it's just an alias for AbstractElementShape
+const AbstractElemShape{NDIMS} = AbstractElementShape{NDIMS}
+export AbstractElemShape 
+
+export AbstractElementShape, AbstractTensorProductElement, AbstractSimplexElement
 export Line
 export Tri, Quad
 export Hex, Wedge, Pyr, Tet

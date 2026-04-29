@@ -2,37 +2,55 @@ using NodesAndModes
 using Test
 using LinearAlgebra
 
+@testset "Types" begin
+    for elem in (Line(), Quad(), Hex())
+        @test elem isa AbstractElementShape
+        @test elem isa AbstractTensorProductElement
+        @test !(elem isa AbstractSimplexElement)
+    end
+    for elem in (Tri(), Tet())
+        @test elem isa AbstractElementShape
+        @test elem isa AbstractSimplexElement
+        @test !(elem isa AbstractTensorProductElement)
+    end
+    for elem in (Wedge(), Pyr())
+        @test elem isa AbstractElementShape
+        @test !(elem isa AbstractSimplexElement)
+        @test !(elem isa AbstractTensorProductElement)
+    end
+end
+
 @testset "1D tests" begin
-    tol = 1e2*eps()
+    tol = 1e2 * eps()
 
     N = 0
-    r,w = gauss_lobatto_quad(0,0,N)
+    r, w = gauss_lobatto_quad(0, 0, N)
     @test sum(w) ≈ 2
 
     for N = 1:2
-        r,w = gauss_quad(0,0,N)
+        r, w = gauss_quad(0, 0, N)
         @test sum(w) ≈ 2
-        @test abs(sum(w.*r)) < tol
+        @test abs(sum(w .* r)) < tol
 
-        V = vandermonde(Line(),N,r)
-        @test V'*diagm(w)*V ≈ I
+        V = vandermonde(Line(), N, r)
+        @test V' * diagm(w) * V ≈ I
 
-        Vr = grad_vandermonde(Line(),N,r)
-        Dr = Vr/V
-        @test norm(sum(Dr,dims=2)) < tol
-        @test Dr*r ≈ ones(N+1)
+        Vr = grad_vandermonde(Line(), N, r)
+        Dr = Vr / V
+        @test norm(sum(Dr, dims = 2)) < tol
+        @test Dr * r ≈ ones(N + 1)
 
-        r,w = gauss_lobatto_quad(0,0,N)
+        r, w = gauss_lobatto_quad(0, 0, N)
         @test sum(w) ≈ 2
-        @test abs(sum(w.*r)) < tol
+        @test abs(sum(w .* r)) < tol
 
         # check if Lobatto is exact for 2N-2 polynoms
-        V = vandermonde(Line(),N-1,r)
-        @test V'*diagm(w)*V ≈ I
+        V = vandermonde(Line(), N - 1, r)
+        @test V' * diagm(w) * V ≈ I
 
-        Dr = grad_vandermonde(Line(),N,r)/vandermonde(Line(),N,r)
-        @test norm(sum(Dr,dims=2)) < tol
-        @test Dr*r ≈ ones(N+1)
+        Dr = grad_vandermonde(Line(), N, r) / vandermonde(Line(), N, r)
+        @test norm(sum(Dr, dims = 2)) < tol
+        @test Dr * r ≈ ones(N + 1)
     end
 
     @test NodesAndModes.face_vertices(Line()) == (1, 2)

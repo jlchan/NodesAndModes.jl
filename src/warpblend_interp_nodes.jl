@@ -4,15 +4,24 @@
 #####
 
 """
-    get_edge_list(elem::AbstractElemShape)
+    get_edge_list(elem::AbstractElementShape)
 
 Returns list of edges for a specific element (elem = Tri(), Pyr(), Hex(), or Tet()).
 """
-get_edge_list(elem::AbstractElemShape)
+get_edge_list(elem::AbstractElementShape)
 
-get_edge_list(elem::Union{Tri, Quad}) = SVector{2}.(find_face_nodes(elem, equi_nodes(elem, 1)...))
-get_edge_list(::Tet)  = SVector(1, 4), SVector(4, 3), SVector(3, 1), SVector(1, 2), SVector(3, 2), SVector(4, 2)
-get_edge_list(::Pyr)  = SVector(1, 2), SVector(2, 4), SVector(3, 4), SVector(3, 1), SVector(1, 5), SVector(2, 5), SVector(3, 5), SVector(4, 5)
+get_edge_list(elem::Union{Tri,Quad}) =
+    SVector{2}.(find_face_nodes(elem, equi_nodes(elem, 1)...))
+get_edge_list(::Tet) =
+    SVector(1, 4), SVector(4, 3), SVector(3, 1), SVector(1, 2), SVector(3, 2), SVector(4, 2)
+get_edge_list(::Pyr) = SVector(1, 2),
+SVector(2, 4),
+SVector(3, 4),
+SVector(3, 1),
+SVector(1, 5),
+SVector(2, 5),
+SVector(3, 5),
+SVector(4, 5)
 
 # edges = recursive ±xyz ordering on each face
 # 
@@ -22,28 +31,37 @@ get_edge_list(::Pyr)  = SVector(1, 2), SVector(2, 4), SVector(3, 4), SVector(3, 
 # | 2 ___| 4
 # |/     |/ 
 # 1 ---- 3      
- 
-get_edge_list(::Hex) = SVector(1, 5), SVector(3, 7), SVector(2, 6), SVector(4, 8), 
-                       SVector(1, 3), SVector(2, 4), SVector(1, 2), SVector(3, 4), 
-                       SVector(5, 7), SVector(6, 8), SVector(5, 6), SVector(7, 8)
+
+get_edge_list(::Hex) = SVector(1, 5),
+SVector(3, 7),
+SVector(2, 6),
+SVector(4, 8),
+SVector(1, 3),
+SVector(2, 4),
+SVector(1, 2),
+SVector(3, 4),
+SVector(5, 7),
+SVector(6, 8),
+SVector(5, 6),
+SVector(7, 8)
 
 
-get_vertices(elem::AbstractElemShape) = equi_nodes(elem, 1)
-get_vertex_fxns(elem::AbstractElemShape) =
+get_vertices(elem::AbstractElementShape) = equi_nodes(elem, 1)
+get_vertex_fxns(elem::AbstractElementShape) =
     (rst...) -> vandermonde(elem, 1, rst...) / vandermonde(elem, 1, equi_nodes(elem, 1)...)
 
 # assumes r1D in [-1,1], v1, v2 are vertices
 function interp_1D_to_line(r1D, v1, v2)
     runit = @. (1 + r1D) / 2
-    return map((a,b) -> (b-a) * runit .+ a, v1, v2)
+    return map((a, b) -> (b - a) * runit .+ a, v1, v2)
 end
 
 """
-    interp_1D_to_edges(elem::AbstractElemShape, r1D)
+    interp_1D_to_edges(elem::AbstractElementShape, r1D)
 
 Interpolates points r1D to the edges of an element (elem = :Tri, :Pyr, or :Tet)
 """
-function interp_1D_to_edges(elem::AbstractElemShape, r1D)
+function interp_1D_to_edges(elem::AbstractElementShape, r1D)
     v = get_vertices(elem)
     edges = get_edge_list(elem)
     edge_pts = ntuple(x -> zeros(length(r1D), length(edges)), length(v))
@@ -55,18 +73,25 @@ function interp_1D_to_edges(elem::AbstractElemShape, r1D)
 end
 
 """
-    edge_basis(elem::AbstractElemShape, N, rst...)
+    edge_basis(elem::AbstractElementShape, N, rst...)
 
 Returns the generalized Vandermonde matrix evaluated using an edge basis (e.g.,
 degree `N` polynomials over an edge, but linearly blended into the interior). The 
 dimension of the resulting space is simply the number of total nodes on edges of 
 a degree `N` element. 
 """
-function edge_basis(elem::AbstractElemShape, N, rst...)
+function edge_basis(elem::AbstractElementShape, N, rst...)
     vertices = get_vertices(elem)
     edges = get_edge_list(elem)
     vertex_functions = get_vertex_fxns(elem)
-    return edge_basis(N, vertices, edges, (N, r)->basis(Line(), N, r), vertex_functions, rst...)
+    return edge_basis(
+        N,
+        vertices,
+        edges,
+        (N, r) -> basis(Line(), N, r),
+        vertex_functions,
+        rst...,
+    )
 end
 
 """
@@ -226,20 +251,20 @@ function face_basis(elem, N, r, s, t)
 end
 
 """
-    build_warped_nodes(elem::AbstractElemShape, N, r1D)
+    build_warped_nodes(elem::AbstractElementShape, N, r1D)
 
 Computes degree N warp-and-blend interpolation nodes for elem = Tri(), Pyr(), or
 Tet() based on the 1D node set "r1D". Returns a tuple "rst" containing arrays of
 interpolation points.
 """
-function build_warped_nodes(elem::AbstractElemShape, N, r1D)
+function build_warped_nodes(elem::AbstractElementShape, N, r1D)
     r1D_equi = equi_nodes(Line(), N)
     rst_edge_equi = interp_1D_to_edges(elem, r1D_equi)
     V_edge = edge_basis(elem, N, rst_edge_equi...)
-    rst_edge = interp_1D_to_edges(elem,r1D)
+    rst_edge = interp_1D_to_edges(elem, r1D)
 
-    c = (x->V_edge \ x).(rst_edge) # should be lsq solve
+    c = (x -> V_edge \ x).(rst_edge) # should be lsq solve
 
     rst_equi = equi_nodes(elem, N)
-    return (x->edge_basis(elem, N, rst_equi...) * x).(c)
+    return (x -> edge_basis(elem, N, rst_equi...) * x).(c)
 end
