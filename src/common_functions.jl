@@ -50,7 +50,6 @@ Compute quadrature nodes and weights exact for (at least) degree 2N polynomials.
 """
 quad_nodes(elem::AbstractElementShape, N)
 
-
 """
     stroud_quad_nodes(elem::AbstractElementShape,N)
 
