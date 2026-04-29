@@ -9,11 +9,15 @@ include("meshgrid.jl")
 
 # each type of element shape - used for dispatch only
 abstract type AbstractElemShape{NDIMS} end
-struct Line <: AbstractElemShape{1} end
-struct Quad <: AbstractElemShape{2} end
-struct Tri <: AbstractElemShape{2} end
-struct Hex <: AbstractElemShape{3} end
-struct Tet <: AbstractElemShape{3} end
+
+abstract type AbstractTensorProductElement{NDIMS} <: AbstractElemShape{NDIMS} end
+struct Line <: AbstractTensorProductElement{1} end
+struct Quad <: AbstractTensorProductElement{2} end
+struct Hex <: AbstractTensorProductElement{3} end
+
+abstract type AbstractSimplexElement{NDIMS} <: AbstractElemShape{NDIMS} end
+struct Tri <: AbstractSimplexElement{2} end
+struct Tet <: AbstractSimplexElement{3} end
 
 # `node_ids_by_face` is an optional container for node ids of each face, since there is more than
 # one face type for both Wedge and Pyramid types.
@@ -28,6 +32,7 @@ end
 Pyr() = Pyr(nothing)
 
 export AbstractElemShape
+export AbstractTensorProductElement, AbstractSimplexElement
 export Line
 export Tri, Quad
 export Hex, Wedge, Pyr, Tet
