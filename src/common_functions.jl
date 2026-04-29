@@ -3,8 +3,8 @@
 
 Computes the generalized Vandermonde matrix V of degree N at points (r,s,t).
 """
-vandermonde(elem::AbstractElemShape, N, rst...) = first(basis(elem,N,rst...))
-vandermonde(elem::Line, N, r) = first(basis(elem,N,r)) # specialize for 1D
+vandermonde(elem::AbstractElemShape, N, rst...) = first(basis(elem, N, rst...))
+vandermonde(elem::Line, N, r) = first(basis(elem, N, r)) # specialize for 1D
 
 """
     grad_vandermonde(elem::AbstractElemShape, N, rst...)
@@ -12,8 +12,7 @@ vandermonde(elem::Line, N, r) = first(basis(elem,N,r)) # specialize for 1D
 Computes the generalized Vandermonde derivative matrix V of degree N at points (r,s,t).
 """
 grad_vandermonde(elem::AbstractElemShape, N, rst...) = basis(elem, N, rst...)[2:end]
-grad_vandermonde(elem::Line, N, r) = last(basis(elem,N,r)) # specialize for 1D
-
+grad_vandermonde(elem::Line, N, r) = last(basis(elem, N, r)) # specialize for 1D
 
 """
     nodes(elem::AbstractElemShape,N)
@@ -24,17 +23,14 @@ Default routine for elem = Tet(), Pyr(), Tri().
 For Quad(), Hex(), Wedge() elements, nodes(...) returns interpolation points constructed
 using a tensor product of lower-dimensional nodes. 
 """
-nodes(elem::AbstractElemShape,N) = build_warped_nodes(elem, N, nodes(Line(),N))
-
-
+nodes(elem::AbstractElemShape, N) = build_warped_nodes(elem, N, nodes(Line(), N))
 
 """
     basis(elem::AbstractElemShape, N, rst...)
 
 Computes orthonormal basis of degree N at tuple of coordinate arrays (r,s,t).
 """
-basis(elem::AbstractElemShape,N,rst...)
-
+basis(elem::AbstractElemShape, N, rst...)
 
 """
     equi_nodes(elem::AbstractElemShape, N)
@@ -49,7 +45,6 @@ equi_nodes(elem::AbstractElemShape, N)
 Compute quadrature nodes and weights exact for (at least) degree 2N polynomials.
 """
 quad_nodes(elem::AbstractElemShape, N)
-
 
 """
     stroud_quad_nodes(elem::AbstractElemShape,N)

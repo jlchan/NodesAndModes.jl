@@ -9,8 +9,8 @@ Evaluate 2D PKDO basis phi_ij at points (a,b) on the Duffy domain [-1,1]^2
 """
 function simplex_2D(a, b, i, j)
     h₁ = jacobiP(a, 0, 0, i)
-    h₂ = jacobiP(b, 2i+1, 0, j)
-    return @. sqrt(2.0)*h₁*h₂*(1-b)^i # WARNING: (1-b)^i can blow up if N is too large (> 25)
+    h₂ = jacobiP(b, 2i + 1, 0, j)
+    return @. sqrt(2.0) * h₁ * h₂ * (1 - b)^i # WARNING: (1-b)^i can blow up if N is too large (> 25)
 end
 
 """
@@ -22,31 +22,30 @@ indices (id,jd) at (a,b)
 
 function grad_simplex_2D(a, b, id, jd)
     fa = jacobiP(a, 0, 0, id)
-    gb = jacobiP(b, 2*id+1, 0, jd)
+    gb = jacobiP(b, 2 * id + 1, 0, jd)
     dfa = grad_jacobiP(a, 0, 0, id)
-    dgb = grad_jacobiP(b, 2*id+1, 0, jd)
+    dgb = grad_jacobiP(b, 2 * id + 1, 0, jd)
 
-    dmodedr = @. dfa*gb
+    dmodedr = @. dfa * gb
     if id > 0
-        dmodedr = dmodedr.*((0.5*(1 .- b)).^(id-1))
+        dmodedr = dmodedr .* ((0.5 * (1 .- b)) .^ (id - 1))
     end
 
-    dmodeds = @. dfa*(gb*(0.5*(1+a)))
+    dmodeds = @. dfa * (gb * (0.5 * (1 + a)))
     if id > 0
-        dmodeds = dmodeds.*((0.5*(1 .- b)).^(id-1))
+        dmodeds = dmodeds .* ((0.5 * (1 .- b)) .^ (id - 1))
     end
 
-    tmp = @. dgb*((0.5*(1-b))^id)
+    tmp = @. dgb * ((0.5 * (1 - b))^id)
     if id > 0
-        tmp = tmp-0.5*id*gb.*((0.5*(1 .- b)).^(id-1))
+        tmp = tmp - 0.5 * id * gb .* ((0.5 * (1 .- b)) .^ (id - 1))
     end
-    dmodeds = dmodeds+fa.*tmp
+    dmodeds = dmodeds + fa .* tmp
 
-    dmodedr = 2^(id+0.5)*dmodedr
-    dmodeds = 2^(id+0.5)*dmodeds
+    dmodedr = 2^(id + 0.5) * dmodedr
+    dmodeds = 2^(id + 0.5) * dmodeds
     return dmodedr, dmodeds
 end
-
 
 """
     rstoab(r, s, tol = 1e-12)
@@ -87,14 +86,17 @@ end
 Returns quadrature nodes (from Gimbutas and Xiao 2010) which exactly integrate degree N polynomials
 """
 function quad_nodes_tri(N)
-
     if N < 51
-        rsw::Matrix{Float64} = readdlm(string(@__DIR__, "/QuadratureData/quad_nodes_tri_N", N, ".txt"), ' ', Float64, '\n')
+        rsw::Matrix{Float64} = readdlm(string(@__DIR__, "/QuadratureData/quad_nodes_tri_N",
+                                              N, ".txt"),
+                                       ' ',
+                                       Float64,
+                                       '\n')
         r = rsw[:, 1]
         s = rsw[:, 2]
         w = rsw[:, 3]
     else
-        cubN = ceil(Int, (N+1) / 2)
+        cubN = ceil(Int, (N + 1) / 2)
         r, s, w = stroud_quad_nodes(Tri(), cubN)
     end
 
@@ -113,12 +115,12 @@ function stroud_quad_nodes(::Tri, N)
 end
 
 function equi_nodes(::Tri, N)
-    Np = (N+1) * (N+2) ÷ 2
+    Np = (N + 1) * (N + 2) ÷ 2
 
     r = zeros(Np)
     s = zeros(Np)
 
-    r1D = LinRange(-1, 1, N+1)
+    r1D = LinRange(-1, 1, N + 1)
     sk = 1
 
     # order so that the nodes change fastest in the x-direction,
@@ -128,27 +130,26 @@ function equi_nodes(::Tri, N)
     # | \
     # 1---2
 
-    for j = 0:N, i = 0:N-j 
-        r[sk] = r1D[i+1]
-        s[sk] = r1D[j+1]
+    for j in 0:N, i in 0:(N - j)
+        r[sk] = r1D[i + 1]
+        s[sk] = r1D[j + 1]
         sk += 1
     end
 
     return r[:], s[:]
 end
 
-
-function quad_nodes(::Tri, N)    
-    return quad_nodes_tri(2*N)
+function quad_nodes(::Tri, N)
+    return quad_nodes_tri(2 * N)
 end
 
 function basis(::Tri, N, r, s)
-    Np = (N+1) * (N+2) ÷ 2
+    Np = (N + 1) * (N + 2) ÷ 2
     V2D, V2Dr, V2Ds = ntuple(x -> zeros(length(r), Np), 3)
     a, b = rstoab(r, s)
     sk = 1
-    for i = 0:N
-        for j = 0:N-i
+    for i in 0:N
+        for j in 0:(N - i)
             V2D[:, sk] = simplex_2D(a, b, i, j)
             V2Dr[:, sk], V2Ds[:, sk] = grad_simplex_2D(a, b, i, j)
             sk = sk + 1

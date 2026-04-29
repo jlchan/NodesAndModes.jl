@@ -35,7 +35,8 @@ For more information, see the MATLAB documentation.
 Copied and pasted directly from [VectorizedRoutines.jl](https://github.com/ChrisRackauckas/VectorizedRoutines.jl/blob/master/src/matlab.jl).
 Using VectorizedRoutines.jl directly causes Pkg versioning issues with SpecialFunctions.jl
 """
-function meshgrid(vx::AbstractVector{T}, vy::AbstractVector{T},
+function meshgrid(vx::AbstractVector{T},
+                  vy::AbstractVector{T},
                   vz::AbstractVector{T}) where {T}
     m, n, o = length(vy), length(vx), length(vz)
     vx = reshape(vx, 1, n, 1)
