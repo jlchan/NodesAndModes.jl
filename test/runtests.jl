@@ -27,7 +27,7 @@ end
     r, w = gauss_lobatto_quad(0, 0, N)
     @test sum(w) ≈ 2
 
-    for N = 1:2
+    for N in 1:2
         r, w = gauss_quad(0, 0, N)
         @test sum(w) ≈ 2
         @test abs(sum(w .* r)) < tol

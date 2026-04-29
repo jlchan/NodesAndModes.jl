@@ -33,7 +33,7 @@ Pyr() = Pyr(nothing)
 
 # TODO: deprecate AbstractElemShape{NDIMS} - it's just an alias for AbstractElementShape
 const AbstractElemShape{NDIMS} = AbstractElementShape{NDIMS}
-export AbstractElemShape 
+export AbstractElemShape
 
 export AbstractElementShape, AbstractTensorProductElement, AbstractSimplexElement
 export Line

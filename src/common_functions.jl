@@ -14,7 +14,6 @@ Computes the generalized Vandermonde derivative matrix V of degree N at points (
 grad_vandermonde(elem::AbstractElementShape, N, rst...) = basis(elem, N, rst...)[2:end]
 grad_vandermonde(elem::Line, N, r) = last(basis(elem, N, r)) # specialize for 1D
 
-
 """
     nodes(elem::AbstractElementShape,N)
 
@@ -26,15 +25,12 @@ using a tensor product of lower-dimensional nodes.
 """
 nodes(elem::AbstractElementShape, N) = build_warped_nodes(elem, N, nodes(Line(), N))
 
-
-
 """
     basis(elem::AbstractElementShape, N, rst...)
 
 Computes orthonormal basis of degree N at tuple of coordinate arrays (r,s,t).
 """
 basis(elem::AbstractElementShape, N, rst...)
-
 
 """
     equi_nodes(elem::AbstractElementShape, N)
