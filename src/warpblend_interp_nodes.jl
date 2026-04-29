@@ -4,11 +4,11 @@
 #####
 
 """
-    get_edge_list(elem::AbstractElemShape)
+    get_edge_list(elem::AbstractElementShape)
 
 Returns list of edges for a specific element (elem = Tri(), Pyr(), Hex(), or Tet()).
 """
-get_edge_list(elem::AbstractElemShape)
+get_edge_list(elem::AbstractElementShape)
 
 function get_edge_list(elem::Union{Tri, Quad})
     SVector{2}.(find_face_nodes(elem, equi_nodes(elem, 1)...))
@@ -52,8 +52,8 @@ function get_edge_list(::Hex)
     SVector(7, 8)
 end
 
-get_vertices(elem::AbstractElemShape) = equi_nodes(elem, 1)
-function get_vertex_fxns(elem::AbstractElemShape)
+get_vertices(elem::AbstractElementShape) = equi_nodes(elem, 1)
+function get_vertex_fxns(elem::AbstractElementShape)
     (rst...) -> vandermonde(elem, 1, rst...) / vandermonde(elem, 1, equi_nodes(elem, 1)...)
 end
 
@@ -64,11 +64,11 @@ function interp_1D_to_line(r1D, v1, v2)
 end
 
 """
-    interp_1D_to_edges(elem::AbstractElemShape, r1D)
+    interp_1D_to_edges(elem::AbstractElementShape, r1D)
 
 Interpolates points r1D to the edges of an element (elem = :Tri, :Pyr, or :Tet)
 """
-function interp_1D_to_edges(elem::AbstractElemShape, r1D)
+function interp_1D_to_edges(elem::AbstractElementShape, r1D)
     v = get_vertices(elem)
     edges = get_edge_list(elem)
     edge_pts = ntuple(x -> zeros(length(r1D), length(edges)), length(v))
@@ -80,14 +80,14 @@ function interp_1D_to_edges(elem::AbstractElemShape, r1D)
 end
 
 """
-    edge_basis(elem::AbstractElemShape, N, rst...)
+    edge_basis(elem::AbstractElementShape, N, rst...)
 
 Returns the generalized Vandermonde matrix evaluated using an edge basis (e.g.,
 degree `N` polynomials over an edge, but linearly blended into the interior). The 
 dimension of the resulting space is simply the number of total nodes on edges of 
 a degree `N` element. 
 """
-function edge_basis(elem::AbstractElemShape, N, rst...)
+function edge_basis(elem::AbstractElementShape, N, rst...)
     vertices = get_vertices(elem)
     edges = get_edge_list(elem)
     vertex_functions = get_vertex_fxns(elem)
@@ -255,13 +255,13 @@ function face_basis(elem, N, r, s, t)
 end
 
 """
-    build_warped_nodes(elem::AbstractElemShape, N, r1D)
+    build_warped_nodes(elem::AbstractElementShape, N, r1D)
 
 Computes degree N warp-and-blend interpolation nodes for elem = Tri(), Pyr(), or
 Tet() based on the 1D node set "r1D". Returns a tuple "rst" containing arrays of
 interpolation points.
 """
-function build_warped_nodes(elem::AbstractElemShape, N, r1D)
+function build_warped_nodes(elem::AbstractElementShape, N, r1D)
     r1D_equi = equi_nodes(Line(), N)
     rst_edge_equi = interp_1D_to_edges(elem, r1D_equi)
     V_edge = edge_basis(elem, N, rst_edge_equi...)

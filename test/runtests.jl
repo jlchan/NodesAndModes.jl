@@ -2,6 +2,24 @@ using NodesAndModes
 using Test
 using LinearAlgebra
 
+@testset "Types" begin
+    for elem in (Line(), Quad(), Hex())
+        @test elem isa AbstractElementShape
+        @test elem isa AbstractTensorProductElement
+        @test !(elem isa AbstractSimplexElement)
+    end
+    for elem in (Tri(), Tet())
+        @test elem isa AbstractElementShape
+        @test elem isa AbstractSimplexElement
+        @test !(elem isa AbstractTensorProductElement)
+    end
+    for elem in (Wedge(), Pyr())
+        @test elem isa AbstractElementShape
+        @test !(elem isa AbstractSimplexElement)
+        @test !(elem isa AbstractTensorProductElement)
+    end
+end
+
 @testset "1D tests" begin
     tol = 1e2 * eps()
 
