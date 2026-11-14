@@ -72,8 +72,7 @@ end
 Evaluate the Jacobi Polynomial (α, β) of order N at points x. 
 Can optionally specify the output array `out` to avoid allocations.
 """
-# vectorized version. 
-function jacobiP(x, α, β, N)
+function jacobiP(x, α, β, N) # vectorized version.
     PL = zeros(length(x))
     return jacobiP!(PL, x, α, β, N)
 end

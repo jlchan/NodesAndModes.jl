@@ -20,7 +20,6 @@ end
 Evalute the partial derivative w.r.t. (r,s,t) of 3D "Legendre" polynomial with
 index, or order, (id,jd,kd) at (a,b,c)
 """
-
 function grad_simplex_3D(a, b, c, id, jd, kd)
     fa = jacobiP(a, 0, 0, id)
     gb = jacobiP(b, 2 * id + 1, 0, jd)

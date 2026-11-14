@@ -19,7 +19,6 @@ end
 Evalute the partial derivative w.r.t. (r,s) of 2D PKDO polynomials with
 indices (id,jd) at (a,b)
 """
-
 function grad_simplex_2D(a, b, id, jd)
     fa = jacobiP(a, 0, 0, id)
     gb = jacobiP(b, 2 * id + 1, 0, jd)
